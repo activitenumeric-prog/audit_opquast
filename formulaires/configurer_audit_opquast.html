@@ -1,0 +1,24 @@
+<div class="formulaire_spip formulaire_configurer formulaire_#FORM">
+
+	<h3 class="titrem"><:audit_opquast:cfg_titre_parametrages:/></h3>
+
+	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
+	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
+
+	<form method="post" action="#ENV{action}">
+	<div>
+		#ACTION_FORMULAIRE
+
+		<div class="editer-groupe">
+			[(#SAISIE{input, exemple,
+				label=<:audit_opquast:cfg_exemple:/>,
+				explication=<:audit_opquast:cfg_exemple_explication:/>})]
+		</div>
+
+		<input type="hidden" name="_meta_casier" value="audit_opquast" />
+		<p class="boutons">
+			<button type="submit"><:bouton_enregistrer:/></button>
+		</p>
+	</div>
+	</form>
+</div>

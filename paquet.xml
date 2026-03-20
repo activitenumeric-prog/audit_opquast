@@ -1,0 +1,17 @@
+<paquet
+	prefix="audit_opquast"
+	version="1.1.0"
+	etat="dev"
+	compatibilite="[4.0.0;4.4.*]"
+	logo="prive/themes/spip/images/audit_opquast-xx.svg"
+	documentation=""
+	schema="1.1.0"
+>
+	<nom>Audit Opquast</nom>
+	<auteur>Mikael Folio</auteur>
+	<licence>GNU/GPL</licence>
+
+	<pipeline nom="autoriser" inclure="audit_opquast_autorisations.php" />
+	<pipeline nom="insert_head" inclure="audit_opquast_pipelines.php" />
+	<pipeline nom="declarer_tables_principales" inclure="base/audit_opquast.php" />
+</paquet>
