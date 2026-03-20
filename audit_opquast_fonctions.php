@@ -501,6 +501,34 @@ function audit_opquast_navigation_regle($id_audit, $id_regle) {
 	return $navigation;
 }
 
+function audit_opquast_regle_visible_dans_filtres($id_audit, $id_regle, $filtres = []) {
+	$id_regle = intval($id_regle);
+
+	if (!$id_regle) {
+		return false;
+	}
+
+	$regles = audit_opquast_lister_regles_audit($id_audit, $filtres);
+
+	foreach ($regles as $regle) {
+		if (intval($regle['id_regle'] ?? 0) === $id_regle) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function audit_opquast_premiere_regle_visible($id_audit, $filtres = []) {
+	$regles = audit_opquast_lister_regles_audit($id_audit, $filtres);
+
+	if (!$regles) {
+		return 0;
+	}
+
+	return intval($regles[0]['id_regle'] ?? 0);
+}
+
 function audit_opquast_raccourcis_statuts($id_audit) {
 	$resume = audit_opquast_resume_audit($id_audit);
 	$statuts = [

@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.4.7 - 2026-03-20
+
+- correction finale de l'affichage du numero et du titre de la regle dans le formulaire de resultat
+- redirection plus propre apres enregistrement quand la regle sort du filtre actif
+
+## 1.4.6 - 2026-03-20
+
+- correction de l'affichage du titre de la regle dans le formulaire de resultat pour supprimer le fragment technique visible a l'ecran
+
+## 1.4.5 - 2026-03-20
+
+- augmentation de la marge externe des blocs principaux `audit-opquast-bloc` a `2rem`
+
+## 1.4.4 - 2026-03-20
+
+- refonte du bloc de synthese d'audit en carte structuree alignee a gauche
+- mise en avant de l'URL cible, du statut et de deux KPI visibles
+- ajustement CSS isole sur la carte de synthese pour faciliter un retour arriere
+
 ## 1.4.3 - 2026-03-20
 
 - deplacement du badge de priorite sous le nom de famille dans les cartes KPI

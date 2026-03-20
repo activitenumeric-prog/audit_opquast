@@ -20,21 +20,35 @@
 		<h1><:audit_opquast:titre_page_detail_audit:/></h1>
 		<p class="audit-opquast-intro"><a href="[(#VAL|audit_opquast_url_liste)]"><:audit_opquast:lien_retour_liste:/></a></p>
 
-		<div class="bloc audit-opquast-bloc">
-			<h2>[(#GET{audit}|table_valeur{titre})]</h2>
-			<p><strong><:audit_opquast:champ_url_cible_label:/></strong> : [(#GET{audit}|table_valeur{url_cible})]</p>
-			<p><strong><:audit_opquast:champ_type_cible_label:/></strong> : [((#GET{audit}|table_valeur{type_cible}|audit_opquast_types_cible))]</p>
-			<p><strong><:audit_opquast:champ_statut_audit_label:/></strong> : [((#GET{audit}|table_valeur{statut}|audit_opquast_statuts_audit))]</p>
-			<p class="audit-opquast-card__meta">
-				<strong><:audit_opquast:label_regles_traitees:/></strong>
-				:
-				[(#GET{resume}|table_valeur{traitees})] / [(#GET{resume}|table_valeur{total_regles})]
-				-
-				<strong><:audit_opquast:label_progression:/></strong>
-				:
-				[(#GET{resume}|table_valeur{progression})]%
-			</p>
-			<div class="audit-opquast-progress" aria-hidden="true">
+		<div class="bloc audit-opquast-bloc audit-opquast-bloc--hero">
+			<div class="audit-opquast-hero">
+				<div class="audit-opquast-hero__main">
+					<div class="audit-opquast-hero__header">
+						<div class="audit-opquast-hero__titles">
+							<h2 class="audit-opquast-hero__title">[(#GET{audit}|table_valeur{titre})]</h2>
+							<p class="audit-opquast-hero__subtitle"><:audit_opquast:champ_type_cible_label:/>&nbsp;: [((#GET{audit}|table_valeur{type_cible}|audit_opquast_types_cible))]</p>
+						</div>
+						<p class="audit-opquast-hero__status">
+							<span class="audit-opquast-badge audit-opquast-badge--status">[(#GET{audit}|table_valeur{statut}|audit_opquast_statuts_audit)]</span>
+						</p>
+					</div>
+					<div class="audit-opquast-hero__target">
+						<p class="audit-opquast-hero__label"><:audit_opquast:champ_url_cible_label:/></p>
+						<p class="audit-opquast-hero__url">[(#GET{audit}|table_valeur{url_cible})]</p>
+					</div>
+				</div>
+				<div class="audit-opquast-hero__stats">
+					<div class="audit-opquast-hero__kpi">
+						<strong class="audit-opquast-hero__kpi-value">[(#GET{resume}|table_valeur{traitees})] / [(#GET{resume}|table_valeur{total_regles})]</strong>
+						<span class="audit-opquast-hero__kpi-label"><:audit_opquast:label_regles_traitees:/></span>
+					</div>
+					<div class="audit-opquast-hero__kpi audit-opquast-hero__kpi--progress">
+						<strong class="audit-opquast-hero__kpi-value">[(#GET{resume}|table_valeur{progression})]%</strong>
+						<span class="audit-opquast-hero__kpi-label"><:audit_opquast:label_progression:/></span>
+					</div>
+				</div>
+			</div>
+			<div class="audit-opquast-progress audit-opquast-progress--hero" aria-hidden="true">
 				<span style="width:[(#GET{resume}|table_valeur{progression})]%;"></span>
 			</div>
 		</div>

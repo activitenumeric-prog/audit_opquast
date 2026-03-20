@@ -1,7 +1,7 @@
 # audit_opquast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.4.3-blue)
+![Version](https://img.shields.io/badge/version-1.4.7-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.4.3`
+- Version courante : `1.4.7`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -31,6 +31,7 @@ Le MVP permet maintenant :
 - de creer un audit avec un titre, une cible et un statut
 - d'afficher la liste des audits existants
 - d'afficher pour chaque audit une progression et le nombre de regles deja traitees
+- d'afficher une carte de synthese d'audit plus lisible, alignee a gauche, avec 2 KPI visibles
 - d'ouvrir un audit en detail
 - de modifier un audit existant depuis sa page detail
 - de filtrer les regles par famille, recherche libre et statut
@@ -43,6 +44,8 @@ Le MVP permet maintenant :
 - d'afficher la vue par famille sous forme de cartes KPI plus lisibles
 - de beneficier d'un polissage visuel des cartes famille pour une lecture plus confortable
 - d'aligner plus proprement les badges de priorite dans les cartes famille
+- de conserver un redesign isole du bloc de synthese d'audit pour faciliter un retour arriere
+- d'espacer davantage chaque bloc principal pour aérer la lecture
 - d'acceder aux pages publiques via `spip.php?page=audit_opquast` et `spip.php?page=audit_opquast_audit`
 - de beneficier d'une mise en forme CSS dediee pour les ecrans publics du plugin
 
