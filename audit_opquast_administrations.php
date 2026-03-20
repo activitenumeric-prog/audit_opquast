@@ -20,6 +20,14 @@ function audit_opquast_upgrade($nom_meta_base_version, $version_cible) {
 		['maj_tables', $tables],
 		['audit_opquast_peupler_referentiel'],
 	];
+	$maj['1.1.1'] = [
+		['maj_tables', $tables],
+		['audit_opquast_peupler_referentiel'],
+	];
+	$maj['1.1.2'] = [
+		['maj_tables', $tables],
+		['audit_opquast_peupler_referentiel'],
+	];
 
 	include_spip('base/upgrade');
 	maj_plugin($nom_meta_base_version, $version_cible, $maj);
@@ -27,17 +35,31 @@ function audit_opquast_upgrade($nom_meta_base_version, $version_cible) {
 
 function audit_opquast_peupler_referentiel() {
 	include_spip('base/abstract_sql');
+	include_spip('base/upgrade');
+	include_spip('inc/utils');
 	include_spip('inc/audit_opquast_referentiel');
 
 	$regles = audit_opquast_referentiel_regles();
 
 	if (!$regles || !is_array($regles)) {
+		effacer_meta('audit_opquast_import_index');
+		return;
+	}
+
+	$index_depart = intval($GLOBALS['meta']['audit_opquast_import_index'] ?? 0);
+	$total = count($regles);
+
+	if ($index_depart >= $total) {
+		effacer_meta('audit_opquast_import_index');
 		return;
 	}
 
 	$maintenant = date('Y-m-d H:i:s');
+	$lot_max = 25;
+	$traitees = 0;
 
-	foreach ($regles as $regle) {
+	for ($i = $index_depart; $i < $total; $i++) {
+		$regle = $regles[$i];
 		$set = [
 			'numero' => intval($regle['numero']),
 			'titre' => $regle['titre'],
@@ -71,7 +93,19 @@ function audit_opquast_peupler_referentiel() {
 			$set['niveau_automatisation'] = $regle['niveau_automatisation'];
 			sql_insertq('spip_audit_opquast_regles', $set);
 		}
+
+		$traitees++;
+		ecrire_meta('audit_opquast_import_index', (string) ($i + 1));
+
+		if (
+			(defined('_TIME_OUT') && time() >= _TIME_OUT)
+			|| $traitees >= $lot_max
+		) {
+			relance_maj('audit_opquast_base_version', 'meta', generer_url_ecrire('admin_plugin'));
+		}
 	}
+
+	effacer_meta('audit_opquast_import_index');
 }
 
 function audit_opquast_vider_tables($nom_meta_base_version) {
@@ -81,4 +115,5 @@ function audit_opquast_vider_tables($nom_meta_base_version) {
 
 	effacer_meta($nom_meta_base_version);
 	effacer_meta('audit_opquast');
+	effacer_meta('audit_opquast_import_index');
 }

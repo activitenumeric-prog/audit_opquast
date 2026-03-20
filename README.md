@@ -1,10 +1,15 @@
 # audit_opquast
 
+![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
+![Version](https://img.shields.io/badge/version-1.4.3-blue)
+![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
+![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
+
 Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.1.0`
+- Version courante : `1.4.3`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -17,6 +22,29 @@ Le plugin pose les bases d'un outil d'audit dans SPIP avec :
 - une table des resultats par regle et par audit
 - une installation qui cree les tables et peuple le referentiel
 - une desinstallation qui supprime les tables creees par le plugin
+- un premier parcours front office pour creer un audit et renseigner des regles
+
+## MVP disponible
+
+Le MVP permet maintenant :
+
+- de creer un audit avec un titre, une cible et un statut
+- d'afficher la liste des audits existants
+- d'afficher pour chaque audit une progression et le nombre de regles deja traitees
+- d'ouvrir un audit en detail
+- de modifier un audit existant depuis sa page detail
+- de filtrer les regles par famille, recherche libre et statut
+- de filtrer rapidement les regles via des raccourcis cliquables par statut
+- de naviguer entre les regles precedentes et suivantes dans un audit filtre
+- de saisir un resultat par regle avec statut, commentaire et preuve
+- de suivre un resume plus lisible de l'avancement global et par famille
+- de piloter l'audit avec une synthese decisionnelle des non-conformites et familles prioritaires
+- de trier les regles par priorite d'action, numero, famille ou statut
+- d'afficher la vue par famille sous forme de cartes KPI plus lisibles
+- de beneficier d'un polissage visuel des cartes famille pour une lecture plus confortable
+- d'aligner plus proprement les badges de priorite dans les cartes famille
+- d'acceder aux pages publiques via `spip.php?page=audit_opquast` et `spip.php?page=audit_opquast_audit`
+- de beneficier d'une mise en forme CSS dediee pour les ecrans publics du plugin
 
 ## Tables SQL
 
@@ -30,6 +58,11 @@ A l'installation ou a la mise a jour du plugin :
 
 - les trois tables SQL sont creees ou mises a jour
 - le referentiel local des 245 regles est importe dans `spip_audit_opquast_regles`
+- l'import du referentiel est repris par lots pour eviter les blocages a l'activation
+- les reprises d'import reviennent vers l'ecran des plugins et non vers l'upgrade SQL du coeur SPIP
+- le formulaire de resultat affiche correctement le numero et le titre de la regle selectionnee
+- le bouton de filtre utilise maintenant un libelle traduit par le plugin
+- la fiche audit propose une synthese decisionnelle sans modification du schema SQL
 
 A la desinstallation :
 
@@ -56,10 +89,8 @@ Les donnees importees dans le MVP sont :
 
 ## Prochaine etape conseillee
 
-Construire l'interface MVP :
+Enrichir le MVP avec :
 
-- liste des audits
-- creation d'un audit
-- fiche audit
-- selection d'une regle
-- enregistrement d'un resultat
+- un export des resultats
+- une aide semi-automatique sur certaines regles
+- une ponderation plus fine des priorites selon criticite ou contexte projet

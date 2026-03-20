@@ -1,0 +1,45 @@
+<div class="formulaire_spip formulaire_editer_audit_opquast_resultat">
+	<h3 class="titrem">
+		<:audit_opquast:info_selection_regle:/>
+		[(#ENV{_regle_numero}|oui) (#ENV{_regle_numero}) - ][(#ENV{_regle_titre})]
+	</h3>
+
+	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
+	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
+
+	<form method="post" action="#ENV{action}">
+		<div>
+			#ACTION_FORMULAIRE
+			<input type="hidden" name="id_audit" value="#ENV{id_audit}" />
+			<input type="hidden" name="id_regle" value="#ENV{id_regle}" />
+			<input type="hidden" name="q" value="#ENV{q}" />
+			<input type="hidden" name="famille" value="#ENV{famille}" />
+			<input type="hidden" name="statut_verification_filtre" value="#ENV{statut_verification_filtre}" />
+			<input type="hidden" name="tri" value="#ENV{tri}" />
+
+			<div class="editer editer_statut_verification[ (#ENV**{erreurs}|table_valeur{statut_verification}|oui)erreur]">
+				<label for="statut_verification"><:audit_opquast:champ_statut_verification_label:/></label>
+				[<span class="erreur_message">(#ENV**{erreurs}|table_valeur{statut_verification})</span>]
+				<select name="statut_verification" id="statut_verification">
+					<BOUCLE_statuts_verif(DATA){source table, #ENV{_statuts_verification}}>
+						<option value="#CLE"[(#CLE|=={#ENV{statut_verification}}|oui) selected="selected"]>#VALEUR</option>
+					</BOUCLE_statuts_verif>
+				</select>
+			</div>
+
+			<div class="editer editer_commentaire">
+				<label for="commentaire"><:audit_opquast:champ_commentaire_label:/></label>
+				<textarea name="commentaire" id="commentaire" rows="6">#ENV{commentaire}</textarea>
+			</div>
+
+			<div class="editer editer_preuve">
+				<label for="preuve"><:audit_opquast:champ_preuve_label:/></label>
+				<textarea name="preuve" id="preuve" rows="4">#ENV{preuve}</textarea>
+			</div>
+
+			<p class="boutons">
+				<button type="submit"><:audit_opquast:bouton_enregistrer_resultat:/></button>
+			</p>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,53 @@
+[(#AUTORISER{voir,audit_opquast}|sinon_interdire_acces)]
+
+#SET{audits,#VAL|audit_opquast_lister_audits}
+
+<div class="audit-opquast">
+	<h1><:audit_opquast:titre_page_liste_audits:/></h1>
+	<p class="audit-opquast-intro"><:audit_opquast:audit_opquast_description:/></p>
+
+	<div class="bloc audit-opquast-bloc">
+		<h2><:audit_opquast:info_nouveau_audit:/></h2>
+		<div class="ajax">
+			#FORMULAIRE_EDITER_AUDIT_OPQUAST
+		</div>
+	</div>
+
+	<div class="bloc audit-opquast-bloc">
+		<h2><:audit_opquast:audit_opquast_titre:/></h2>
+		<B_audits>
+			<ul class="liste-items audit-opquast-cards">
+				<BOUCLE_audits(DATA){source table, #GET{audits}}>
+					#SET{resume,#VALEUR{id_audit}|audit_opquast_resume_audit}
+					<li class="item audit-opquast-card">
+						<p class="audit-opquast-card__surtitle">[(#VALEUR{type_cible}|audit_opquast_types_cible)]</p>
+						<h3 class="audit-opquast-card__title">#VALEUR{titre}</h3>
+						<p class="audit-opquast-card__target">#VALEUR{url_cible}</p>
+						<p class="audit-opquast-card__status">
+							<span class="audit-opquast-badge">[(#VALEUR{statut}|audit_opquast_statuts_audit)]</span>
+						</p>
+						<p class="audit-opquast-card__meta">
+							<strong><:audit_opquast:label_regles_traitees:/></strong>
+							:
+							[(#GET{resume}|table_valeur{traitees})] / [(#GET{resume}|table_valeur{total_regles})]
+							-
+							<strong><:audit_opquast:label_progression:/></strong>
+							:
+							[(#GET{resume}|table_valeur{progression})]%
+						</p>
+						<div class="audit-opquast-progress" aria-hidden="true">
+							<span style="width:[(#GET{resume}|table_valeur{progression})]%;"></span>
+						</div>
+						<p class="audit-opquast-card__actions">
+							<a href="[(#VALEUR{id_audit}|audit_opquast_url_audit)]"><:audit_opquast:bouton_ouvrir_audit:/></a>
+							<a href="[(#VALEUR{id_audit}|audit_opquast_url_audit)]#parametres-audit"><:audit_opquast:bouton_modifier_audit:/></a>
+						</p>
+					</li>
+				</BOUCLE_audits>
+			</ul>
+		</B_audits>
+			<p><:audit_opquast:info_aucun_audit:/></p>
+			<p><:audit_opquast:info_creer_premier_audit:/></p>
+		<//B_audits>
+	</div>
+</div>

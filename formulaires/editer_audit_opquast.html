@@ -1,0 +1,51 @@
+<div class="formulaire_spip formulaire_editer_audit_opquast">
+	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
+	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
+
+	<form method="post" action="#ENV{action}">
+		<div>
+			#ACTION_FORMULAIRE
+			<input type="hidden" name="id_audit" value="#ENV{id_audit}" />
+			<input type="hidden" name="id_regle" value="#ENV{id_regle}" />
+			<input type="hidden" name="q" value="#ENV{q}" />
+			<input type="hidden" name="famille" value="#ENV{famille}" />
+			<input type="hidden" name="statut_verification" value="#ENV{statut_verification}" />
+			<input type="hidden" name="tri" value="#ENV{tri}" />
+
+			<div class="editer editer_titre[ (#ENV**{erreurs}|table_valeur{titre}|oui)erreur]">
+				<label for="titre"><:audit_opquast:champ_titre_label:/></label>
+				[<span class="erreur_message">(#ENV**{erreurs}|table_valeur{titre})</span>]
+				<input type="text" class="text" name="titre" id="titre" value="#ENV{titre}" />
+			</div>
+
+			<div class="editer editer_url_cible[ (#ENV**{erreurs}|table_valeur{url_cible}|oui)erreur]">
+				<label for="url_cible"><:audit_opquast:champ_url_cible_label:/></label>
+				<p class="explication"><:audit_opquast:explication_url_cible:/></p>
+				[<span class="erreur_message">(#ENV**{erreurs}|table_valeur{url_cible})</span>]
+				<input type="text" class="text" name="url_cible" id="url_cible" value="#ENV{url_cible}" />
+			</div>
+
+			<div class="editer editer_type_cible">
+				<label for="type_cible"><:audit_opquast:champ_type_cible_label:/></label>
+				<select name="type_cible" id="type_cible">
+					<BOUCLE_types(DATA){source table, #ENV{_types_cible}}>
+						<option value="#CLE"[(#CLE|=={#ENV{type_cible}}|oui) selected="selected"]>#VALEUR</option>
+					</BOUCLE_types>
+				</select>
+			</div>
+
+			<div class="editer editer_statut">
+				<label for="statut"><:audit_opquast:champ_statut_audit_label:/></label>
+				<select name="statut" id="statut">
+					<BOUCLE_statuts(DATA){source table, #ENV{_statuts_audit}}>
+						<option value="#CLE"[(#CLE|=={#ENV{statut}}|oui) selected="selected"]>#VALEUR</option>
+					</BOUCLE_statuts>
+				</select>
+			</div>
+
+			<p class="boutons">
+				<button type="submit">#ENV{_submit_label}</button>
+			</p>
+		</div>
+	</form>
+</div>

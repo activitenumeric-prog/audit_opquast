@@ -1,28 +1,351 @@
-/**
- * Styles pour le plugin Audit OpQuast
- *
- * @plugin     Audit OpQuast
- * @copyright  2026
- */
-
-/* Styles généraux du plugin */
-.audit_opquast {
-	/* Vos styles ici */
+.audit-opquast {
+	margin: 2rem 0 3rem;
 }
 
-/* Exemple de classe spécifique */
-.audit_opquast-container {
+.audit-opquast-intro {
+	margin-bottom: 1.5rem;
+}
+
+.audit-opquast-bloc {
+	margin: 0 0 1.5rem;
+	padding: 1.25rem;
+	border: 1px solid #d9d9d9;
+	border-radius: 0.75rem;
+	background: #fff;
+	box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.04);
+}
+
+.audit-opquast-bloc--decision {
+	border-color: #f0d7bf;
+	background: linear-gradient(180deg, #fffaf4 0%, #ffffff 100%);
+}
+
+.audit-opquast-cards,
+.audit-opquast-rule-list,
+.audit-opquast-family-list,
+.audit-opquast-family-kpis,
+.audit-opquast-shortcuts,
+.audit-opquast-priority-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.audit-opquast-card,
+.audit-opquast-rule-item,
+.audit-opquast-family-item {
+	padding: 1rem 0;
+	border-bottom: 1px solid #ebebeb;
+}
+
+.audit-opquast-card:first-child,
+.audit-opquast-rule-item:first-child,
+.audit-opquast-family-item:first-child {
+	padding-top: 0;
+}
+
+.audit-opquast-card:last-child,
+.audit-opquast-rule-item:last-child,
+.audit-opquast-family-item:last-child {
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+
+.audit-opquast-family-kpis {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+	gap: 1.25rem;
+}
+
+.audit-opquast-family-kpi {
+	display: flex;
+	flex-direction: column;
+	gap: 0.9rem;
+	padding: 1.2rem;
+	border: 1px solid #e3e3e3;
+	border-radius: 0.9rem;
+	background: #fff;
+	box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
+}
+
+.audit-opquast-family-kpi--alert {
+	border-color: #f1bcbc;
+	background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%);
+}
+
+.audit-opquast-family-kpi--warning {
+	border-color: #ead8aa;
+	background: linear-gradient(180deg, #fffaf0 0%, #ffffff 100%);
+}
+
+.audit-opquast-card__surtitle,
+.audit-opquast-rule-item__family,
+.audit-opquast-card__target,
+.audit-opquast-card__meta,
+.audit-opquast-family-item__stats,
+.audit-opquast-rule-item__commentaire {
+	margin: 0.35rem 0;
+}
+
+.audit-opquast-card__title {
+	margin: 0 0 0.35rem;
+}
+
+.audit-opquast-card__actions a,
+.audit-opquast-rule-item__actions a,
+.audit-opquast-rule-nav__link,
+.audit-opquast-priority-list a {
+	display: inline-block;
+	margin-right: 1rem;
+	font-weight: 600;
+}
+
+.audit-opquast-progress {
+	overflow: hidden;
+	height: 0.6rem;
+	margin: 0.75rem 0 0;
+	border-radius: 999px;
+	background: #ececec;
+}
+
+.audit-opquast-progress > span {
+	display: block;
+	height: 100%;
+	background: linear-gradient(90deg, #237a57 0%, #4ea66f 100%);
+}
+
+.audit-opquast-badge {
+	display: inline-block;
+	padding: 0.2rem 0.55rem;
+	border-radius: 999px;
+	background: #edf3ff;
+	color: #1f4b99;
+	font-size: 0.92rem;
+}
+
+.audit-opquast-summary,
+.audit-opquast-kpis {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+	gap: 0.75rem 1rem;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.audit-opquast-kpi {
 	padding: 1rem;
-	margin: 1rem 0;
+	border: 1px solid #e4e4e4;
+	border-radius: 0.75rem;
+	background: #fff;
 }
 
-.audit_opquast-titre {
+.audit-opquast-kpi--alert {
+	border-color: #f2c8c8;
+	background: #fff3f3;
+}
+
+.audit-opquast-kpi--warning {
+	border-color: #f0ddb8;
+	background: #fff8ec;
+}
+
+.audit-opquast-kpi__value {
+	display: block;
 	font-size: 1.5rem;
-	font-weight: bold;
-	margin-bottom: 0.5rem;
+	line-height: 1.2;
 }
 
-/* Styles pour les formulaires */
-.formulaire_audit_opquast {
-	/* Vos styles de formulaires ici */
+.audit-opquast-kpi__label {
+	display: block;
+	margin-top: 0.35rem;
+}
+
+.audit-opquast-decision-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+	gap: 1rem 1.5rem;
+	margin-top: 1.25rem;
+}
+
+.audit-opquast-priority-list li {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	padding: 0.85rem 0;
+	border-bottom: 1px solid #ececec;
+}
+
+.audit-opquast-priority-list li:first-child {
+	padding-top: 0;
+}
+
+.audit-opquast-priority-list li:last-child {
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+
+.audit-opquast-shortcuts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+}
+
+.audit-opquast-shortcut {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.55rem 0.85rem;
+	border: 1px solid #d8d8d8;
+	border-radius: 999px;
+	background: #fff;
+	text-decoration: none;
+}
+
+.audit-opquast-shortcut.is-active {
+	border-color: #144c8a;
+	background: #eef5ff;
+	color: #144c8a;
+}
+
+.audit-opquast-rule-nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem 1rem;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.audit-opquast-rule-nav__current,
+.audit-opquast-rule-position {
+	margin: 0;
+}
+
+.audit-opquast-rule-item__head,
+.audit-opquast-family-item__head,
+.audit-opquast-family-kpi__head {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+.audit-opquast-family-kpi__progress {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	margin: 0.2rem 0 0;
+}
+
+.audit-opquast-family-kpi__progress strong {
+	font-size: 1.4rem;
+	line-height: 1;
+}
+
+.audit-opquast-family-kpi__badge {
+	margin: 0;
+}
+
+.audit-opquast-family-kpi__metrics {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.85rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.audit-opquast-family-kpi__metrics li {
+	min-height: 5.4rem;
+	padding: 0.85rem 0.9rem;
+	border-radius: 0.75rem;
+	background: #f7f7f7;
+}
+
+.audit-opquast-family-kpi__metrics strong,
+.audit-opquast-family-kpi__metrics span {
+	display: block;
+}
+
+.audit-opquast-family-kpi__metrics strong {
+	font-size: 1.2rem;
+	line-height: 1.2;
+}
+
+.audit-opquast-family-kpi__metrics span {
+	margin-top: 0.25rem;
+	line-height: 1.35;
+}
+
+.audit-opquast-family-kpi__actions {
+	margin-top: auto;
+	padding-top: 0.2rem;
+}
+
+.audit-opquast-family-kpi__link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.65rem 0.95rem;
+	border: 1px solid #e0c7ac;
+	border-radius: 999px;
+	background: #fff7ee;
+	color: #8a3d00;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.audit-opquast-rule-item--priority {
+	border-left: 0.25rem solid #d06b2f;
+	padding-left: 1rem;
+}
+
+.audit-opquast-filters {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+	gap: 1rem;
+}
+
+.audit-opquast-filters .boutons {
+	display: flex;
+	align-items: end;
+	margin: 0;
+}
+
+.audit-opquast .formulaire_spip .editer {
+	margin-bottom: 1rem;
+}
+
+.audit-opquast input.text,
+.audit-opquast select,
+.audit-opquast textarea {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+	.audit-opquast-bloc {
+		padding: 1rem;
+	}
+
+	.audit-opquast-rule-item__head,
+	.audit-opquast-family-item__head {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.audit-opquast-shortcut {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.audit-opquast-family-kpis {
+		grid-template-columns: 1fr;
+	}
+
+	.audit-opquast-family-kpi__metrics {
+		grid-template-columns: 1fr;
+	}
 }

@@ -1,33 +1,32 @@
 <?php
 
-/**
- * Définit les autorisations du plugin Audit OpQuast
- *
- * @plugin     Audit OpQuast
- * @copyright  2026
- * @author     Mikaël
- * @licence    GNU/GPL
- * @package    SPIP\Audit OpQuast\Autorisations
- */
-
 if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
-
-/**
- * Fonction d'appel pour le pipeline
- * @pipeline autoriser
- */
 function audit_opquast_autoriser() {
 }
 
+function audit_opquast_auteur_autorise($qui) {
+	if (empty($qui['id_auteur']) || empty($qui['statut'])) {
+		return false;
+	}
 
-/**
- * Autoriser la configuration du plugin
- *
- * @return bool
- */
+	return in_array($qui['statut'], ['0minirezo', '1comite']);
+}
+
+function autoriser_audit_opquast_voir_dist($faire, $type, $id, $qui, $opt) {
+	return audit_opquast_auteur_autorise($qui);
+}
+
+function autoriser_audit_opquast_creer_dist($faire, $type, $id, $qui, $opt) {
+	return audit_opquast_auteur_autorise($qui);
+}
+
+function autoriser_audit_opquast_modifier_dist($faire, $type, $id, $qui, $opt) {
+	return audit_opquast_auteur_autorise($qui);
+}
+
 function autoriser_audit_opquast_configurer_dist($faire, $type, $id, $qui, $opt) {
 	return autoriser('webmestre', $type, $id, $qui, $opt);
 }

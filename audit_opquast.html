@@ -1,0 +1,11 @@
+[(#REM) Page publique racine pour le listing des audits]
+<INCLURE{fond=inclure/head, env, home=no, titrepage=<:audit_opquast:titre_page_liste_audits:/>, meta_description=<:audit_opquast:audit_opquast_description:/>, type-page=page, composition=audit_opquast} />
+<INCLURE{fond=inclure/header, home=no, env} />
+
+<main role="main" id="contenu">
+	<div class="fr-container">
+		<INCLURE{fond=content/audit_opquast, env} />
+	</div>
+</main>
+
+<INCLURE{fond=inclure/footer, self=#SELF, env, home=no} />
