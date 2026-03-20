@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.0 - 2026-03-20
+
+- recharge AJAX du bloc `Filtres + navigation + liste des regles` sans rechargement complet de la page
+- prise en charge des raccourcis de statut et du formulaire de filtres avec mise a jour de l'URL
+
 ## 1.8.0 - 2026-03-20
 
 - ouverture en AJAX du bloc `Navigation entre les regles` depuis les liens `Enregistrer le resultat` de la liste

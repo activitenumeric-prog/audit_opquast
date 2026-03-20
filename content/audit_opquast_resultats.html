@@ -1,0 +1,114 @@
+[(#REM) Bloc filtres + navigation + liste chargeable en AJAX]
+#SET{raccourcis,#ENV{id_audit}|audit_opquast_raccourcis_statuts}
+#SET{tri_options,#VAL|audit_opquast_tri_regles}
+#SET{regles,#ENV{id_audit}|audit_opquast_lister_regles_mvp}
+#SET{familles,#VAL|audit_opquast_lister_familles}
+
+<div class="bloc audit-opquast-bloc">
+	<h2><:audit_opquast:legende_filtres:/></h2>
+	<p><:audit_opquast:info_filtrer_regles:/></p>
+	<B_raccourcis>
+		<ul class="audit-opquast-shortcuts">
+			<BOUCLE_raccourcis(DATA){source table, #GET{raccourcis}}>
+				<li>
+					<a class="audit-opquast-shortcut[(#VALEUR{actif}|oui) is-active]" href="#VALEUR{url}">
+						<span>#VALEUR{label}</span>
+						<strong>#VALEUR{compteur}</strong>
+					</a>
+				</li>
+			</BOUCLE_raccourcis>
+		</ul>
+	</B_raccourcis>
+	<//B_raccourcis>
+	<form method="get" action="[(#SELF)]" class="audit-opquast-filters">
+		<input type="hidden" name="page" value="audit_opquast_audit" />
+		<input type="hidden" name="id_audit" value="#ENV{id_audit}" />
+		<input type="hidden" name="id_regle" value="#ENV{id_regle}" />
+
+		<p>
+			<label for="q"><:audit_opquast:champ_q_label:/></label><br />
+			<input type="text" name="q" id="q" value="#ENV{q}" />
+			<br />
+			<small><:audit_opquast:explication_q:/></small>
+		</p>
+
+		<p>
+			<label for="famille"><:audit_opquast:champ_famille_label:/></label><br />
+			<select name="famille" id="famille">
+				<option value=""></option>
+				<BOUCLE_familles(DATA){source table, #GET{familles}}>
+					<option value="#VALEUR{valeur}"[(#ENV{famille}|=={#VALEUR{valeur}}|oui) selected="selected"]>#VALEUR{label}</option>
+				</BOUCLE_familles>
+			</select>
+		</p>
+
+		<p>
+			<label for="statut_verification"><:audit_opquast:champ_statut_verification_label:/></label><br />
+			<select name="statut_verification" id="statut_verification">
+				<option value=""></option>
+				<option value="a_verifier"[(#ENV{statut_verification}|=={a_verifier}|oui) selected="selected"]><:audit_opquast:statut_verification_a_verifier:/></option>
+				<option value="conforme"[(#ENV{statut_verification}|=={conforme}|oui) selected="selected"]><:audit_opquast:statut_verification_conforme:/></option>
+				<option value="non_conforme"[(#ENV{statut_verification}|=={non_conforme}|oui) selected="selected"]><:audit_opquast:statut_verification_non_conforme:/></option>
+				<option value="non_applicable"[(#ENV{statut_verification}|=={non_applicable}|oui) selected="selected"]><:audit_opquast:statut_verification_non_applicable:/></option>
+			</select>
+		</p>
+
+		<p>
+			<label for="tri"><:audit_opquast:champ_tri_label:/></label><br />
+			<select name="tri" id="tri">
+				<BOUCLE_tri_options(DATA){source table, #GET{tri_options}}>
+					<option value="#CLE"[(#ENV{tri,priorite}|=={#CLE}|oui) selected="selected"]>#VALEUR</option>
+				</BOUCLE_tri_options>
+			</select>
+		</p>
+
+		<p class="boutons">
+			<button type="submit"><:audit_opquast:bouton_filtrer:/></button>
+		</p>
+	</form>
+</div>
+
+<div
+	id="audit-opquast-navigation-region"
+	class="audit-opquast-navigation-region"
+	data-audit-opquast-navigation-region="oui"
+	data-navigation-page="audit_opquast_navigation"
+>
+	<INCLURE{fond=content/audit_opquast_navigation, env} />
+</div>
+
+<div class="bloc audit-opquast-bloc">
+	<h2><:audit_opquast:info_liste_regles:/></h2>
+	<p class="audit-opquast-intro"><strong><:audit_opquast:label_tri_actif:/></strong> : [(#ENV{tri,priorite}|audit_opquast_tri_regles)]</p>
+	<B_regles>
+		<ul class="liste-items audit-opquast-rule-list">
+			<BOUCLE_regles(DATA){source table, #GET{regles}}>
+				<li class="item audit-opquast-rule-item[(#VALEUR{prioritaire}|oui) audit-opquast-rule-item--priority]">
+					<div class="audit-opquast-rule-item__head">
+						<strong>#VALEUR{numero}. #VALEUR{titre}</strong>
+						<span class="audit-opquast-badge [(#VALEUR{statut_verification}|audit_opquast_classe_badge_statut_verification)]">[(#VALEUR{statut_verification}|audit_opquast_statuts_verification)]</span>
+					</div>
+					<p class="audit-opquast-rule-item__family">#VALEUR{famille}</p>
+					[(#VALEUR{commentaire}|oui)
+						<p class="audit-opquast-rule-item__commentaire">#VALEUR{commentaire}</p>
+					]
+					<p class="audit-opquast-rule-item__actions">
+						<a
+							class="audit-opquast-rule-item__edit-link"
+							href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#VALEUR{id_regle}})]#audit-opquast-navigation-region"
+							data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_filtre{#VALEUR{id_regle}})]"
+						>
+							<:audit_opquast:bouton_enregistrer_resultat:/>
+						</a>
+						[(#VALEUR{url_source}|oui)
+							-
+							<a href="#VALEUR{url_source}" target="_blank" rel="noopener">Source</a>
+						]
+					</p>
+				</li>
+			</BOUCLE_regles>
+		</ul>
+	</B_regles>
+		<p><:info_aucun_resultat:/></p>
+	<//B_regles>
+</div>
