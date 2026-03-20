@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0 - 2026-03-20
+
+- ouverture en AJAX du bloc `Navigation entre les regles` depuis les liens `Enregistrer le resultat` de la liste
+- conservation du contexte de filtre avec mise a jour de l'URL et defilement vers le bloc charge
+
 ## 1.7.2 - 2026-03-20
 
 - ajout de couleurs dediees et accessibles aux badges de statut des regles

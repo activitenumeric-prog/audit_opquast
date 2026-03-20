@@ -28,6 +28,18 @@
 		region.innerHTML = html;
 	}
 
+	function scrollToRegion(region) {
+		if (!region) {
+			return;
+		}
+
+		try {
+			region.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		} catch (error) {
+			region.scrollIntoView(true);
+		}
+	}
+
 	function navigate(region, ajaxUrl, fullUrl, mode) {
 		setLoading(region, true);
 
@@ -104,6 +116,30 @@
 		});
 	}
 
+	function initRuleList(region) {
+		if (!region) {
+			return;
+		}
+
+		document.addEventListener('click', function (event) {
+			var link = event.target.closest('.audit-opquast-rule-item__edit-link');
+
+			if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+				return;
+			}
+
+			var ajaxUrl = link.getAttribute('data-ajax-href') || buildAjaxUrl(link.href, region.dataset.navigationPage || 'audit_opquast_navigation');
+			var fullUrl = preserveCurrentDebugParams(link.href);
+
+			ajaxUrl = preserveCurrentDebugParams(ajaxUrl);
+
+			event.preventDefault();
+			navigate(region, ajaxUrl, fullUrl, 'push').then(function () {
+				scrollToRegion(region);
+			});
+		});
+	}
+
 	function initParamsRegion(region) {
 		if (!region) {
 			return;
@@ -127,7 +163,10 @@
 	}
 
 	document.addEventListener('DOMContentLoaded', function () {
-		initNavigation(document.querySelector('[data-audit-opquast-navigation-region]'));
+		var navigationRegion = document.querySelector('[data-audit-opquast-navigation-region]');
+
+		initNavigation(navigationRegion);
+		initRuleList(navigationRegion);
 		initParamsRegion(document.querySelector('[data-audit-opquast-params-region]'));
 	});
 }());

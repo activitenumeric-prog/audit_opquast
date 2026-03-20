@@ -262,16 +262,14 @@
 			</form>
 		</div>
 
-		[(#ENV{id_regle}|oui)
-			<div
-				id="audit-opquast-navigation-region"
-				class="audit-opquast-navigation-region"
-				data-audit-opquast-navigation-region="oui"
-				data-navigation-page="audit_opquast_navigation"
-			>
-				<INCLURE{fond=content/audit_opquast_navigation, env} />
-			</div>
-		]
+		<div
+			id="audit-opquast-navigation-region"
+			class="audit-opquast-navigation-region"
+			data-audit-opquast-navigation-region="oui"
+			data-navigation-page="audit_opquast_navigation"
+		>
+			<INCLURE{fond=content/audit_opquast_navigation, env} />
+		</div>
 
 		<div class="bloc audit-opquast-bloc">
 			<h2><:audit_opquast:info_liste_regles:/></h2>
@@ -289,7 +287,13 @@
 								<p class="audit-opquast-rule-item__commentaire">#VALEUR{commentaire}</p>
 							]
 							<p class="audit-opquast-rule-item__actions">
-								<a href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#VALEUR{id_regle}})]"><:audit_opquast:bouton_enregistrer_resultat:/></a>
+								<a
+									class="audit-opquast-rule-item__edit-link"
+									href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#VALEUR{id_regle}})]#audit-opquast-navigation-region"
+									data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_filtre{#VALEUR{id_regle}})]"
+								>
+									<:audit_opquast:bouton_enregistrer_resultat:/>
+								</a>
 								[(#VALEUR{url_source}|oui)
 									-
 									<a href="#VALEUR{url_source}" target="_blank" rel="noopener">Source</a>
