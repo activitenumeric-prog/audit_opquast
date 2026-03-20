@@ -17,6 +17,9 @@
 						<span class="audit-opquast-rule-nav__current-number">[(#GET{navigation}|table_valeur{courante_numero})].</span>
 						<strong class="audit-opquast-rule-nav__current-title">[(#GET{navigation}|table_valeur{courante_titre})]</strong>
 					</p>
+					<p class="audit-opquast-rule-nav__status-line">
+						<span class="audit-opquast-badge audit-opquast-rule-nav__status [(#GET{navigation}|table_valeur{courante_statut_verification}|audit_opquast_classe_badge_statut_verification)]">[(#GET{navigation}|table_valeur{courante_statut_label})]</span>
+					</p>
 				]
 			</div>
 			<div class="audit-opquast-rule-nav__actions">

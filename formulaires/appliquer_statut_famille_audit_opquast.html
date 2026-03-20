@@ -1,0 +1,23 @@
+<div class="formulaire_spip formulaire_appliquer_statut_famille_audit_opquast">
+	<form method="post" action="#ENV{action}">
+		<div>
+			#ACTION_FORMULAIRE
+			<input type="hidden" name="id_audit" value="#ENV{id_audit}" />
+			<input type="hidden" name="famille_cible" value="#ENV{famille_cible}" />
+			<input type="hidden" name="id_regle" value="#ENV{id_regle}" />
+			<input type="hidden" name="q" value="#ENV{q}" />
+			<input type="hidden" name="famille" value="#ENV{famille}" />
+			<input type="hidden" name="statut_verification_filtre" value="#ENV{statut_verification_filtre}" />
+			<input type="hidden" name="tri" value="#ENV{tri}" />
+
+			<div class="audit-opquast-family-kpi__bulk-buttons">
+				<button type="submit" class="audit-opquast-family-kpi__bulk-button" name="statut_cible" value="a_verifier">
+					<:audit_opquast:bouton_famille_a_verifier:/>
+				</button>
+				<button type="submit" class="audit-opquast-family-kpi__bulk-button audit-opquast-family-kpi__bulk-button--ghost" name="statut_cible" value="non_applicable">
+					<:audit_opquast:bouton_famille_non_applicable:/>
+				</button>
+			</div>
+		</div>
+	</form>
+</div>

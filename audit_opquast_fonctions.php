@@ -33,6 +33,21 @@ function audit_opquast_statuts_verification($valeur = null) {
 	return $statuts[$valeur] ?? $valeur;
 }
 
+function audit_opquast_classe_badge_statut_verification($valeur = null) {
+	$classes = [
+		'a_verifier' => 'audit-opquast-badge--a-verifier',
+		'conforme' => 'audit-opquast-badge--conforme',
+		'non_conforme' => 'audit-opquast-badge--non-conforme',
+		'non_applicable' => 'audit-opquast-badge--non-applicable',
+	];
+
+	if ($valeur === null) {
+		return $classes;
+	}
+
+	return $classes[$valeur] ?? '';
+}
+
 function audit_opquast_tri_regles($valeur = null) {
 	$tris = [
 		'priorite' => _T('audit_opquast:tri_regles_priorite'),
@@ -118,6 +133,81 @@ function audit_opquast_lire_resultat($id_audit, $id_regle) {
 	);
 
 	return is_array($resultat) ? $resultat : [];
+}
+
+function audit_opquast_appliquer_statut_famille($id_audit, $famille, $statut_verification, $id_auteur = 0) {
+	include_spip('base/abstract_sql');
+
+	$id_audit = intval($id_audit);
+	$famille = trim((string) $famille);
+	$statut_verification = trim((string) $statut_verification);
+	$id_auteur = intval($id_auteur);
+
+	if (
+		!$id_audit
+		|| $famille === ''
+		|| !in_array($statut_verification, ['a_verifier', 'non_applicable'], true)
+	) {
+		return 0;
+	}
+
+	$regles = sql_allfetsel(
+		'id_regle',
+		'spip_audit_opquast_regles',
+		'famille=' . sql_quote($famille),
+		'',
+		'numero ASC'
+	);
+
+	if (!$regles) {
+		return 0;
+	}
+
+	$maintenant = date('Y-m-d H:i:s');
+	$nb = 0;
+
+	foreach ($regles as $regle) {
+		$id_regle = intval($regle['id_regle'] ?? 0);
+
+		if (!$id_regle) {
+			continue;
+		}
+
+		$existant = sql_fetsel(
+			'id_resultat',
+			'spip_audit_opquast_resultats',
+			'id_audit=' . $id_audit . ' AND id_regle=' . $id_regle
+		);
+
+		if ($existant) {
+			sql_updateq(
+				'spip_audit_opquast_resultats',
+				[
+					'statut_verification' => $statut_verification,
+					'date_modif' => $maintenant,
+					'id_auteur' => $id_auteur,
+				],
+				'id_resultat=' . intval($existant['id_resultat'])
+			);
+		} else {
+			sql_insertq(
+				'spip_audit_opquast_resultats',
+				[
+					'id_audit' => $id_audit,
+					'id_regle' => $id_regle,
+					'statut_verification' => $statut_verification,
+					'commentaire' => '',
+					'preuve' => '',
+					'date_modif' => $maintenant,
+					'id_auteur' => $id_auteur,
+				]
+			);
+		}
+
+		$nb++;
+	}
+
+	return $nb;
 }
 
 function audit_opquast_resume_audit($id_audit) {
@@ -459,6 +549,8 @@ function audit_opquast_navigation_regle($id_audit, $id_regle) {
 		'courante_id_regle' => 0,
 		'courante_numero' => '',
 		'courante_titre' => '',
+		'courante_statut_verification' => 'a_verifier',
+		'courante_statut_label' => audit_opquast_statuts_verification('a_verifier'),
 		'precedente_id_regle' => 0,
 		'precedente_numero' => '',
 		'precedente_titre' => '',
@@ -480,6 +572,8 @@ function audit_opquast_navigation_regle($id_audit, $id_regle) {
 		$navigation['courante_id_regle'] = intval($regle['id_regle'] ?? 0);
 		$navigation['courante_numero'] = $regle['numero'] ?? '';
 		$navigation['courante_titre'] = $regle['titre'] ?? '';
+		$navigation['courante_statut_verification'] = $regle['statut_verification'] ?? 'a_verifier';
+		$navigation['courante_statut_label'] = audit_opquast_statuts_verification($navigation['courante_statut_verification']);
 
 		if (isset($regles[$index - 1])) {
 			$precedente = $regles[$index - 1];
@@ -610,6 +704,48 @@ function audit_opquast_url_navigation_filtre($id_audit, $id_regle = 0, $override
 	}
 
 	return generer_url_public('audit_opquast_navigation', http_build_query($args, '', '&'));
+}
+
+function audit_opquast_url_parametres($id_audit, $mode = '') {
+	include_spip('inc/utils');
+
+	$args = array_merge(
+		['id_audit' => intval($id_audit)],
+		audit_opquast_parametres_filtres()
+	);
+
+	$id_regle = intval(_request('id_regle'));
+
+	if ($id_regle) {
+		$args['id_regle'] = $id_regle;
+	}
+
+	if ($mode !== '') {
+		$args['parametres_mode'] = trim((string) $mode);
+	}
+
+	return generer_url_public('audit_opquast_parametres', http_build_query($args, '', '&'));
+}
+
+function audit_opquast_url_audit_parametres($id_audit, $mode = '') {
+	include_spip('inc/utils');
+
+	$args = array_merge(
+		['id_audit' => intval($id_audit)],
+		audit_opquast_parametres_filtres()
+	);
+
+	$id_regle = intval(_request('id_regle'));
+
+	if ($id_regle) {
+		$args['id_regle'] = $id_regle;
+	}
+
+	if ($mode !== '') {
+		$args['parametres_mode'] = trim((string) $mode);
+	}
+
+	return generer_url_public('audit_opquast_audit', http_build_query($args, '', '&'));
 }
 
 function audit_opquast_url_audit_famille($id_audit, $famille = '') {

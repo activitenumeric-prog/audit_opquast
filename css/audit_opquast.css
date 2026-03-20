@@ -219,6 +219,26 @@
 	font-size: 0.92rem;
 }
 
+.audit-opquast-badge--non-conforme {
+	background: #d32f2f;
+	color: #ffffff;
+}
+
+.audit-opquast-badge--conforme {
+	background: #2e7d32;
+	color: #ffffff;
+}
+
+.audit-opquast-badge--a-verifier {
+	background: #edf3ff;
+	color: #1f4b99;
+}
+
+.audit-opquast-badge--non-applicable {
+	background: #475569;
+	color: #ffffff;
+}
+
 .audit-opquast-badge--status {
 	padding: 0.35rem 0.75rem;
 	background: #eef5ff;
@@ -267,6 +287,100 @@
 .audit-opquast-summary__label {
 	color: #57534b;
 	font-size: 0.95rem;
+}
+
+.audit-opquast-params__intro {
+	margin: 0 0 0.9rem;
+	color: #57534b;
+}
+
+.audit-opquast-params__actions,
+.audit-opquast-params-card__actions {
+	margin: 0;
+}
+
+.audit-opquast-params__toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	padding: 0.55rem 0.9rem;
+	border: 1px solid #d9d6cf;
+	border-radius: 999px;
+	background: #fff;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.audit-opquast-params__toggle--ghost {
+	background: #fffaf2;
+}
+
+.audit-opquast-params-card {
+	display: grid;
+	gap: 1rem;
+	padding: 1rem 1.1rem;
+	border: 1px solid #e7dfd3;
+	border-radius: 0.95rem;
+	background: linear-gradient(180deg, #fffdf9 0%, #fffaf2 100%);
+}
+
+.audit-opquast-params-card__head {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.85rem 1rem;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+
+.audit-opquast-params-card__eyebrow {
+	margin: 0 0 0.2rem;
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: #756451;
+}
+
+.audit-opquast-params-card__title {
+	margin: 0;
+	text-align: left;
+}
+
+.audit-opquast-params-card__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+	gap: 0.85rem 1rem;
+}
+
+.audit-opquast-params-card__item {
+	display: grid;
+	gap: 0.2rem;
+	padding: 0.85rem 0.95rem;
+	border-radius: 0.85rem;
+	background: rgba(255, 255, 255, 0.82);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.audit-opquast-params-card__item--wide {
+	grid-column: 1 / -1;
+}
+
+.audit-opquast-params-card__label {
+	font-size: 0.85rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	color: #6b5f50;
+}
+
+.audit-opquast-params-card__value {
+	font-size: 1rem;
+	line-height: 1.45;
+}
+
+.audit-opquast-params-card__value--url {
+	word-break: break-word;
 }
 
 .audit-opquast-kpi {
@@ -363,6 +477,8 @@
 	display: grid;
 	gap: 0.45rem;
 	min-width: min(100%, 24rem);
+	justify-items: start;
+	text-align: left;
 }
 
 .audit-opquast-rule-nav__actions {
@@ -402,11 +518,12 @@
 .audit-opquast-rule-nav__current {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.35rem;
 	align-items: baseline;
+	gap: 0.35rem;
 	font-size: 1.08rem;
 	line-height: 1.4;
 	max-width: 52rem;
+	text-align: left;
 }
 
 .audit-opquast-rule-nav__current-number {
@@ -416,6 +533,18 @@
 
 .audit-opquast-rule-nav__current-title {
 	font-weight: 700;
+	flex: 1 1 24rem;
+	min-width: 12rem;
+}
+
+.audit-opquast-rule-nav__status-line {
+	margin: 0;
+	text-align: left;
+}
+
+.audit-opquast-rule-nav__status {
+	display: inline-flex;
+	margin-left: 0;
 }
 
 .formulaire_editer_audit_opquast_resultat {
@@ -517,6 +646,10 @@
 	background: #f7f7f7;
 }
 
+.audit-opquast-family-kpi__metric--wide {
+	grid-column: 1 / -1;
+}
+
 .audit-opquast-family-kpi__metrics strong,
 .audit-opquast-family-kpi__metrics span {
 	display: block;
@@ -535,6 +668,29 @@
 .audit-opquast-family-kpi__actions {
 	margin-top: auto;
 	padding-top: 0.2rem;
+}
+
+.audit-opquast-family-kpi__bulk-form {
+	margin-top: 0.75rem;
+}
+
+.audit-opquast-family-kpi__bulk-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.55rem;
+}
+
+.audit-opquast-family-kpi__bulk-button {
+	padding: 0.45rem 0.75rem;
+	border: 1px solid #d9d6cf;
+	border-radius: 999px;
+	background: #fff;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.audit-opquast-family-kpi__bulk-button--ghost {
+	background: #fffaf2;
 }
 
 .audit-opquast-family-kpi__link {
@@ -611,8 +767,16 @@
 		grid-template-columns: 1fr;
 	}
 
+	.audit-opquast-family-kpi__bulk-buttons {
+		flex-direction: column;
+	}
+
 	.audit-opquast-rule-nav {
 		padding: 0.85rem 1rem;
+	}
+
+	.audit-opquast-params-card {
+		padding: 0.9rem 1rem;
 	}
 
 	.audit-opquast-resultat-form__header,

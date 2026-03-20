@@ -7,6 +7,18 @@
 		return url.toString();
 	}
 
+	function preserveCurrentDebugParams(urlString) {
+		var url = new URL(urlString, window.location.origin);
+		var currentUrl = new URL(window.location.href);
+		var varMode = currentUrl.searchParams.get('var_mode');
+
+		if (varMode && !url.searchParams.get('var_mode')) {
+			url.searchParams.set('var_mode', varMode);
+		}
+
+		return url.toString();
+	}
+
 	function setLoading(region, isLoading) {
 		region.classList.toggle('is-loading', isLoading);
 		region.setAttribute('aria-busy', isLoading ? 'true' : 'false');
@@ -14,16 +26,6 @@
 
 	function updateRegion(region, html) {
 		region.innerHTML = html;
-		var title = region.querySelector('.audit-opquast-rule-nav__current-title');
-
-		if (title) {
-			title.setAttribute('tabindex', '-1');
-			try {
-				title.focus({ preventScroll: true });
-			} catch (error) {
-				title.focus();
-			}
-		}
 	}
 
 	function navigate(region, ajaxUrl, fullUrl, mode) {
@@ -76,9 +78,12 @@
 			}
 
 			var ajaxUrl = link.getAttribute('data-ajax-href') || buildAjaxUrl(link.href, region.dataset.navigationPage || 'audit_opquast_navigation');
+			var fullUrl = preserveCurrentDebugParams(link.href);
+
+			ajaxUrl = preserveCurrentDebugParams(ajaxUrl);
 
 			event.preventDefault();
-			navigate(region, ajaxUrl, link.href, 'push');
+			navigate(region, ajaxUrl, fullUrl, 'push');
 		});
 
 		window.addEventListener('popstate', function () {
@@ -92,12 +97,37 @@
 				return;
 			}
 
-			var currentUrl = buildAjaxUrl(window.location.href, region.dataset.navigationPage || 'audit_opquast_navigation');
+			var currentUrl = preserveCurrentDebugParams(
+				buildAjaxUrl(window.location.href, region.dataset.navigationPage || 'audit_opquast_navigation')
+			);
 			navigate(region, currentUrl, null, 'replace');
+		});
+	}
+
+	function initParamsRegion(region) {
+		if (!region) {
+			return;
+		}
+
+		region.addEventListener('click', function (event) {
+			var link = event.target.closest('.audit-opquast-params__toggle');
+
+			if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+				return;
+			}
+
+			var ajaxUrl = link.getAttribute('data-ajax-href') || buildAjaxUrl(link.href, region.dataset.paramsPage || 'audit_opquast_parametres');
+			var fullUrl = preserveCurrentDebugParams(link.href);
+
+			ajaxUrl = preserveCurrentDebugParams(ajaxUrl);
+
+			event.preventDefault();
+			navigate(region, ajaxUrl, fullUrl, 'replace');
 		});
 	}
 
 	document.addEventListener('DOMContentLoaded', function () {
 		initNavigation(document.querySelector('[data-audit-opquast-navigation-region]'));
+		initParamsRegion(document.querySelector('[data-audit-opquast-params-region]'));
 	});
 }());

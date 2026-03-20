@@ -132,13 +132,17 @@
 		</div>
 
 		<div class="bloc audit-opquast-bloc" id="parametres-audit">
-			<h2><:audit_opquast:info_parametres_audit:/></h2>
-			<div class="ajax">
-				#FORMULAIRE_EDITER_AUDIT_OPQUAST{#ENV{id_audit}}
+			<div
+				id="audit-opquast-parametres-region"
+				class="audit-opquast-parametres-region"
+				data-audit-opquast-params-region="oui"
+				data-params-page="audit_opquast_parametres"
+			>
+				<INCLURE{fond=content/audit_opquast_parametres, env} />
 			</div>
 		</div>
 
-		<div class="bloc audit-opquast-bloc">
+		<div class="bloc audit-opquast-bloc" id="resume-familles">
 			<h2><:audit_opquast:info_resume_familles:/></h2>
 			<B_familles_resume>
 				<ul class="audit-opquast-family-kpis">
@@ -171,6 +175,10 @@
 									<span><:audit_opquast:label_conforme:/></span>
 								</li>
 								<li>
+									<strong>#VALEUR{non_applicable}</strong>
+									<span><:audit_opquast:label_non_applicable:/></span>
+								</li>
+								<li class="audit-opquast-family-kpi__metric--wide">
 									<strong>#VALEUR{traitees} / #VALEUR{total_regles}</strong>
 									<span><:audit_opquast:label_regles_traitees:/></span>
 								</li>
@@ -178,6 +186,11 @@
 							<p class="audit-opquast-family-kpi__actions">
 								<a class="audit-opquast-family-kpi__link" href="[(#ENV{id_audit}|audit_opquast_url_audit_famille{#VALEUR{famille}})]"><:audit_opquast:lien_voir_regles_famille:/></a>
 							</p>
+							<div class="audit-opquast-family-kpi__bulk-form">
+								<div class="ajax">
+									#FORMULAIRE_APPLIQUER_STATUT_FAMILLE_AUDIT_OPQUAST{#ENV{id_audit},#VALEUR{famille}}
+								</div>
+							</div>
 						</li>
 					</BOUCLE_familles_resume>
 				</ul>
@@ -269,7 +282,7 @@
 						<li class="item audit-opquast-rule-item[(#VALEUR{prioritaire}|oui) audit-opquast-rule-item--priority]">
 							<div class="audit-opquast-rule-item__head">
 								<strong>#VALEUR{numero}. #VALEUR{titre}</strong>
-								<span class="audit-opquast-badge">[(#VALEUR{statut_verification}|audit_opquast_statuts_verification)]</span>
+								<span class="audit-opquast-badge [(#VALEUR{statut_verification}|audit_opquast_classe_badge_statut_verification)]">[(#VALEUR{statut_verification}|audit_opquast_statuts_verification)]</span>
 							</div>
 							<p class="audit-opquast-rule-item__family">#VALEUR{famille}</p>
 							[(#VALEUR{commentaire}|oui)

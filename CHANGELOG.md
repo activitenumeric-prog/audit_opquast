@@ -1,5 +1,50 @@
 # Changelog
 
+## 1.7.2 - 2026-03-20
+
+- ajout de couleurs dediees et accessibles aux badges de statut des regles
+- application de ces variantes sur la navigation et la liste des regles
+
+## 1.7.1 - 2026-03-20
+
+- ajout du KPI `Non applicable` dans les cartes famille
+- reorganisation des indicateurs famille avec `Regles traitees` sur toute la largeur
+
+## 1.7.0 - 2026-03-20
+
+- ajout d'actions groupees par famille pour passer toutes les regles en `A verifier` ou `Non applicable`
+- integration de ces actions directement dans les cartes KPI des familles
+
+## 1.6.0 - 2026-03-20
+
+- remplacement du formulaire des parametres d'audit par une card compacte en affichage par defaut
+- ouverture et fermeture du formulaire de parametres en AJAX avec fallback standard sans JavaScript
+
+## 1.5.6 - 2026-03-20
+
+- remise du numero et du texte de la regle active sur une meme ligne logique dans la navigation
+
+## 1.5.5 - 2026-03-20
+
+- suppression du focus visuel parasite apres navigation AJAX entre les regles
+- alignement a gauche du numero, du titre et du badge de statut pour mieux gerer les regles longues
+
+## 1.5.4 - 2026-03-20
+
+- deplacement du badge de statut sous le titre de la regle active dans la navigation pour mieux gerer les intitules longs
+
+## 1.5.3 - 2026-03-20
+
+- conservation de `var_mode=recalcul` dans la navigation AJAX pour fiabiliser le rechargement du bloc partiel en phase de mise au point
+
+## 1.5.2 - 2026-03-20
+
+- correction de l'affichage du badge `A verifier` dans la navigation AJAX entre les regles
+
+## 1.5.1 - 2026-03-20
+
+- ajout du badge de statut dans la navigation entre les regles pour afficher l'etat de la regle active
+
 ## 1.5.0 - 2026-03-20
 
 - navigation AJAX sur le bloc regle active et formulaire pour eviter le rechargement complet de la page
