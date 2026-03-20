@@ -9,8 +9,8 @@
 	#SET{familles,#VAL|audit_opquast_lister_familles}
 	#SET{familles_resume,#ENV{id_audit}|audit_opquast_resume_familles}
 	#SET{synthese,#ENV{id_audit}|audit_opquast_synthese_decisionnelle}
-	<div class="audit-opquast">
-		<h1><:audit_opquast:titre_page_detail_audit:/></h1>
+	<div class="audit-opquast" id="audit-opquast-top">
+		<h1><:audit_opquast:titre_page_detail_audit:/> ([(#GET{audit}|table_valeur{titre})])</h1>
 		<p class="audit-opquast-intro"><a href="[(#VAL|audit_opquast_url_liste)]"><:audit_opquast:lien_retour_liste:/></a></p>
 
 		<div class="bloc audit-opquast-bloc audit-opquast-bloc--hero">
@@ -27,7 +27,12 @@
 					</div>
 					<div class="audit-opquast-hero__target">
 						<p class="audit-opquast-hero__label"><:audit_opquast:champ_url_cible_label:/></p>
-						<p class="audit-opquast-hero__url">[(#GET{audit}|table_valeur{url_cible})]</p>
+						[(#GET{audit}|table_valeur{url_cible}|audit_opquast_est_url_externe|oui)
+							<p class="audit-opquast-hero__url"><a href="[(#GET{audit}|table_valeur{url_cible})]" target="_blank" rel="noopener">[(#GET{audit}|table_valeur{url_cible})]</a></p>
+						]
+						[(#GET{audit}|table_valeur{url_cible}|audit_opquast_est_url_externe|non)
+							<p class="audit-opquast-hero__url">[(#GET{audit}|table_valeur{url_cible})]</p>
+						]
 					</div>
 				</div>
 				<div class="audit-opquast-hero__stats">
@@ -185,7 +190,11 @@
 								</li>
 							</ul>
 							<p class="audit-opquast-family-kpi__actions">
-								<a class="audit-opquast-family-kpi__link" href="[(#ENV{id_audit}|audit_opquast_url_audit_famille{#VALEUR{famille}})]"><:audit_opquast:lien_voir_regles_famille:/></a>
+								<a
+									class="audit-opquast-family-kpi__link"
+									href="[(#ENV{id_audit}|audit_opquast_url_audit_famille{#VALEUR{famille}})]#audit-opquast-resultats-region"
+									data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_resultats_famille{#VALEUR{famille}})]"
+								><:audit_opquast:lien_voir_regles_famille:/></a>
 							</p>
 							<div class="audit-opquast-family-kpi__bulk-form">
 								<div class="ajax">
@@ -209,5 +218,15 @@
 		>
 			<INCLURE{fond=content/audit_opquast_resultats, env} />
 		</div>
+
+		<a
+			class="audit-opquast-back-to-top"
+			href="#audit-opquast-top"
+			data-audit-opquast-back-to-top="oui"
+			title="<:audit_opquast:lien_retour_haut:/>"
+		>
+			<span aria-hidden="true">↑</span>
+			<span class="audit-opquast-sr-only"><:audit_opquast:lien_retour_haut:/></span>
+		</a>
 	</div>
 ]

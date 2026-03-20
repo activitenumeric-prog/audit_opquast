@@ -148,6 +148,32 @@
 		});
 	}
 
+	function initFamilyLinks() {
+		if (document.body.dataset.auditOpquastFamilyLinksInit === 'oui') {
+			return;
+		}
+		document.body.dataset.auditOpquastFamilyLinksInit = 'oui';
+
+		document.addEventListener('click', function (event) {
+			var link = event.target.closest('.audit-opquast-family-kpi__link');
+			var region = document.querySelector('[data-audit-opquast-results-region]');
+
+			if (!link || !region || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+				return;
+			}
+
+			var ajaxUrl = link.getAttribute('data-ajax-href') || buildAjaxUrl(link.href, region.dataset.resultsPage || 'audit_opquast_resultats');
+			var fullUrl = preserveCurrentDebugParams(link.href);
+
+			ajaxUrl = preserveCurrentDebugParams(ajaxUrl);
+
+			event.preventDefault();
+			navigate(region, ajaxUrl, fullUrl, 'push').then(function () {
+				scrollToRegion(region);
+			});
+		});
+	}
+
 	function initParamsRegion(region) {
 		if (!region) {
 			return;
@@ -166,6 +192,33 @@
 			}
 
 			var ajaxUrl = link.getAttribute('data-ajax-href') || buildAjaxUrl(link.href, region.dataset.paramsPage || 'audit_opquast_parametres');
+			var fullUrl = preserveCurrentDebugParams(link.href);
+
+			ajaxUrl = preserveCurrentDebugParams(ajaxUrl);
+
+			event.preventDefault();
+			navigate(region, ajaxUrl, fullUrl, 'replace');
+		});
+	}
+
+	function initCreationRegion(region) {
+		if (!region) {
+			return;
+		}
+
+		if (region.dataset.auditOpquastCreationInit === 'oui') {
+			return;
+		}
+		region.dataset.auditOpquastCreationInit = 'oui';
+
+		region.addEventListener('click', function (event) {
+			var link = event.target.closest('a.audit-opquast-creation__toggle');
+
+			if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+				return;
+			}
+
+			var ajaxUrl = link.getAttribute('data-ajax-href') || buildAjaxUrl(link.href, region.dataset.creationPage || 'audit_opquast_creation');
 			var fullUrl = preserveCurrentDebugParams(link.href);
 
 			ajaxUrl = preserveCurrentDebugParams(ajaxUrl);
@@ -228,6 +281,35 @@
 		});
 	}
 
+	function initBackToTop() {
+		var link = document.querySelector('[data-audit-opquast-back-to-top]');
+		var threshold = 280;
+
+		if (!link || link.dataset.auditOpquastBackToTopInit === 'oui') {
+			return;
+		}
+		link.dataset.auditOpquastBackToTopInit = 'oui';
+
+		function toggleVisibility() {
+			var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+			link.classList.toggle('is-visible', scrollTop > threshold);
+		}
+
+		window.addEventListener('scroll', toggleVisibility, { passive: true });
+
+		link.addEventListener('click', function (event) {
+			event.preventDefault();
+
+			try {
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			} catch (error) {
+				window.scrollTo(0, 0);
+			}
+		});
+
+		toggleVisibility();
+	}
+
 	function initDynamicRegions(root) {
 		if (!root) {
 			return;
@@ -235,11 +317,14 @@
 
 		initNavigation(root.querySelector('[data-audit-opquast-navigation-region]'));
 		initParamsRegion(root.querySelector('[data-audit-opquast-params-region]'));
+		initCreationRegion(root.querySelector('[data-audit-opquast-creation-region]'));
 		initResultsRegion(root.querySelector('[data-audit-opquast-results-region]'));
 	}
 
 	document.addEventListener('DOMContentLoaded', function () {
 		initDynamicRegions(document);
 		initRuleList();
+		initFamilyLinks();
+		initBackToTop();
 	});
 }());

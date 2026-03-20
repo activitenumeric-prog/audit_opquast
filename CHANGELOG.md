@@ -1,5 +1,60 @@
 # Changelog
 
+## 1.11.3 - 2026-03-21
+
+- ajout du titre de l'audit dans le `h1` de la page detail
+- conservation du meme titre dans le bloc hero pour la synthese visuelle
+
+## 1.11.2 - 2026-03-21
+
+- URL cible du bloc hero rendue cliquable quand elle commence par `http://` ou `https://`
+- conservation d'un affichage texte simple pour les cibles libres non URL
+
+## 1.11.1 - 2026-03-21
+
+- correction de l'interception AJAX sur le bouton de soumission du formulaire de creation
+- suppression de la redirection parasite vers `/undefined` lors de la creation d'un audit
+
+## 1.11.0 - 2026-03-21
+
+- amelioration visuelle du formulaire de creation et d'edition d'audit avec une largeur mieux maitrisee
+- meilleure hierarchie des champs, grille plus lisible et actions `Annuler / Creer un audit` harmonisees
+
+## 1.10.1 - 2026-03-21
+
+- chargement du script AJAX sur la page liste des audits
+- activation du bouton `Creer un nouvel audit` sans rechargement complet
+
+## 1.10.0 - 2026-03-21
+
+- remplacement du formulaire de creation visible en permanence par un bloc compact ouvrable au clic
+- transformation de la liste des audits existants en cards KPI avec progression, statuts et actions
+
+## 1.9.9 - 2026-03-21
+
+- passage du libelle `Retour en haut` en texte reserve aux lecteurs d'ecran
+- affichage visuel reduit a la fleche du bouton fixe
+
+## 1.9.8 - 2026-03-21
+
+- ajout d'un bouton `Retour en haut` fixe sur la page detail d'audit
+- affichage conditionnel au scroll avec retour doux vers le haut
+
+## 1.9.7 - 2026-03-20
+
+- ajout de la famille active dans le titre du bloc `Regles du referentiel`
+- conservation du titre simple quand aucun filtre famille n'est applique
+
+## 1.9.6 - 2026-03-20
+
+- ajout d'un `href` ancre vers la zone resultats pour les liens des cartes famille
+- ajout d'un `data-ajax-href` explicite pour fiabiliser l'ouverture AJAX des regles par famille
+
+## 1.9.5 - 2026-03-20
+
+- ouverture AJAX du bloc resultats depuis les liens `Voir les regles de cette famille`
+- mise a jour de l'URL et defilement vers la zone filtres/liste sans rechargement complet
+
 ## 1.9.4 - 2026-03-20
 
 - ouverture des regles prioritaires sans reutiliser des filtres incompatibles

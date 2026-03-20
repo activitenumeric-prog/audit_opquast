@@ -21,7 +21,7 @@ function audit_opquast_insert_head($flux) {
 		$flux .= '<link rel="stylesheet" href="' . $css . '" type="text/css" media="all" />';
 	}
 
-	if (_request('page') === 'audit_opquast_audit') {
+	if (in_array(_request('page'), ['audit_opquast', 'audit_opquast_audit'], true)) {
 		$js = find_in_path('javascript/audit_opquast_navigation.js');
 
 		if ($js) {

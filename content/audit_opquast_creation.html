@@ -1,0 +1,24 @@
+[(#REM) Bloc de creation d'audit chargeable en AJAX]
+<h2><:audit_opquast:info_nouveau_audit:/></h2>
+
+[(#ENV{creation_mode}|=={edit}|oui)
+	<div class="audit-opquast-creation audit-opquast-creation--edit">
+		<div class="ajax">
+			#FORMULAIRE_EDITER_AUDIT_OPQUAST
+		</div>
+	</div>
+]
+[(#ENV{creation_mode}|!={edit}|oui)
+	<div class="audit-opquast-creation audit-opquast-creation--compact">
+		<p class="audit-opquast-creation__intro"><:audit_opquast:info_creation_compacte:/></p>
+		<p class="audit-opquast-creation__actions">
+			<a
+				class="audit-opquast-creation__toggle"
+				href="[(#VAL{edit}|audit_opquast_url_creation_audit)]#creation-audit"
+				data-ajax-href="[(#VAL{edit}|audit_opquast_url_creation_region)]"
+			>
+				<:audit_opquast:bouton_nouvel_audit:/>
+			</a>
+		</p>
+	</div>
+]

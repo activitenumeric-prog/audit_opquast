@@ -104,6 +104,16 @@ function audit_opquast_lire_audit($id_audit) {
 	return is_array($audit) ? $audit : [];
 }
 
+function audit_opquast_est_url_externe($valeur) {
+	$valeur = trim((string) $valeur);
+
+	if ($valeur === '') {
+		return false;
+	}
+
+	return (bool) preg_match(',^https?://,i', $valeur);
+}
+
 function audit_opquast_lire_regle($id_regle) {
 	include_spip('base/abstract_sql');
 	$id_regle = intval($id_regle);
@@ -722,6 +732,22 @@ function audit_opquast_url_navigation_prioritaire($id_audit, $id_regle = 0) {
 	]);
 }
 
+function audit_opquast_url_resultats_famille($id_audit, $famille = '') {
+	include_spip('inc/utils');
+
+	$args = array_merge(
+		['id_audit' => intval($id_audit)],
+		audit_opquast_parametres_filtres([
+			'id_regle' => null,
+			'q' => null,
+			'famille' => trim((string) $famille),
+			'statut_verification' => null,
+		])
+	);
+
+	return generer_url_public('audit_opquast_resultats', http_build_query($args, '', '&'));
+}
+
 function audit_opquast_url_parametres($id_audit, $mode = '') {
 	include_spip('inc/utils');
 
@@ -772,4 +798,28 @@ function audit_opquast_url_liste($valeur = null) {
 	include_spip('inc/utils');
 
 	return generer_url_public('audit_opquast');
+}
+
+function audit_opquast_url_creation_audit($mode = '') {
+	include_spip('inc/utils');
+
+	$args = [];
+
+	if ($mode !== '') {
+		$args['creation_mode'] = trim((string) $mode);
+	}
+
+	return generer_url_public('audit_opquast', http_build_query($args, '', '&'));
+}
+
+function audit_opquast_url_creation_region($mode = '') {
+	include_spip('inc/utils');
+
+	$args = [];
+
+	if ($mode !== '') {
+		$args['creation_mode'] = trim((string) $mode);
+	}
+
+	return generer_url_public('audit_opquast_creation', http_build_query($args, '', '&'));
 }

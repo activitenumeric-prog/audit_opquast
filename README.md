@@ -1,7 +1,7 @@
 # audit_opquast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.9.4-blue)
+![Version](https://img.shields.io/badge/version-1.11.3-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.9.4`
+- Version courante : `1.11.3`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -57,6 +57,18 @@ Le MVP permet maintenant :
 - de conserver la taille naturelle du bouton `Filtrer` tout en le gardant aligne avec les champs
 - d'ajuster finement l'alignement du bouton `Filtrer` sans toucher au champ `Recherche`
 - d'ouvrir correctement les regles prioritaires meme si des filtres incompatibles etaient actifs
+- d'ouvrir en AJAX les listes de regles depuis les cartes KPI des familles
+- de viser directement la zone `Regles du referentiel` depuis les cartes famille, avec ou sans JavaScript
+- d'afficher la famille active dans le titre `Regles du referentiel` quand un filtre famille est applique
+- de proposer un bouton `Retour en haut` discret, affiche au scroll
+- d'afficher uniquement la fleche du bouton `Retour en haut`, avec un texte conserve pour l'accessibilite
+- de n'afficher la creation d'audit qu'au clic sur `Creer un nouvel audit`
+- de presenter les audits existants sous forme de cards KPI plus lisibles
+- de faire fonctionner les bascules AJAX aussi sur la page liste des audits
+- d'offrir un formulaire de creation et d'edition d'audit plus lisible, avec une grille plus claire et des actions harmonisees
+- de soumettre correctement le formulaire de creation d'audit sans interception AJAX parasite
+- de rendre cliquable l'URL cible dans le detail d'audit quand il s'agit d'une vraie URL
+- d'afficher le titre de l'audit directement dans le `h1` de la page detail
 - de beneficier d'une mise en forme CSS dediee pour les ecrans publics du plugin
 
 ## Tables SQL
