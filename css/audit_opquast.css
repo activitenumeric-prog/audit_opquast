@@ -717,10 +717,24 @@
 	gap: 1rem;
 }
 
-.audit-opquast-filters .boutons {
-	display: flex;
-	align-items: end;
+.audit-opquast-filters > p {
 	margin: 0;
+}
+
+.audit-opquast-filters__submit {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	gap: initial;
+	margin: 0;
+}
+
+.audit-opquast-filters__label {
+	display: block;
+	min-height: 1.5rem;
+	font-weight: 700;
+	visibility: hidden;
 }
 
 .audit-opquast .formulaire_spip .editer {
@@ -769,6 +783,10 @@
 
 	.audit-opquast-family-kpi__bulk-buttons {
 		flex-direction: column;
+	}
+
+	.audit-opquast-filters__label {
+		display: none;
 	}
 
 	.audit-opquast-rule-nav {

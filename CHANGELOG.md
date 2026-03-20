@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.9.4 - 2026-03-20
+
+- ouverture des regles prioritaires sans reutiliser des filtres incompatibles
+- activation de l'ouverture AJAX du bloc navigation depuis `Regles a traiter en premier`
+
+## 1.9.3 - 2026-03-20
+
+- ajustement CSS cible de l'alignement du bouton `Filtrer` dans la grille
+- conservation du champ `Recherche` tel quel
+
+## 1.9.2 - 2026-03-20
+
+- correction de l'alignement du bouton `Filtrer` dans sa colonne de grille
+- retour a une largeur naturelle du bouton au lieu d'un etirement sur toute la colonne
+
+## 1.9.1 - 2026-03-20
+
+- alignement du bouton `Filtrer` avec les autres champs du formulaire de filtres
+- meilleure tenue responsive du bouton dans la grille des filtres
+
 ## 1.9.0 - 2026-03-20
 
 - recharge AJAX du bloc `Filtres + navigation + liste des regles` sans rechargement complet de la page

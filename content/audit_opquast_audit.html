@@ -85,7 +85,11 @@
 						<ul class="audit-opquast-priority-list">
 							<BOUCLE_regles_prioritaires(DATA){source table, #GET{synthese}|table_valeur{regles_prioritaires}}>
 								<li>
-									<a href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#VALEUR{id_regle}})]">#VALEUR{numero}. #VALEUR{titre}</a>
+									<a
+										class="audit-opquast-rule-item__edit-link"
+										href="[(#ENV{id_audit}|audit_opquast_url_audit_prioritaire{#VALEUR{id_regle}})]#audit-opquast-navigation-region"
+										data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_prioritaire{#VALEUR{id_regle}})]"
+									>#VALEUR{numero}. #VALEUR{titre}</a>
 									<span>#VALEUR{famille}</span>
 									<span>[(#VALEUR{statut_verification}|audit_opquast_statuts_verification)]</span>
 								</li>

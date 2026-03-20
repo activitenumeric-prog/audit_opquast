@@ -1,7 +1,7 @@
 # audit_opquast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.9.0-blue)
+![Version](https://img.shields.io/badge/version-1.9.4-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.9.0`
+- Version courante : `1.9.4`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -53,6 +53,10 @@ Le MVP permet maintenant :
 - d'afficher des badges de statut colores avec un contraste accessible pour les regles
 - d'ouvrir en AJAX le bloc `Navigation entre les regles` depuis la liste sans recharger toute la page
 - d'utiliser l'AJAX sur le bloc filtres pour recharger plus vite la liste, les raccourcis et la navigation
+- d'aligner le bouton `Filtrer` sur la meme ligne de lecture que les autres champs du bloc filtres
+- de conserver la taille naturelle du bouton `Filtrer` tout en le gardant aligne avec les champs
+- d'ajuster finement l'alignement du bouton `Filtrer` sans toucher au champ `Recherche`
+- d'ouvrir correctement les regles prioritaires meme si des filtres incompatibles etaient actifs
 - de beneficier d'une mise en forme CSS dediee pour les ecrans publics du plugin
 
 ## Tables SQL

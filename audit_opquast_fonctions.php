@@ -706,6 +706,22 @@ function audit_opquast_url_navigation_filtre($id_audit, $id_regle = 0, $override
 	return generer_url_public('audit_opquast_navigation', http_build_query($args, '', '&'));
 }
 
+function audit_opquast_url_audit_prioritaire($id_audit, $id_regle = 0) {
+	return audit_opquast_url_audit_filtre($id_audit, $id_regle, [
+		'q' => null,
+		'famille' => null,
+		'statut_verification' => null,
+	]);
+}
+
+function audit_opquast_url_navigation_prioritaire($id_audit, $id_regle = 0) {
+	return audit_opquast_url_navigation_filtre($id_audit, $id_regle, [
+		'q' => null,
+		'famille' => null,
+		'statut_verification' => null,
+	]);
+}
+
 function audit_opquast_url_parametres($id_audit, $mode = '') {
 	include_spip('inc/utils');
 
