@@ -597,6 +597,21 @@ function audit_opquast_url_audit_filtre($id_audit, $id_regle = 0, $overrides = [
 	return generer_url_public('audit_opquast_audit', http_build_query($args, '', '&'));
 }
 
+function audit_opquast_url_navigation_filtre($id_audit, $id_regle = 0, $overrides = []) {
+	include_spip('inc/utils');
+
+	$args = array_merge(
+		['id_audit' => intval($id_audit)],
+		audit_opquast_parametres_filtres($overrides)
+	);
+
+	if (intval($id_regle)) {
+		$args['id_regle'] = intval($id_regle);
+	}
+
+	return generer_url_public('audit_opquast_navigation', http_build_query($args, '', '&'));
+}
+
 function audit_opquast_url_audit_famille($id_audit, $famille = '') {
 	return audit_opquast_url_audit_filtre($id_audit, 0, ['famille' => trim((string) $famille)]);
 }

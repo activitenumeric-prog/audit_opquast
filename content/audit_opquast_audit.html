@@ -12,10 +12,6 @@
 	#SET{raccourcis,#ENV{id_audit}|audit_opquast_raccourcis_statuts}
 	#SET{tri_options,#VAL|audit_opquast_tri_regles}
 	#SET{regles,#ENV{id_audit}|audit_opquast_lister_regles_mvp}
-	#SET{navigation,#ENV{id_audit}|audit_opquast_navigation_regle{#ENV{id_regle}}}
-	#SET{precedente_id,#GET{navigation}|table_valeur{precedente_id_regle}}
-	#SET{suivante_id,#GET{navigation}|table_valeur{suivante_id_regle}}
-
 	<div class="audit-opquast">
 		<h1><:audit_opquast:titre_page_detail_audit:/></h1>
 		<p class="audit-opquast-intro"><a href="[(#VAL|audit_opquast_url_liste)]"><:audit_opquast:lien_retour_liste:/></a></p>
@@ -108,12 +104,30 @@
 		<div class="bloc audit-opquast-bloc">
 			<h2><:audit_opquast:info_resume_audit:/></h2>
 			<ul class="audit-opquast-summary">
-				<li><strong><:audit_opquast:label_total_regles:/></strong> : [(#GET{resume}|table_valeur{total_regles})]</li>
-				<li><strong><:audit_opquast:label_regles_traitees:/></strong> : [(#GET{resume}|table_valeur{traitees})]</li>
-				<li><strong><:audit_opquast:label_conforme:/></strong> : [(#GET{resume}|table_valeur{conforme})]</li>
-				<li><strong><:audit_opquast:label_non_conforme:/></strong> : [(#GET{resume}|table_valeur{non_conforme})]</li>
-				<li><strong><:audit_opquast:label_non_applicable:/></strong> : [(#GET{resume}|table_valeur{non_applicable})]</li>
-				<li><strong><:audit_opquast:label_a_verifier:/></strong> : [(#GET{resume}|table_valeur{a_verifier})]</li>
+				<li class="audit-opquast-summary__item">
+					<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{total_regles})]</strong>
+					<span class="audit-opquast-summary__label"><:audit_opquast:label_total_regles:/></span>
+				</li>
+				<li class="audit-opquast-summary__item audit-opquast-summary__item--treated">
+					<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{traitees})]</strong>
+					<span class="audit-opquast-summary__label"><:audit_opquast:label_regles_traitees:/></span>
+				</li>
+				<li class="audit-opquast-summary__item audit-opquast-summary__item--success">
+					<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{conforme})]</strong>
+					<span class="audit-opquast-summary__label"><:audit_opquast:label_conforme:/></span>
+				</li>
+				<li class="audit-opquast-summary__item audit-opquast-summary__item--alert">
+					<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{non_conforme})]</strong>
+					<span class="audit-opquast-summary__label"><:audit_opquast:label_non_conforme:/></span>
+				</li>
+				<li class="audit-opquast-summary__item">
+					<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{non_applicable})]</strong>
+					<span class="audit-opquast-summary__label"><:audit_opquast:label_non_applicable:/></span>
+				</li>
+				<li class="audit-opquast-summary__item audit-opquast-summary__item--warning">
+					<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{a_verifier})]</strong>
+					<span class="audit-opquast-summary__label"><:audit_opquast:label_a_verifier:/></span>
+				</li>
 			</ul>
 		</div>
 
@@ -236,33 +250,13 @@
 		</div>
 
 		[(#ENV{id_regle}|oui)
-			<div class="bloc audit-opquast-bloc">
-				<h2><:audit_opquast:info_navigation_regles:/></h2>
-				<p class="audit-opquast-rule-position">
-					<strong><:audit_opquast:label_position_regle:/></strong>
-					:
-					[(#GET{navigation}|table_valeur{position})] / [(#GET{navigation}|table_valeur{total})]
-				</p>
-				<div class="audit-opquast-rule-nav">
-					[(#GET{precedente_id}|oui)
-						<a class="audit-opquast-rule-nav__link" href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#GET{precedente_id}})]">
-							&larr; <:audit_opquast:lien_regle_precedente:/>
-						</a>
-					]
-					[(#GET{navigation}|table_valeur{courante_numero}|oui)
-						<p class="audit-opquast-rule-nav__current">
-							<strong>[(#GET{navigation}|table_valeur{courante_numero})]. [(#GET{navigation}|table_valeur{courante_titre})]</strong>
-						</p>
-					]
-					[(#GET{suivante_id}|oui)
-						<a class="audit-opquast-rule-nav__link" href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#GET{suivante_id}})]">
-							<:audit_opquast:lien_regle_suivante:/> &rarr;
-						</a>
-					]
-				</div>
-				<div class="ajax">
-					#FORMULAIRE_EDITER_AUDIT_OPQUAST_RESULTAT{#ENV{id_audit},#ENV{id_regle}}
-				</div>
+			<div
+				id="audit-opquast-navigation-region"
+				class="audit-opquast-navigation-region"
+				data-audit-opquast-navigation-region="oui"
+				data-navigation-page="audit_opquast_navigation"
+			>
+				<INCLURE{fond=content/audit_opquast_navigation, env} />
 			</div>
 		]
 

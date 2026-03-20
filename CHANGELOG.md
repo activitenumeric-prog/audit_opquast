@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.5.0 - 2026-03-20
+
+- navigation AJAX sur le bloc regle active et formulaire pour eviter le rechargement complet de la page
+- ajout d'un endpoint partiel dedie et d'un script progressif avec fallback standard
+
+## 1.4.10 - 2026-03-20
+
+- amelioration visuelle du bloc navigation entre les regles et meilleure separation avec le formulaire de saisie
+- sous-titre du formulaire plus discret et titre de regle mieux mis en valeur
+
+## 1.4.9 - 2026-03-20
+
+- mise en forme plus compacte et plus claire du bloc de resume de l'audit
+- transformation des indicateurs en mini cartes KPI plus lisibles
+
+## 1.4.8 - 2026-03-20
+
+- mise en forme plus compacte et plus lisible du bloc de navigation entre les regles
+- meilleure separation entre la position de la regle, son intitule et les actions precedente/suivante
+
 ## 1.4.7 - 2026-03-20
 
 - correction finale de l'affichage du numero et du titre de la regle dans le formulaire de resultat

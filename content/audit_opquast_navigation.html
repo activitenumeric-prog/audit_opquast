@@ -1,0 +1,47 @@
+[(#REM) Bloc de navigation chargeable en AJAX]
+[(#ENV{id_regle}|oui)
+	#SET{navigation,#ENV{id_audit}|audit_opquast_navigation_regle{#ENV{id_regle}}}
+	#SET{precedente_id,#GET{navigation}|table_valeur{precedente_id_regle}}
+	#SET{suivante_id,#GET{navigation}|table_valeur{suivante_id_regle}}
+
+	<div class="bloc audit-opquast-bloc">
+		<h2><:audit_opquast:info_navigation_regles:/></h2>
+		<div class="audit-opquast-rule-nav">
+			<div class="audit-opquast-rule-nav__meta">
+				<p class="audit-opquast-rule-position">
+					<span class="audit-opquast-rule-position__label"><:audit_opquast:label_position_regle:/></span>
+					<strong class="audit-opquast-rule-position__value">[(#GET{navigation}|table_valeur{position})] / [(#GET{navigation}|table_valeur{total})]</strong>
+				</p>
+				[(#GET{navigation}|table_valeur{courante_numero}|oui)
+					<p class="audit-opquast-rule-nav__current">
+						<span class="audit-opquast-rule-nav__current-number">[(#GET{navigation}|table_valeur{courante_numero})].</span>
+						<strong class="audit-opquast-rule-nav__current-title">[(#GET{navigation}|table_valeur{courante_titre})]</strong>
+					</p>
+				]
+			</div>
+			<div class="audit-opquast-rule-nav__actions">
+			[(#GET{precedente_id}|oui)
+				<a
+					class="audit-opquast-rule-nav__link"
+					href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#GET{precedente_id}})]"
+					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_filtre{#GET{precedente_id}})]"
+				>
+					&larr; <:audit_opquast:lien_regle_precedente:/>
+				</a>
+			]
+			[(#GET{suivante_id}|oui)
+				<a
+					class="audit-opquast-rule-nav__link"
+					href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#GET{suivante_id}})]"
+					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_filtre{#GET{suivante_id}})]"
+				>
+					<:audit_opquast:lien_regle_suivante:/> &rarr;
+				</a>
+			]
+			</div>
+		</div>
+		<div class="ajax">
+			#FORMULAIRE_EDITER_AUDIT_OPQUAST_RESULTAT{#ENV{id_audit},#ENV{id_regle}}
+		</div>
+	</div>
+]

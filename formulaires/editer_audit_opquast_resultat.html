@@ -1,15 +1,17 @@
 <div class="formulaire_spip formulaire_editer_audit_opquast_resultat">
-	<h3 class="titrem">
-		<:audit_opquast:info_selection_regle:/>
-		[(#ENV{_regle_numero}|oui)<span class="audit-opquast-regle-numero">[(#ENV{_regle_numero})]</span> - ]
-		[(#ENV{_regle_titre})]
-	</h3>
+	<div class="audit-opquast-resultat-form__header">
+		<p class="audit-opquast-resultat-form__intro"><:audit_opquast:info_selection_regle:/></p>
+		<h3 class="titrem audit-opquast-resultat-form__title">
+			[(#ENV{_regle_numero}|oui)<span class="audit-opquast-regle-numero">[(#ENV{_regle_numero})]</span> - ]
+			[(#ENV{_regle_titre})]
+		</h3>
+	</div>
 
 	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
 	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
 
 	<form method="post" action="#ENV{action}">
-		<div>
+		<div class="audit-opquast-resultat-form__body">
 			#ACTION_FORMULAIRE
 			<input type="hidden" name="id_audit" value="#ENV{id_audit}" />
 			<input type="hidden" name="id_regle" value="#ENV{id_regle}" />

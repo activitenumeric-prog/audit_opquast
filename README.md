@@ -1,7 +1,7 @@
 # audit_opquast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.4.7-blue)
+![Version](https://img.shields.io/badge/version-1.5.0-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.4.7`
+- Version courante : `1.5.0`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -47,6 +47,7 @@ Le MVP permet maintenant :
 - de conserver un redesign isole du bloc de synthese d'audit pour faciliter un retour arriere
 - d'espacer davantage chaque bloc principal pour aérer la lecture
 - d'acceder aux pages publiques via `spip.php?page=audit_opquast` et `spip.php?page=audit_opquast_audit`
+- de naviguer entre les regles sans recharger toute la page grace a l'AJAX
 - de beneficier d'une mise en forme CSS dediee pour les ecrans publics du plugin
 
 ## Tables SQL
