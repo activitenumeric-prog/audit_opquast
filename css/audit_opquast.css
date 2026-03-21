@@ -801,6 +801,21 @@ ul.audit-opquast-hero__summary {
 	text-decoration: none;
 }
 
+.audit-opquast .audit-opquast-params__toggle.audit-opquast-creation__toggle,
+.audit-opquast .audit-opquast-params__toggle.audit-opquast-creation__toggle:link,
+.audit-opquast .audit-opquast-params__toggle.audit-opquast-creation__toggle:visited {
+	border-color: #bf915e;
+	background: #fff4e7;
+	color: #7d4d1b !important;
+	font-weight: 700;
+}
+
+.audit-opquast .audit-opquast-params__toggle.audit-opquast-creation__toggle:hover,
+.audit-opquast .audit-opquast-params__toggle.audit-opquast-creation__toggle:focus {
+	background: #ffe9cf;
+	color: #643811 !important;
+}
+
 .audit-opquast-params__toggle--ghost {
 	background: #fffaf2;
 }

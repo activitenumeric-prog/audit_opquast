@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.23.1 - 2026-03-21
+
+- retour du panneau `Restitution de l'audit` a un etat d'attente avec `DOC` et `PDF` de nouveau marques `bientot disponible`
+- retrait de la generation PDF active pour repartir d'une base propre avant une nouvelle implementation
+- nettoyage des fichiers temporaires et experimentaux lies a l'ancien chantier PDF
+
+## 1.23.0 - 2026-03-21
+
+- activation d'une vraie restitution `PDF` pour les audits de type `URL`
+- ajout d'un flux de restitution distinct de l'export de donnees, avec `PDF` actif et `DOC` encore bientot disponible
+- generation d'un rapport PDF structure avec tableau de bord, resultats par famille, non-conformites et detail des regles
+
 ## 1.22.0 - 2026-03-21
 
 - ajout d'un troisieme panneau `Restitution de l'audit` dans le bloc de tete, a cote des actions `Parametres` et `Export`
