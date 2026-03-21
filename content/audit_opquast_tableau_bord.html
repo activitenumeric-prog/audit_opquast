@@ -91,24 +91,44 @@
 					</div>
 				]
 				[(#ENV{export_mode}|=={edit}|non)
-					<div class="audit-opquast-hero__actions">
+					[(#ENV{restitution_mode}|=={edit}|oui)
 						<div
-							id="audit-opquast-parametres-region"
-							class="audit-opquast-parametres-region audit-opquast-hero__action-region"
-							data-audit-opquast-params-region="oui"
-							data-params-page="audit_opquast_parametres"
+							id="audit-opquast-restitution-region"
+							class="audit-opquast-restitution-region audit-opquast-hero__action-region audit-opquast-hero__action-region--expanded"
+							data-audit-opquast-restitution-region="oui"
+							data-restitution-page="audit_opquast_restitution"
 						>
-							<INCLURE{fond=content/audit_opquast_parametres, env} />
+							<INCLURE{fond=content/audit_opquast_restitution, env} />
 						</div>
-						<div
-							id="audit-opquast-export-region"
-							class="audit-opquast-export-region audit-opquast-hero__action-region"
-							data-audit-opquast-export-region="oui"
-							data-export-page="audit_opquast_export"
-						>
-							<INCLURE{fond=content/audit_opquast_export, env} />
+					]
+					[(#ENV{restitution_mode}|=={edit}|non)
+						<div class="audit-opquast-hero__actions">
+							<div
+								id="audit-opquast-parametres-region"
+								class="audit-opquast-parametres-region audit-opquast-hero__action-region"
+								data-audit-opquast-params-region="oui"
+								data-params-page="audit_opquast_parametres"
+							>
+								<INCLURE{fond=content/audit_opquast_parametres, env} />
+							</div>
+							<div
+								id="audit-opquast-export-region"
+								class="audit-opquast-export-region audit-opquast-hero__action-region"
+								data-audit-opquast-export-region="oui"
+								data-export-page="audit_opquast_export"
+							>
+								<INCLURE{fond=content/audit_opquast_export, env} />
+							</div>
+							<div
+								id="audit-opquast-restitution-region"
+								class="audit-opquast-restitution-region audit-opquast-hero__action-region"
+								data-audit-opquast-restitution-region="oui"
+								data-restitution-page="audit_opquast_restitution"
+							>
+								<INCLURE{fond=content/audit_opquast_restitution, env} />
+							</div>
 						</div>
-					</div>
+					]
 				]
 			]
 		</div>

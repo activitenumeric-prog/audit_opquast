@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.22.0 - 2026-03-21
+
+- ajout d'un troisieme panneau `Restitution de l'audit` dans le bloc de tete, a cote des actions `Parametres` et `Export`
+- ajout d'une bascule AJAX dediee pour afficher un panneau pleine largeur de restitution
+- activation des choix `DOC` et `PDF` comme formats de restitution bientot disponibles, distincts de l'export de donnees
+
 ## 1.21.1 - 2026-03-21
 
 - rapprochement visuel de l'export Excel avec le modele valide, surtout sur l'onglet `Tableau de bord`

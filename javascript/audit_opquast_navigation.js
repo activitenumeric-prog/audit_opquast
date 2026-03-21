@@ -435,6 +435,34 @@
 		});
 	}
 
+	function initRestitutionRegion(region) {
+		if (!region) {
+			return;
+		}
+
+		if (region.dataset.auditOpquastRestitutionInit === 'oui') {
+			return;
+		}
+		region.dataset.auditOpquastRestitutionInit = 'oui';
+
+		region.addEventListener('click', function (event) {
+			var link = event.target.closest('a.audit-opquast-restitution__toggle');
+			var dashboardRegion = document.querySelector('[data-audit-opquast-dashboard-region]');
+
+			if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+				return;
+			}
+
+			var fullUrl = preserveCurrentDebugParams(link.href);
+			var ajaxUrl = preserveCurrentDebugParams(
+				buildAjaxUrl(fullUrl, (dashboardRegion && dashboardRegion.dataset.dashboardPage) || 'audit_opquast_tableau_bord')
+			);
+
+			event.preventDefault();
+			navigate(dashboardRegion || region, ajaxUrl, fullUrl, 'replace');
+		});
+	}
+
 	function buildFormUrl(form, pageName) {
 		var url = new URL(form.getAttribute('action') || window.location.href, window.location.origin);
 		var formData = new FormData(form);
@@ -541,6 +569,7 @@
 		initParamsRegion(root.querySelector('[data-audit-opquast-params-region]'));
 		initCreationRegion(root.querySelector('[data-audit-opquast-creation-region]'));
 		initExportRegion(root.querySelector('[data-audit-opquast-export-region]'));
+		initRestitutionRegion(root.querySelector('[data-audit-opquast-restitution-region]'));
 		initResultsRegion(root.querySelector('[data-audit-opquast-results-region]'));
 	}
 

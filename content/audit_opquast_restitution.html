@@ -1,0 +1,58 @@
+[(#REM) Panneau de restitution de l'audit]
+#SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
+[(#GET{audit}|oui)
+	#SET{mode,#ENV{restitution_mode}|sinon{compact}}
+	[(#GET{mode}|=={edit}|oui)
+		<div class="audit-opquast-export audit-opquast-export--panel audit-opquast-hero-action-panel">
+			<div class="audit-opquast-export__head">
+				<div>
+					<h3><:audit_opquast:info_restitution_audit:/></h3>
+					<p class="audit-opquast-export__intro"><:audit_opquast:info_restitution_intro:/></p>
+				</div>
+				<a
+					class="audit-opquast-params__toggle audit-opquast-restitution__toggle"
+					href="[(#ENV{id_audit}|audit_opquast_url_audit_restitution)]#parametres-audit"
+					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_restitution_region)]"
+				><:audit_opquast:bouton_fermer:/>&nbsp;<span aria-hidden="true">×</span></a>
+			</div>
+
+			<form action="#" class="audit-opquast-export-form" method="get">
+				<div class="audit-opquast-export-form__options">
+					<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
+						<input type="radio" name="format_restitution" value="doc" disabled="disabled" />
+						<span class="audit-opquast-export-option__content">
+							<strong>DOC</strong>
+							<span><:audit_opquast:info_bientot_disponible:/></span>
+						</span>
+					</label>
+					<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
+						<input type="radio" name="format_restitution" value="pdf" disabled="disabled" />
+						<span class="audit-opquast-export-option__content">
+							<strong>PDF</strong>
+							<span><:audit_opquast:info_bientot_disponible:/></span>
+						</span>
+					</label>
+				</div>
+			</form>
+		</div>
+	]
+	[(#GET{mode}|=={edit}|non)
+		<div class="audit-opquast-export audit-opquast-export--compact">
+			<div class="audit-opquast-params-card audit-opquast-params-card--inline audit-opquast-hero-action-card">
+				<div class="audit-opquast-params-card__head">
+					<div>
+						<p class="audit-opquast-params-card__eyebrow"><:audit_opquast:info_restitution_audit:/></p>
+						<p class="audit-opquast-export__intro"><:audit_opquast:info_restitution_compact:/></p>
+					</div>
+					<p class="audit-opquast-params-card__actions">
+						<a
+							class="audit-opquast-params__toggle audit-opquast-creation__toggle audit-opquast-restitution__toggle"
+							href="[(#ENV{id_audit}|audit_opquast_url_audit_restitution{edit})]#parametres-audit"
+							data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_restitution_region{edit})]"
+						><:audit_opquast:bouton_generer_restitution:/></a>
+					</p>
+				</div>
+			</div>
+		</div>
+	]
+]
