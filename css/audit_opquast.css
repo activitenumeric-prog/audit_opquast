@@ -593,9 +593,17 @@
 	gap: 1rem;
 }
 
+.audit-opquast-export--compact {
+	display: block;
+}
+
 .audit-opquast-export__intro {
 	margin: 0.25rem 0 0;
 	color: #57534b;
+}
+
+.audit-opquast-export__head h3 {
+	margin: 0;
 }
 
 .audit-opquast-export-form__options {
@@ -654,10 +662,39 @@
 	margin-top: 1rem;
 }
 
+.audit-opquast-hero__summary {
+	margin-top: 1rem;
+}
+
 .audit-opquast-hero__params {
 	margin-top: 1rem;
 	padding-top: 1rem;
 	border-top: 1px solid rgba(35, 122, 87, 0.12);
+}
+
+.audit-opquast-hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	align-items: flex-start;
+}
+
+.audit-opquast-hero__action-region {
+	flex: 1 1 22rem;
+	min-width: min(100%, 22rem);
+}
+
+.audit-opquast-hero__action-region--expanded {
+	flex-basis: 100%;
+}
+
+.audit-opquast-hero-action-card,
+.audit-opquast-hero-action-panel {
+	height: 100%;
+}
+
+.audit-opquast-hero__action-region--expanded .audit-opquast-hero-action-panel {
+	height: auto;
 }
 
 .audit-opquast-badge {
@@ -1313,6 +1350,15 @@
 	.audit-opquast-audit-card__head {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+
+	.audit-opquast-hero__actions {
+		flex-direction: column;
+	}
+
+	.audit-opquast-hero__action-region {
+		width: 100%;
+		min-width: 0;
 	}
 
 	.audit-opquast-audit-form {

@@ -364,18 +364,19 @@
 
 		region.addEventListener('click', function (event) {
 			var link = event.target.closest('.audit-opquast-params__toggle');
+			var dashboardRegion = document.querySelector('[data-audit-opquast-dashboard-region]');
 
 			if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
 				return;
 			}
 
-			var ajaxUrl = link.getAttribute('data-ajax-href') || buildAjaxUrl(link.href, region.dataset.paramsPage || 'audit_opquast_parametres');
 			var fullUrl = preserveCurrentDebugParams(link.href);
-
-			ajaxUrl = preserveCurrentDebugParams(ajaxUrl);
+			var ajaxUrl = preserveCurrentDebugParams(
+				buildAjaxUrl(fullUrl, (dashboardRegion && dashboardRegion.dataset.dashboardPage) || 'audit_opquast_tableau_bord')
+			);
 
 			event.preventDefault();
-			navigate(region, ajaxUrl, fullUrl, 'replace');
+			navigate(dashboardRegion || region, ajaxUrl, fullUrl, 'replace');
 		});
 	}
 
@@ -418,18 +419,19 @@
 
 		region.addEventListener('click', function (event) {
 			var link = event.target.closest('a.audit-opquast-export__toggle');
+			var dashboardRegion = document.querySelector('[data-audit-opquast-dashboard-region]');
 
 			if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
 				return;
 			}
 
-			var ajaxUrl = link.getAttribute('data-ajax-href') || buildAjaxUrl(link.href, region.dataset.exportPage || 'audit_opquast_export');
 			var fullUrl = preserveCurrentDebugParams(link.href);
-
-			ajaxUrl = preserveCurrentDebugParams(ajaxUrl);
+			var ajaxUrl = preserveCurrentDebugParams(
+				buildAjaxUrl(fullUrl, (dashboardRegion && dashboardRegion.dataset.dashboardPage) || 'audit_opquast_tableau_bord')
+			);
 
 			event.preventDefault();
-			navigate(region, ajaxUrl, fullUrl, 'replace');
+			navigate(dashboardRegion || region, ajaxUrl, fullUrl, 'replace');
 		});
 	}
 

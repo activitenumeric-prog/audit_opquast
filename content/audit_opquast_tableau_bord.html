@@ -41,13 +41,75 @@
 		<div class="audit-opquast-progress audit-opquast-progress--hero" aria-hidden="true">
 			<span style="width:[(#GET{resume}|table_valeur{progression})]%;"></span>
 		</div>
-		<div
-			id="audit-opquast-parametres-region"
-			class="audit-opquast-parametres-region audit-opquast-hero__params"
-			data-audit-opquast-params-region="oui"
-			data-params-page="audit_opquast_parametres"
-		>
-			<INCLURE{fond=content/audit_opquast_parametres, env} />
+		<ul class="audit-opquast-summary audit-opquast-hero__summary">
+			<li class="audit-opquast-summary__item">
+				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{total_regles})]</strong>
+				<span class="audit-opquast-summary__label"><:audit_opquast:label_total_regles:/></span>
+			</li>
+			<li class="audit-opquast-summary__item audit-opquast-summary__item--treated">
+				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{traitees})]</strong>
+				<span class="audit-opquast-summary__label"><:audit_opquast:label_regles_traitees:/></span>
+			</li>
+			<li class="audit-opquast-summary__item audit-opquast-summary__item--success">
+				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{conforme})]</strong>
+				<span class="audit-opquast-summary__label"><:audit_opquast:label_conforme:/></span>
+			</li>
+			<li class="audit-opquast-summary__item audit-opquast-summary__item--alert">
+				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{non_conforme})]</strong>
+				<span class="audit-opquast-summary__label"><:audit_opquast:label_non_conforme:/></span>
+			</li>
+			<li class="audit-opquast-summary__item">
+				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{non_applicable})]</strong>
+				<span class="audit-opquast-summary__label"><:audit_opquast:label_non_applicable:/></span>
+			</li>
+			<li class="audit-opquast-summary__item audit-opquast-summary__item--warning">
+				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{a_verifier})]</strong>
+				<span class="audit-opquast-summary__label"><:audit_opquast:label_a_verifier:/></span>
+			</li>
+		</ul>
+		<div class="audit-opquast-hero__params">
+			[(#ENV{parametres_mode}|=={edit}|oui)
+				<div
+					id="audit-opquast-parametres-region"
+					class="audit-opquast-parametres-region audit-opquast-hero__action-region audit-opquast-hero__action-region--expanded"
+					data-audit-opquast-params-region="oui"
+					data-params-page="audit_opquast_parametres"
+				>
+					<INCLURE{fond=content/audit_opquast_parametres, env} />
+				</div>
+			]
+			[(#ENV{parametres_mode}|=={edit}|non)
+				[(#ENV{export_mode}|=={edit}|oui)
+					<div
+						id="audit-opquast-export-region"
+						class="audit-opquast-export-region audit-opquast-hero__action-region audit-opquast-hero__action-region--expanded"
+						data-audit-opquast-export-region="oui"
+						data-export-page="audit_opquast_export"
+					>
+						<INCLURE{fond=content/audit_opquast_export, env} />
+					</div>
+				]
+				[(#ENV{export_mode}|=={edit}|non)
+					<div class="audit-opquast-hero__actions">
+						<div
+							id="audit-opquast-parametres-region"
+							class="audit-opquast-parametres-region audit-opquast-hero__action-region"
+							data-audit-opquast-params-region="oui"
+							data-params-page="audit_opquast_parametres"
+						>
+							<INCLURE{fond=content/audit_opquast_parametres, env} />
+						</div>
+						<div
+							id="audit-opquast-export-region"
+							class="audit-opquast-export-region audit-opquast-hero__action-region"
+							data-audit-opquast-export-region="oui"
+							data-export-page="audit_opquast_export"
+						>
+							<INCLURE{fond=content/audit_opquast_export, env} />
+						</div>
+					</div>
+				]
+			]
 		</div>
 	</div>
 
@@ -105,36 +167,6 @@
 				<//B_regles_prioritaires>
 			</div>
 		</div>
-	</div>
-
-	<div class="bloc audit-opquast-bloc">
-		<h2><:audit_opquast:info_resume_audit:/> ([(#GET{audit}|table_valeur{titre})])</h2>
-		<ul class="audit-opquast-summary">
-			<li class="audit-opquast-summary__item">
-				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{total_regles})]</strong>
-				<span class="audit-opquast-summary__label"><:audit_opquast:label_total_regles:/></span>
-			</li>
-			<li class="audit-opquast-summary__item audit-opquast-summary__item--treated">
-				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{traitees})]</strong>
-				<span class="audit-opquast-summary__label"><:audit_opquast:label_regles_traitees:/></span>
-			</li>
-			<li class="audit-opquast-summary__item audit-opquast-summary__item--success">
-				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{conforme})]</strong>
-				<span class="audit-opquast-summary__label"><:audit_opquast:label_conforme:/></span>
-			</li>
-			<li class="audit-opquast-summary__item audit-opquast-summary__item--alert">
-				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{non_conforme})]</strong>
-				<span class="audit-opquast-summary__label"><:audit_opquast:label_non_conforme:/></span>
-			</li>
-			<li class="audit-opquast-summary__item">
-				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{non_applicable})]</strong>
-				<span class="audit-opquast-summary__label"><:audit_opquast:label_non_applicable:/></span>
-			</li>
-			<li class="audit-opquast-summary__item audit-opquast-summary__item--warning">
-				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{a_verifier})]</strong>
-				<span class="audit-opquast-summary__label"><:audit_opquast:label_a_verifier:/></span>
-			</li>
-		</ul>
 	</div>
 
 	<div class="bloc audit-opquast-bloc" id="resume-familles">

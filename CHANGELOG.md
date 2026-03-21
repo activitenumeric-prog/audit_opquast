@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.18.0 - 2026-03-21
+
+- integration des KPI du resume directement dans le bloc de tete de l'audit
+- suppression du bloc `Resume de l'audit` separe pour centraliser l'information et les actions au meme endroit
+
+## 1.17.4 - 2026-03-21
+
+- suppression de la hauteur excessive du panneau d'export dans le bloc de tete
+- conservation des cartes compactes homogenes sans grand espace vide en mode ouvert
+
+## 1.17.3 - 2026-03-21
+
+- harmonisation du panneau `Modifier l'audit` avec le panneau d'export
+- ajout d'un titre visible et remplacement du bouton `Annuler` par `Fermer`
+
+## 1.17.2 - 2026-03-21
+
+- remplacement des deux cartes d'action du bloc de tete par un panneau unique quand `Parametres de l'audit` ou `Exporter l'audit` est ouvert
+- conservation du retour aux deux KPI cote a cote quand aucun panneau n'est actif
+
+## 1.17.1 - 2026-03-21
+
+- fusion des actions `Parametres de l'audit` et `Exporter l'audit` dans le bloc de tete
+- alignement des deux panneaux sur une meme ligne en mode compact, avec ouverture AJAX conservee
+
 ## 1.17.0 - 2026-03-21
 
 - ajout d'un panneau `Exporter l'audit` sur la page detail avec bascule AJAX

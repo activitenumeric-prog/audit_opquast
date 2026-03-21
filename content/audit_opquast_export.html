@@ -3,15 +3,15 @@
 [(#GET{audit}|oui)
 	#SET{mode,#ENV{export_mode}|sinon{compact}}
 	[(#GET{mode}|=={edit}|oui)
-		<div class="bloc audit-opquast-bloc audit-opquast-export audit-opquast-export--panel">
+		<div class="audit-opquast-export audit-opquast-export--panel audit-opquast-hero-action-panel">
 			<div class="audit-opquast-export__head">
 				<div>
-					<h2><:audit_opquast:info_export_audit:/></h2>
+					<h3><:audit_opquast:info_export_audit:/></h3>
 					<p class="audit-opquast-export__intro"><:audit_opquast:info_export_intro:/></p>
 				</div>
 				<a
 					class="audit-opquast-params__toggle audit-opquast-export__toggle"
-					href="[(#ENV{id_audit}|audit_opquast_url_audit_export)]"
+					href="[(#ENV{id_audit}|audit_opquast_url_audit_export)]#parametres-audit"
 					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_export_region)]"
 				><:audit_opquast:bouton_fermer:/>&nbsp;<span aria-hidden="true">×</span></a>
 			</div>
@@ -55,16 +55,22 @@
 		</div>
 	]
 	[(#GET{mode}|=={edit}|non)
-		<div class="bloc audit-opquast-bloc audit-opquast-export audit-opquast-export--compact">
-			<div>
-				<h2><:audit_opquast:info_export_audit:/></h2>
-				<p class="audit-opquast-export__intro"><:audit_opquast:info_export_compact:/></p>
+		<div class="audit-opquast-export audit-opquast-export--compact">
+			<div class="audit-opquast-params-card audit-opquast-params-card--inline audit-opquast-hero-action-card">
+				<div class="audit-opquast-params-card__head">
+					<div>
+						<p class="audit-opquast-params-card__eyebrow"><:audit_opquast:info_export_audit:/></p>
+						<p class="audit-opquast-export__intro"><:audit_opquast:info_export_compact:/></p>
+					</div>
+					<p class="audit-opquast-params-card__actions">
+						<a
+							class="audit-opquast-params__toggle audit-opquast-creation__toggle audit-opquast-export__toggle"
+							href="[(#ENV{id_audit}|audit_opquast_url_audit_export{edit})]#parametres-audit"
+							data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_export_region{edit})]"
+						><:audit_opquast:bouton_exporter_audit:/></a>
+					</p>
+				</div>
 			</div>
-			<a
-				class="audit-opquast-creation__toggle audit-opquast-export__toggle"
-				href="[(#ENV{id_audit}|audit_opquast_url_audit_export{edit})]"
-				data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_export_region{edit})]"
-			><:audit_opquast:bouton_exporter_audit:/></a>
 		</div>
 	]
 ]

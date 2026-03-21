@@ -3,25 +3,26 @@
 
 [(#GET{audit}|oui)
 	[(#ENV{parametres_mode}|=={edit}|oui)
-		<div class="audit-opquast-params audit-opquast-params--edit">
-			<p class="audit-opquast-params__intro"><:audit_opquast:info_parametres_intro:/></p>
+		<div class="audit-opquast-params audit-opquast-params--edit audit-opquast-hero-action-panel">
+			<div class="audit-opquast-export__head audit-opquast-params__head">
+				<div>
+					<h3><:audit_opquast:info_parametres_audit:/></h3>
+					<p class="audit-opquast-params__intro"><:audit_opquast:info_parametres_intro:/></p>
+				</div>
+				<a
+					class="audit-opquast-params__toggle audit-opquast-export__toggle"
+					href="[(#ENV{id_audit}|audit_opquast_url_audit_parametres)]#parametres-audit"
+					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_parametres)]"
+				><:audit_opquast:bouton_fermer:/>&nbsp;<span aria-hidden="true">×</span></a>
+			</div>
 			<div class="ajax">
 				#FORMULAIRE_EDITER_AUDIT_OPQUAST{#ENV{id_audit}}
 			</div>
-			<p class="audit-opquast-params__actions">
-				<a
-					class="audit-opquast-params__toggle audit-opquast-params__toggle--ghost"
-					href="[(#ENV{id_audit}|audit_opquast_url_audit_parametres)]#parametres-audit"
-					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_parametres)]"
-				>
-					<:audit_opquast:bouton_annuler_edition:/>
-				</a>
-			</p>
 		</div>
 	]
 	[(#ENV{parametres_mode}|!={edit}|oui)
 		<div class="audit-opquast-params audit-opquast-params--card">
-			<div class="audit-opquast-params-card audit-opquast-params-card--inline">
+			<div class="audit-opquast-params-card audit-opquast-params-card--inline audit-opquast-hero-action-card">
 				<div class="audit-opquast-params-card__head">
 					<div>
 						<p class="audit-opquast-params-card__eyebrow"><:audit_opquast:info_parametres_audit:/></p>
@@ -29,7 +30,7 @@
 					</div>
 					<p class="audit-opquast-params-card__actions">
 						<a
-							class="audit-opquast-params__toggle"
+							class="audit-opquast-params__toggle audit-opquast-creation__toggle"
 							href="[(#ENV{id_audit}|audit_opquast_url_audit_parametres{edit})]#parametres-audit"
 							data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_parametres{edit})]"
 						>
