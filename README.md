@@ -1,7 +1,7 @@
 # audit_opquast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.15.9-blue)
+![Version](https://img.shields.io/badge/version-1.16.0-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.15.9`
+- Version courante : `1.16.0`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -58,6 +58,7 @@ Le MVP permet maintenant :
 - de conserver la regle courante apres sauvegarde tant qu'elle reste visible dans le filtre actif
 - de figer temporairement la position et les liens de navigation de la regle courante jusqu'au prochain clic
 - de conserver explicitement le contexte `famille`, `recherche` et `tri` dans le formulaire de navigation
+- de beneficier d'un bloc `Navigation entre les regles` plus lisible avec un formulaire plus dense et mieux hierarchise
 - de consulter les parametres d'audit dans une card compacte puis d'ouvrir le formulaire d'edition en AJAX
 - d'appliquer en une action le statut `A verifier` ou `Non applicable` a toutes les regles d'une famille
 - d'afficher des badges de statut colores avec un contraste accessible pour les regles

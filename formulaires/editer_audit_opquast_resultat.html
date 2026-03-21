@@ -20,27 +20,29 @@
 			<input type="hidden" name="statut_verification_filtre" value="#ENV{statut_verification_filtre}" />
 			<input type="hidden" name="tri" value="#ENV{tri}" />
 
-			<div class="editer editer_statut_verification[ (#ENV**{erreurs}|table_valeur{statut_verification}|oui)erreur]">
-				<label for="statut_verification"><:audit_opquast:champ_statut_verification_label:/></label>
-				[<span class="erreur_message">(#ENV**{erreurs}|table_valeur{statut_verification})</span>]
-				<select name="statut_verification" id="statut_verification">
-					<BOUCLE_statuts_verif(DATA){source table, #ENV{_statuts_verification}}>
-						<option value="#CLE"[(#CLE|=={#ENV{statut_verification}}|oui) selected="selected"]>#VALEUR</option>
-					</BOUCLE_statuts_verif>
-				</select>
+			<div class="audit-opquast-resultat-form__layout">
+				<div class="editer editer_statut_verification audit-opquast-resultat-form__field audit-opquast-resultat-form__field--status[ (#ENV**{erreurs}|table_valeur{statut_verification}|oui)erreur]">
+					<label for="statut_verification"><:audit_opquast:champ_statut_verification_label:/></label>
+					[<span class="erreur_message">(#ENV**{erreurs}|table_valeur{statut_verification})</span>]
+					<select name="statut_verification" id="statut_verification">
+						<BOUCLE_statuts_verif(DATA){source table, #ENV{_statuts_verification}}>
+							<option value="#CLE"[(#CLE|=={#ENV{statut_verification}}|oui) selected="selected"]>#VALEUR</option>
+						</BOUCLE_statuts_verif>
+					</select>
+				</div>
+
+				<div class="editer editer_commentaire audit-opquast-resultat-form__field">
+					<label for="commentaire"><:audit_opquast:champ_commentaire_label:/></label>
+					<textarea name="commentaire" id="commentaire" rows="5">#ENV{commentaire}</textarea>
+				</div>
+
+				<div class="editer editer_preuve audit-opquast-resultat-form__field">
+					<label for="preuve"><:audit_opquast:champ_preuve_label:/></label>
+					<textarea name="preuve" id="preuve" rows="5">#ENV{preuve}</textarea>
+				</div>
 			</div>
 
-			<div class="editer editer_commentaire">
-				<label for="commentaire"><:audit_opquast:champ_commentaire_label:/></label>
-				<textarea name="commentaire" id="commentaire" rows="6">#ENV{commentaire}</textarea>
-			</div>
-
-			<div class="editer editer_preuve">
-				<label for="preuve"><:audit_opquast:champ_preuve_label:/></label>
-				<textarea name="preuve" id="preuve" rows="4">#ENV{preuve}</textarea>
-			</div>
-
-			<p class="boutons">
+			<p class="boutons audit-opquast-resultat-form__footer">
 				<button type="submit"><:audit_opquast:bouton_enregistrer_resultat:/></button>
 			</p>
 		</div>

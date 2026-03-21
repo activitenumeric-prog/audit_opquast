@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.16.0 - 2026-03-21
+
+- refonte visuelle du bloc `Navigation entre les regles` pour mieux separer la navigation, le statut et l'edition
+- densification du formulaire de resultat avec un header plus clair, des champs mieux structures et une action finale plus lisible
+
 ## 1.15.9 - 2026-03-21
 
 - conservation explicite des champs `famille`, `q` et `tri` dans le formulaire de navigation
