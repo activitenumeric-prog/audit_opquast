@@ -35,14 +35,6 @@
 						</div>
 						<p class="audit-opquast-audit-card__target">#VALEUR{url_cible}</p>
 						<ul class="audit-opquast-audit-card__kpis">
-							<li class="audit-opquast-audit-card__kpi audit-opquast-audit-card__kpi--treated">
-								<strong>[(#GET{resume}|table_valeur{traitees})] / [(#GET{resume}|table_valeur{total_regles})]</strong>
-								<span><:audit_opquast:label_regles_traitees:/></span>
-							</li>
-							<li class="audit-opquast-audit-card__kpi audit-opquast-audit-card__kpi--progress">
-								<strong>[(#GET{resume}|table_valeur{progression})]%</strong>
-								<span><:audit_opquast:label_progression:/></span>
-							</li>
 							<li class="audit-opquast-audit-card__kpi audit-opquast-audit-card__kpi--alert">
 								<strong>[(#GET{resume}|table_valeur{non_conforme})]</strong>
 								<span><:audit_opquast:label_non_conforme:/></span>
@@ -51,15 +43,31 @@
 								<strong>[(#GET{resume}|table_valeur{a_verifier})]</strong>
 								<span><:audit_opquast:label_a_verifier:/></span>
 							</li>
+							<li class="audit-opquast-audit-card__kpi audit-opquast-audit-card__kpi--success">
+								<strong>[(#GET{resume}|table_valeur{conforme})]</strong>
+								<span><:audit_opquast:label_conforme:/></span>
+							</li>
+							<li class="audit-opquast-audit-card__kpi audit-opquast-audit-card__kpi--neutral">
+								<strong>[(#GET{resume}|table_valeur{non_applicable})]</strong>
+								<span><:audit_opquast:label_non_applicable:/></span>
+							</li>
+							<li class="audit-opquast-audit-card__kpi audit-opquast-audit-card__kpi--treated audit-opquast-audit-card__kpi--wide">
+								<strong>[(#GET{resume}|table_valeur{traitees})] / [(#GET{resume}|table_valeur{total_regles})]</strong>
+								<span><:audit_opquast:label_regles_traitees:/></span>
+							</li>
 						</ul>
+						<p class="audit-opquast-audit-card__progress-label"><:audit_opquast:label_progression:/> : [(#GET{resume}|table_valeur{progression})]%</p>
 						<div class="audit-opquast-progress" aria-hidden="true">
 							<span style="width:[(#GET{resume}|table_valeur{progression})]%;"></span>
 						</div>
 						<p class="audit-opquast-audit-card__actions">
-							<a href="[(#VALEUR{id_audit}|audit_opquast_url_audit)]"><:audit_opquast:bouton_ouvrir_audit:/></a>
+							<a
+								href="[(#VALEUR{id_audit}|audit_opquast_url_audit)]"
+								class="audit-opquast-creation__toggle audit-opquast-audit-card__action"
+							><:audit_opquast:bouton_ouvrir_audit:/></a>
 							<a
 								href="[(#VALEUR{id_audit}|audit_opquast_url_supprimer_audit)]"
-								class="audit-opquast-audit-card__action--danger"
+								class="audit-opquast-creation__toggle audit-opquast-audit-card__action audit-opquast-audit-card__action--danger"
 								onclick="return confirm('[(#VAL{audit_opquast:confirmation_supprimer_audit}|_T|attribut_html)]');"
 							><:audit_opquast:bouton_supprimer_audit:/></a>
 						</p>

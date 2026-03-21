@@ -13,7 +13,7 @@
 		<h1><:audit_opquast:titre_page_detail_audit:/> ([(#GET{audit}|table_valeur{titre})])</h1>
 		<p class="audit-opquast-intro"><a href="[(#VAL|audit_opquast_url_liste)]"><:audit_opquast:lien_retour_liste:/></a></p>
 
-		<div class="bloc audit-opquast-bloc audit-opquast-bloc--hero">
+		<div class="bloc audit-opquast-bloc audit-opquast-bloc--hero" id="parametres-audit">
 			<div class="audit-opquast-hero">
 				<div class="audit-opquast-hero__main">
 					<div class="audit-opquast-hero__header">
@@ -48,6 +48,14 @@
 			</div>
 			<div class="audit-opquast-progress audit-opquast-progress--hero" aria-hidden="true">
 				<span style="width:[(#GET{resume}|table_valeur{progression})]%;"></span>
+			</div>
+			<div
+				id="audit-opquast-parametres-region"
+				class="audit-opquast-parametres-region audit-opquast-hero__params"
+				data-audit-opquast-params-region="oui"
+				data-params-page="audit_opquast_parametres"
+			>
+				<INCLURE{fond=content/audit_opquast_parametres, env} />
 			</div>
 		</div>
 
@@ -135,17 +143,6 @@
 					<span class="audit-opquast-summary__label"><:audit_opquast:label_a_verifier:/></span>
 				</li>
 			</ul>
-		</div>
-
-		<div class="bloc audit-opquast-bloc" id="parametres-audit">
-			<div
-				id="audit-opquast-parametres-region"
-				class="audit-opquast-parametres-region"
-				data-audit-opquast-params-region="oui"
-				data-params-page="audit_opquast_parametres"
-			>
-				<INCLURE{fond=content/audit_opquast_parametres, env} />
-			</div>
 		</div>
 
 		<div class="bloc audit-opquast-bloc" id="resume-familles">

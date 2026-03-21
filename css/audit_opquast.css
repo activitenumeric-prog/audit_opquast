@@ -2,6 +2,10 @@
 	margin: 2rem 0 3rem;
 }
 
+.header {
+	margin-top: 2rem;
+}
+
 .audit-opquast-sr-only {
 	position: absolute;
 	width: 1px;
@@ -454,16 +458,24 @@
 	background: #f8fbff;
 }
 
-.audit-opquast-audit-card__kpi--progress {
-	background: #f2fbf4;
-}
-
 .audit-opquast-audit-card__kpi--alert {
 	background: #fff3f3;
 }
 
 .audit-opquast-audit-card__kpi--warning {
 	background: #fff8ec;
+}
+
+.audit-opquast-audit-card__kpi--success {
+	background: #f4fbf6;
+}
+
+.audit-opquast-audit-card__kpi--neutral {
+	background: #f5f7fa;
+}
+
+.audit-opquast-audit-card__kpi--wide {
+	grid-column: 1 / -1;
 }
 
 .audit-opquast-audit-card__kpi strong {
@@ -475,18 +487,31 @@
 	color: #585858;
 }
 
-.audit-opquast-audit-card__actions a {
-	display: inline-block;
-	margin-right: 1rem;
+.audit-opquast-audit-card__progress-label {
+	margin: 0;
 	font-weight: 700;
+	color: #4f5a53;
+}
+
+.audit-opquast-audit-card__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.audit-opquast-audit-card__action {
+	margin: 0;
 }
 
 .audit-opquast-audit-card__action--danger {
+	border-color: #d5a5a1;
+	background: #fff2f0;
 	color: #b42318;
 }
 
 .audit-opquast-audit-card__action--danger:hover,
 .audit-opquast-audit-card__action--danger:focus {
+	background: #ffe4df;
 	color: #912018;
 }
 
@@ -528,6 +553,12 @@
 
 .audit-opquast-progress--hero {
 	margin-top: 1rem;
+}
+
+.audit-opquast-hero__params {
+	margin-top: 1rem;
+	padding-top: 1rem;
+	border-top: 1px solid rgba(35, 122, 87, 0.12);
 }
 
 .audit-opquast-badge {
@@ -651,6 +682,14 @@
 	gap: 0.85rem 1rem;
 	align-items: flex-start;
 	justify-content: space-between;
+}
+
+.audit-opquast-params-card--inline {
+	padding: 0.9rem 1rem;
+}
+
+.audit-opquast-params-card--inline .audit-opquast-params__intro {
+	margin: 0.25rem 0 0;
 }
 
 .audit-opquast-params-card__eyebrow {

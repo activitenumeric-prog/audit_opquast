@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.14.0 - 2026-03-21
+
+- fusion du bloc de synthese et du bloc des parametres dans un bloc de tete unique
+- ouverture du formulaire de parametres dans ce meme bloc, sans duplication des informations de contexte
+
+## 1.13.0 - 2026-03-21
+
+- enrichissement des cards audit avec `Non conforme`, `A verifier`, `Conforme`, `Non applicable`
+- affichage de `Regles traitees` sur toute la largeur de la grille KPI
+- ajout d'un libelle `Progression : x%` au-dessus de la barre de progression
+
+## 1.12.1 - 2026-03-21
+
+- harmonisation visuelle des actions `Ouvrir` et `Supprimer` avec le style des boutons de creation
+- ajout d'une variante danger pour l'action `Supprimer` sur les cards audit
+
 ## 1.12.0 - 2026-03-21
 
 - ajout d'une action `Supprimer` sur chaque card de la liste des audits

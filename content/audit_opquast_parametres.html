@@ -2,8 +2,6 @@
 #SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
 
 [(#GET{audit}|oui)
-	<h2><:audit_opquast:info_parametres_audit:/></h2>
-
 	[(#ENV{parametres_mode}|=={edit}|oui)
 		<div class="audit-opquast-params audit-opquast-params--edit">
 			<p class="audit-opquast-params__intro"><:audit_opquast:info_parametres_intro:/></p>
@@ -23,11 +21,11 @@
 	]
 	[(#ENV{parametres_mode}|!={edit}|oui)
 		<div class="audit-opquast-params audit-opquast-params--card">
-			<div class="audit-opquast-params-card">
+			<div class="audit-opquast-params-card audit-opquast-params-card--inline">
 				<div class="audit-opquast-params-card__head">
 					<div>
-						<p class="audit-opquast-params-card__eyebrow"><:audit_opquast:label_parametres_compacts:/></p>
-						<h3 class="audit-opquast-params-card__title">[(#GET{audit}|table_valeur{titre})]</h3>
+						<p class="audit-opquast-params-card__eyebrow"><:audit_opquast:info_parametres_audit:/></p>
+						<p class="audit-opquast-params__intro"><:audit_opquast:info_parametres_intro:/></p>
 					</div>
 					<p class="audit-opquast-params-card__actions">
 						<a
@@ -38,21 +36,6 @@
 							<:audit_opquast:bouton_modifier_audit:/>
 						</a>
 					</p>
-				</div>
-
-				<div class="audit-opquast-params-card__grid">
-					<div class="audit-opquast-params-card__item audit-opquast-params-card__item--wide">
-						<span class="audit-opquast-params-card__label"><:audit_opquast:champ_url_cible_label:/></span>
-						<strong class="audit-opquast-params-card__value audit-opquast-params-card__value--url">[(#GET{audit}|table_valeur{url_cible})]</strong>
-					</div>
-					<div class="audit-opquast-params-card__item">
-						<span class="audit-opquast-params-card__label"><:audit_opquast:champ_type_cible_label:/></span>
-						<strong class="audit-opquast-params-card__value">[(#GET{audit}|table_valeur{type_cible}|audit_opquast_types_cible)]</strong>
-					</div>
-					<div class="audit-opquast-params-card__item">
-						<span class="audit-opquast-params-card__label"><:audit_opquast:champ_statut_audit_label:/></span>
-						<strong class="audit-opquast-params-card__value">[(#GET{audit}|table_valeur{statut}|audit_opquast_statuts_audit)]</strong>
-					</div>
 				</div>
 			</div>
 		</div>
