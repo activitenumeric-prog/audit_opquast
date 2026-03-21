@@ -23,14 +23,14 @@
 					<input type="text" class="text" name="titre" id="titre" value="#ENV{titre}" />
 				</div>
 
-				<div class="editer editer_url_cible audit-opquast-audit-form__field audit-opquast-audit-form__field--full[ (#ENV**{erreurs}|table_valeur{url_cible}|oui)erreur]">
+				<div class="editer editer_url_cible audit-opquast-audit-form__field audit-opquast-audit-form__field--full[ (#ENV**{erreurs}|table_valeur{url_cible}|oui)erreur]" data-audit-opquast-field="url"[(#ENV{type_cible}|=={site}|oui) hidden="hidden" style="display:none;" aria-hidden="true"]>
 					<label for="url_cible"><:audit_opquast:champ_url_cible_label:/></label>
 					<p class="explication"><:audit_opquast:explication_url_cible:/></p>
 					[<span class="erreur_message">(#ENV**{erreurs}|table_valeur{url_cible})</span>]
 					<input type="text" class="text" name="url_cible" id="url_cible" value="#ENV{url_cible}" />
 				</div>
 
-				<div class="editer editer_urls_site audit-opquast-audit-form__field audit-opquast-audit-form__field--full[ (#ENV**{erreurs}|table_valeur{urls_site}|oui)erreur]">
+				<div class="editer editer_urls_site audit-opquast-audit-form__field audit-opquast-audit-form__field--full[ (#ENV**{erreurs}|table_valeur{urls_site}|oui)erreur]" data-audit-opquast-field="site"[(#ENV{type_cible}|=={site}|non) hidden="hidden" style="display:none;" aria-hidden="true"]>
 					<label for="urls_site"><:audit_opquast:champ_urls_site_label:/></label>
 					<p class="explication"><:audit_opquast:explication_urls_site:/></p>
 					[<span class="erreur_message">(#ENV**{erreurs}|table_valeur{urls_site})</span>]
@@ -39,7 +39,7 @@
 
 				<div class="editer editer_type_cible audit-opquast-audit-form__field">
 					<label for="type_cible"><:audit_opquast:champ_type_cible_label:/></label>
-					<select name="type_cible" id="type_cible">
+					<select name="type_cible" id="type_cible" data-audit-opquast-target-type="oui">
 						<BOUCLE_types(DATA){source table, #ENV{_types_cible}}>
 							<option value="#CLE"[(#CLE|=={#ENV{type_cible}}|oui) selected="selected"]>#VALEUR</option>
 						</BOUCLE_types>
@@ -57,15 +57,6 @@
 			</div>
 
 			<div class="boutons audit-opquast-form-actions">
-				[(#ENV{id_audit}|non)
-					<a
-						class="audit-opquast-creation__toggle audit-opquast-creation__toggle--ghost"
-						href="[(#VAL|audit_opquast_url_liste)]#creation-audit"
-						data-ajax-href="[(#VAL|audit_opquast_url_creation_region)]"
-					>
-						<:audit_opquast:bouton_annuler_edition:/>
-					</a>
-				]
 				<button type="submit" class="audit-opquast-creation__toggle">#ENV{_submit_label}</button>
 			</div>
 		</div>

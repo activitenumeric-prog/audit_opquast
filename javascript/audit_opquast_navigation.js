@@ -407,6 +407,66 @@
 		});
 	}
 
+	function updateAuditTargetFields(form) {
+		if (!form) {
+			return;
+		}
+
+		var select = form.querySelector('[data-audit-opquast-target-type]');
+		var urlField = form.querySelector('[data-audit-opquast-field="url"]');
+		var siteField = form.querySelector('[data-audit-opquast-field="site"]');
+		var mode = select && select.value === 'site' ? 'site' : 'url';
+		var urlInput = urlField ? urlField.querySelector('input, textarea, select') : null;
+		var siteInput = siteField ? siteField.querySelector('input, textarea, select') : null;
+
+		if (urlField) {
+			urlField.hidden = mode !== 'url';
+			urlField.style.display = mode === 'url' ? '' : 'none';
+			urlField.setAttribute('aria-hidden', mode === 'url' ? 'false' : 'true');
+		}
+
+		if (siteField) {
+			siteField.hidden = mode !== 'site';
+			siteField.style.display = mode === 'site' ? '' : 'none';
+			siteField.setAttribute('aria-hidden', mode === 'site' ? 'false' : 'true');
+		}
+
+		if (urlInput) {
+			urlInput.disabled = mode !== 'url';
+		}
+
+		if (siteInput) {
+			siteInput.disabled = mode !== 'site';
+		}
+	}
+
+	function initAuditForm(root) {
+		if (!root) {
+			return;
+		}
+
+		root.querySelectorAll('.formulaire_editer_audit_opquast form').forEach(function (form) {
+			if (form.dataset.auditOpquastTargetInit === 'oui') {
+				updateAuditTargetFields(form);
+				return;
+			}
+
+			form.dataset.auditOpquastTargetInit = 'oui';
+
+			var select = form.querySelector('[data-audit-opquast-target-type]');
+
+			updateAuditTargetFields(form);
+
+			if (!select) {
+				return;
+			}
+
+			select.addEventListener('change', function () {
+				updateAuditTargetFields(form);
+			});
+		});
+	}
+
 	function initExportRegion(region) {
 		if (!region) {
 			return;
@@ -571,6 +631,7 @@
 		initExportRegion(root.querySelector('[data-audit-opquast-export-region]'));
 		initRestitutionRegion(root.querySelector('[data-audit-opquast-restitution-region]'));
 		initResultsRegion(root.querySelector('[data-audit-opquast-results-region]'));
+		initAuditForm(root);
 	}
 
 	document.addEventListener('DOMContentLoaded', function () {
@@ -578,5 +639,15 @@
 		initRuleList();
 		initFamilyLinks();
 		initBackToTop();
+	});
+
+	document.addEventListener('change', function (event) {
+		var select = event.target.closest('[data-audit-opquast-target-type]');
+
+		if (!select) {
+			return;
+		}
+
+		updateAuditTargetFields(select.form || select.closest('form'));
 	});
 }());

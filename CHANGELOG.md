@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.28.3 - 2026-03-21
+
+- isolation d'une page detail dediee `Site` (`audit_opquast_site`) pour faire evoluer les audits `Site` sans casser la page detail `URL`
+- routage des liens et redirections vers la bonne page detail selon le type d'audit
+- chargement du JavaScript de navigation aussi sur la nouvelle page detail `Site`
+
+## 1.28.2 - 2026-03-21
+
+- remplacement du bouton `Annuler` par `Fermer ×` dans le formulaire de creation d'audit
+
+## 1.28.1 - 2026-03-21
+
+- simplification du formulaire d'audit selon le type de cible choisi
+- suppression du choix `Objet SPIP` dans les types de cible disponibles
+- affichage du seul champ `URL ou cible` pour les audits `URL`
+- affichage du seul champ `URLs du site` pour les audits `Site`
+- conservation du type `URL` par defaut a la creation d'un audit
+
 ## 1.28.0 - 2026-03-21
 
 - ajout d'un premier MVP pour les audits de type `Site`

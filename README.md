@@ -1,7 +1,7 @@
 # Audit OpQuast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.28.0-blue)
+![Version](https://img.shields.io/badge/version-1.28.3-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.28.0`
+- Version courante : `1.28.3`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -30,6 +30,7 @@ Le MVP permet maintenant :
 
 - de creer un audit avec un titre, une cible et un statut
 - de creer un audit `Site` avec une liste d'URLs auditees
+- d'afficher un formulaire de creation adapte au type de cible choisi (`URL` ou `Site`)
 - d'afficher la liste des audits existants
 - d'afficher pour chaque audit une progression et le nombre de regles deja traitees
 - d'afficher une carte de synthese d'audit plus lisible, alignee a gauche, avec 2 KPI visibles
@@ -88,6 +89,7 @@ Le premier MVP `Site` repose sur une logique simple :
 - chaque URL cree ou reutilise un audit enfant de type `URL`
 - le tableau de bord du site agrege les KPI des audits enfants
 - la zone de resultats du site liste directement les URLs auditees et permet d'ouvrir chaque audit enfant
+- le formulaire de creation reste par defaut sur `URL` et masque les champs inutiles
 
 Dans ce premier lot :
 
@@ -101,7 +103,7 @@ Dans ce premier lot :
 - d'aligner plus proprement les badges de priorite dans les cartes famille
 - de conserver un redesign isole du bloc de synthese d'audit pour faciliter un retour arriere
 - d'espacer davantage chaque bloc principal pour aérer la lecture
-- d'acceder aux pages publiques via `spip.php?page=audit_opquast` et `spip.php?page=audit_opquast_audit`
+- d'acceder aux pages publiques via `spip.php?page=audit_opquast`, `spip.php?page=audit_opquast_audit` et `spip.php?page=audit_opquast_site`
 - de naviguer entre les regles sans recharger toute la page grace a l'AJAX
 - d'enregistrer un resultat en AJAX et d'enchainer automatiquement sur la regle suivante visible
 - de conserver une confirmation lisible grace a un toast global apres enregistrement AJAX

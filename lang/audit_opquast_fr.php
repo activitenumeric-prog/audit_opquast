@@ -129,7 +129,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = [
 	'tri_regles_numero' => 'Numero de regle',
 	'tri_regles_priorite' => 'Priorite d\'action',
 	'tri_regles_statut' => 'Statut',
-	'type_cible_objet' => 'Objet SPIP',
 	'type_cible_site' => 'Site',
 	'type_cible_url' => 'URL',
 ];

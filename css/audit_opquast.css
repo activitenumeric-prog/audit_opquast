@@ -272,9 +272,36 @@
 	padding: 0.35rem 0 0;
 }
 
-.formulaire_editer_audit_opquast {
+.audit-opquast-creation--edit {
 	max-width: 62rem;
 	margin: 0 auto;
+}
+
+.audit-opquast-creation__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 1rem;
+	width: 100%;
+	padding: 0 1.2rem;
+	box-sizing: border-box;
+	text-align: left;
+}
+
+.audit-opquast-creation__header h2 {
+	margin: 0;
+	flex: 1 1 auto;
+}
+
+.audit-opquast-creation__header-actions {
+	margin: 0;
+	margin-left: auto;
+}
+
+.formulaire_editer_audit_opquast {
+	max-width: none;
+	margin: 0;
 }
 
 .formulaire_editer_audit_opquast .reponse_formulaire {

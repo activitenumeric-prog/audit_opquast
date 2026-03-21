@@ -1,0 +1,41 @@
+[(#AUTORISER{voir,audit_opquast}|sinon_interdire_acces)]
+
+#SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
+[(#GET{audit}|non)
+	<p class="error"><:audit_opquast:info_audit_introuvable:/></p>
+]
+[(#GET{audit}|oui)
+	<div class="audit-opquast" id="audit-opquast-top">
+		<h1><:audit_opquast:titre_page_detail_audit:/> ([(#GET{audit}|table_valeur{titre})])</h1>
+		<p class="audit-opquast-intro"><a href="[(#VAL|audit_opquast_url_liste)]"><:audit_opquast:lien_retour_liste:/></a></p>
+
+		<div
+			id="audit-opquast-dashboard-region"
+			class="audit-opquast-dashboard-region"
+			data-audit-opquast-dashboard-region="oui"
+			data-dashboard-page="audit_opquast_tableau_bord"
+		>
+			<INCLURE{fond=content/audit_opquast_tableau_bord, env} />
+		</div>
+
+		<div
+			id="audit-opquast-resultats-region"
+			class="audit-opquast-resultats-region"
+			data-audit-opquast-results-region="oui"
+			data-results-page="audit_opquast_resultats"
+			data-navigation-page="audit_opquast_navigation"
+		>
+			<INCLURE{fond=content/audit_opquast_resultats, env} />
+		</div>
+
+		<a
+			class="audit-opquast-back-to-top"
+			href="#audit-opquast-top"
+			data-audit-opquast-back-to-top="oui"
+			title="<:audit_opquast:lien_retour_haut:/>"
+		>
+			<span aria-hidden="true">â†‘</span>
+			<span class="audit-opquast-sr-only"><:audit_opquast:lien_retour_haut:/></span>
+		</a>
+	</div>
+]

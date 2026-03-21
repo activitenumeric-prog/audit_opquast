@@ -1,0 +1,11 @@
+[(#REM) Page publique racine pour le detail d'un audit de type site]
+<INCLURE{fond=inc/head, env, home=no, titrepage=<:audit_opquast:titre_page_detail_audit:/>, meta_description=<:audit_opquast:audit_opquast_description:/>, type-page=page, composition=audit_opquast_site} />
+<INCLURE{fond=inc/header, home=no, env, titre_entete=<:audit_opquast:audit_opquast_titre:/>, slogan_entete=<:audit_opquast:audit_opquast_description:/>} />
+
+<main role="main" id="contenu">
+	<div class="fr-container">
+		<INCLURE{fond=content/audit_opquast_site, env} />
+	</div>
+</main>
+
+<INCLURE{fond=inc/footer, self=#SELF, env, home=no} />
