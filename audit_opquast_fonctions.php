@@ -530,6 +530,7 @@ function audit_opquast_resume_familles($id_audit) {
 				'total_regles' => 0,
 				'traitees' => 0,
 				'progression' => 0,
+				'score_conformite' => null,
 				'conforme' => 0,
 				'non_conforme' => 0,
 				'non_applicable' => 0,
@@ -561,6 +562,10 @@ function audit_opquast_resume_familles($id_audit) {
 		$famille['progression'] = $famille['total_regles']
 			? intval(round(($famille['traitees'] / $famille['total_regles']) * 100))
 			: 0;
+		$total_conformite = $famille['conforme'] + $famille['non_conforme'];
+		$famille['score_conformite'] = $total_conformite
+			? round(($famille['conforme'] / $total_conformite) * 100, 2)
+			: null;
 	}
 	unset($famille);
 

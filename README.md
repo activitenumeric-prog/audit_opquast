@@ -1,7 +1,7 @@
 # Audit OpQuast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.19.1-blue)
+![Version](https://img.shields.io/badge/version-1.20.0-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.19.1`
+- Version courante : `1.20.0`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -67,6 +67,7 @@ Le MVP permet maintenant :
 - d'harmoniser le hover des actions de la vue par famille
 - d'afficher un score de conformite dans le bloc de tete, avec `--` tant qu'aucune regle n'est evaluee
 - d'afficher le score de conformite avec deux decimales
+- d'ajouter un score de conformite sur chaque famille, avec affichage `--` si le calcul n'est pas possible
 - de beneficier d'un bloc `Navigation entre les regles` plus lisible avec un formulaire plus dense et mieux hierarchise
 - de supprimer la repetition du titre de regle entre l'entete de navigation et le formulaire
 - de disposer d'un panneau d'export sur la page detail avec `CSV` actif et `Excel`, `DOC`, `PDF` annonces comme bientot disponibles

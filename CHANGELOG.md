@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.20.0 - 2026-03-21
+
+- ajout d'un score de conformite calcule par famille
+- reorganisation des KPI famille sur trois lignes de deux colonnes, avec `Regles traitees` et `Score de conformite`
+
 ## 1.19.1 - 2026-03-21
 
 - affichage du score de conformite avec deux decimales pour un suivi plus precis

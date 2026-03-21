@@ -206,9 +206,13 @@
 								<strong>#VALEUR{non_applicable}</strong>
 								<span><:audit_opquast:label_non_applicable:/></span>
 							</li>
-							<li class="audit-opquast-family-kpi__metric--wide">
+							<li>
 								<strong>#VALEUR{traitees} / #VALEUR{total_regles}</strong>
 								<span><:audit_opquast:label_regles_traitees:/></span>
+							</li>
+							<li>
+								<strong>[(#VALEUR{score_conformite}|audit_opquast_formater_score)][(#VALEUR{score_conformite}|oui)%]</strong>
+								<span><:audit_opquast:label_score_conformite:/></span>
 							</li>
 						</ul>
 						<p class="audit-opquast-family-kpi__actions">
