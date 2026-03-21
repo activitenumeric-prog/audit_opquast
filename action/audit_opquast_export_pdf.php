@@ -13,6 +13,7 @@ function action_audit_opquast_export_pdf_dist($arg = null) {
 		include_spip('inc/minipres');
 		include_spip('audit_opquast_fonctions');
 		include_spip('inc/audit_opquast_pdf_wrapper');
+		include_spip('inc/audit_opquast_docx_wrapper');
 
 		if ($arg === null) {
 			$securiser_action = charger_fonction('securiser_action', 'inc');
@@ -42,24 +43,32 @@ function action_audit_opquast_export_pdf_dist($arg = null) {
 			exit;
 		}
 
-		if ($format !== '' && $format !== 'pdf') {
+		if ($format !== '' && !in_array($format, ['pdf', 'docx'], true)) {
 			echo minipres(_T('audit_opquast:info_restitution_generation_impossible'));
 			exit;
 		}
 
-		$check = audit_opquast_check_requirements();
+		$is_docx = ($format === 'docx');
+		$check = $is_docx ? audit_opquast_check_docx_requirements() : audit_opquast_check_requirements();
 
 		if (!$check['ok']) {
 			spip_log(
-				'[audit_opquast] Prerequis PDF manquants pour l audit #' . $id_audit . ' : ' . implode(' | ', $check['messages']),
+				'[audit_opquast] Prerequis restitution manquants pour l audit #' . $id_audit . ' : ' . implode(' | ', $check['messages']),
 				'audit_opquast'
 			);
-			echo minipres('', audit_opquast_html_diagnostic_requirements($check));
+			echo minipres('', audit_opquast_html_diagnostic_requirements($check, $is_docx ? 'DOCX' : 'PDF'));
 			exit;
 		}
 
-		if (!audit_opquast_export_pdf_action($id_audit)) {
-			$detail = audit_opquast_html_generation_error();
+		$ok = $is_docx
+			? audit_opquast_export_docx_action($id_audit)
+			: audit_opquast_export_pdf_action($id_audit);
+
+		if (!$ok) {
+			$detail = audit_opquast_html_generation_error(
+				$is_docx ? 'DOCX' : 'PDF',
+				$is_docx ? audit_opquast_get_docx_error() : null
+			);
 			echo minipres('', $detail !== '' ? $detail : _T('audit_opquast:info_restitution_generation_impossible'));
 			exit;
 		}

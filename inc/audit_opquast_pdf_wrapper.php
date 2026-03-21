@@ -32,16 +32,20 @@ if (!defined('OPQUAST_EXEC_TIMEOUT')) {
 	define('OPQUAST_EXEC_TIMEOUT', 120);
 }
 
-if (!defined('OPQUAST_MPLCONFIG_DIR')) {
-	define('OPQUAST_MPLCONFIG_DIR', OPQUAST_TMP_DIR . 'matplotlib/');
-}
-
 function audit_opquast_set_pdf_error($message) {
 	$GLOBALS['audit_opquast_pdf_last_error'] = trim((string) $message);
 }
 
 function audit_opquast_get_pdf_error() {
 	return trim((string) ($GLOBALS['audit_opquast_pdf_last_error'] ?? ''));
+}
+
+function audit_opquast_set_python_probe_details($details) {
+	$GLOBALS['audit_opquast_python_probe_details'] = trim((string) $details);
+}
+
+function audit_opquast_get_python_probe_details() {
+	return trim((string) ($GLOBALS['audit_opquast_python_probe_details'] ?? ''));
 }
 
 function audit_opquast_python_commands() {
@@ -126,6 +130,7 @@ function audit_opquast_exec_capture($command, &$output = [], $timeout = OPQUAST_
 		$stdout = '';
 		$stderr = '';
 		$start = time();
+		$process_exit_code = null;
 
 		while (true) {
 			$stdout .= stream_get_contents($pipes[1]);
@@ -134,6 +139,9 @@ function audit_opquast_exec_capture($command, &$output = [], $timeout = OPQUAST_
 			$status = proc_get_status($process);
 
 			if (!$status['running']) {
+				if (isset($status['exitcode']) && $status['exitcode'] >= 0) {
+					$process_exit_code = intval($status['exitcode']);
+				}
 				$stdout .= stream_get_contents($pipes[1]);
 				$stderr .= stream_get_contents($pipes[2]);
 				break;
@@ -152,6 +160,9 @@ function audit_opquast_exec_capture($command, &$output = [], $timeout = OPQUAST_
 		fclose($pipes[2]);
 
 		$exit_code = proc_close($process);
+		if ($exit_code < 0 && $process_exit_code !== null) {
+			$exit_code = $process_exit_code;
+		}
 		$stdout_lines = trim($stdout) !== '' ? preg_split("/\r\n|\n|\r/", trim($stdout)) : [];
 		$stderr_lines = trim($stderr) !== '' ? preg_split("/\r\n|\n|\r/", trim($stderr)) : [];
 		$output = array_values(array_filter(array_merge($output, $stdout_lines, $stderr_lines), 'strlen'));
@@ -179,17 +190,21 @@ function audit_opquast_find_python_command() {
 	}
 
 	$checked = true;
+	$details = [];
 
 	foreach (audit_opquast_python_commands() as $candidate) {
 		$output = [];
 		$exit_code = audit_opquast_exec_capture($candidate . ' --version', $output, 15);
 		$version = trim(implode(' ', $output));
+		$details[] = $candidate . ' => code ' . $exit_code . ($version !== '' ? ' | ' . $version : '');
 
 		if ($exit_code === 0 && preg_match('/Python\s+3\./i', $version)) {
 			$python = $candidate;
 			break;
 		}
 	}
+
+	audit_opquast_set_python_probe_details(implode(' || ', $details));
 
 	return $python;
 }
@@ -236,13 +251,11 @@ function audit_opquast_python_command($command) {
 	}
 
 	if (stripos(PHP_OS_FAMILY, 'Windows') !== false) {
-		$env_command = 'set "PYTHONPATH=' . str_replace('"', '', $lib_dir) . '" && '
-			. 'set "MPLCONFIGDIR=' . str_replace('"', '', OPQUAST_MPLCONFIG_DIR) . '" && '
-			. $command;
+		$env_command = 'set "PYTHONPATH=' . str_replace('"', '', $lib_dir) . '" && ' . $command;
 		return 'cmd /V:OFF /C ' . escapeshellarg($env_command);
 	}
 
-	return 'PYTHONPATH=' . escapeshellarg($lib_dir) . ' MPLCONFIGDIR=' . escapeshellarg(OPQUAST_MPLCONFIG_DIR) . ' ' . $command;
+	return 'PYTHONPATH=' . escapeshellarg($lib_dir) . ' ' . $command;
 }
 
 function audit_opquast_prepare_tmp_dir() {
@@ -252,11 +265,7 @@ function audit_opquast_prepare_tmp_dir() {
 		}
 	}
 
-	if (!is_dir(OPQUAST_MPLCONFIG_DIR) && !@mkdir(OPQUAST_MPLCONFIG_DIR, 0750, true)) {
-		return false;
-	}
-
-	return is_writable(OPQUAST_TMP_DIR) && is_writable(OPQUAST_MPLCONFIG_DIR);
+	return is_writable(OPQUAST_TMP_DIR);
 }
 
 function audit_opquast_cleanup_tmp() {
@@ -484,6 +493,10 @@ function audit_opquast_check_requirements() {
 		$messages[] = $python_bin_configured !== ''
 			? 'Python 3 non trouve au chemin configure : ' . $python_bin_configured
 			: 'Python 3 non trouve.';
+		$probe_details = audit_opquast_get_python_probe_details();
+		if ($probe_details !== '') {
+			$messages[] = 'Diagnostic detection Python : ' . $probe_details;
+		}
 		$ok = false;
 	} else {
 		$messages[] = 'Python detecte : ' . $python;
@@ -508,22 +521,19 @@ function audit_opquast_check_requirements() {
 
 	$embedded_libs = is_dir(OPQUAST_PYTHON_LIB_DIR);
 
-	if (!$embedded_libs) {
-		$messages[] = 'Bibliotheques Python locales introuvables : ' . OPQUAST_PYTHON_LIB_DIR;
-		$ok = false;
-	} else {
+	if ($embedded_libs) {
 		$messages[] = 'Bibliotheques Python embarquees detectees : ' . OPQUAST_PYTHON_LIB_DIR;
+	} else {
+		$messages[] = 'Aucune bibliotheque Python embarquee detectee, utilisation des bibliotheques systeme si disponibles.';
 	}
 
-	if ($python && !$embedded_libs) {
-		foreach (['reportlab', 'matplotlib', 'numpy'] as $module) {
-			if (
-				!audit_opquast_python_import_ok($python, $module)
-				&& !audit_opquast_python_module_embedded($module)
-			) {
-				$messages[] = 'Module Python manquant : ' . $module;
-				$ok = false;
-			}
+	if ($python) {
+		$reportlab_available = audit_opquast_python_module_embedded('reportlab')
+			|| audit_opquast_python_import_ok($python, 'reportlab');
+
+		if (!$reportlab_available) {
+			$messages[] = 'Module Python manquant : reportlab';
+			$ok = false;
 		}
 	}
 
@@ -533,7 +543,7 @@ function audit_opquast_check_requirements() {
 	];
 }
 
-function audit_opquast_html_diagnostic_requirements($check) {
+function audit_opquast_html_diagnostic_requirements($check, $support = 'PDF') {
 	$messages = is_array($check['messages'] ?? null) ? $check['messages'] : [];
 
 	if (!$messages) {
@@ -541,7 +551,9 @@ function audit_opquast_html_diagnostic_requirements($check) {
 	}
 
 	$html = '<p>' . _T('audit_opquast:info_restitution_generation_impossible') . '</p>';
-	$html .= '<p><strong>' . _T('audit_opquast:info_restitution_prerequis_titre') . '</strong></p>';
+	$html .= '<p><strong>'
+		. htmlspecialchars(_T('audit_opquast:info_restitution_prerequis_titre') . ' ' . trim((string) $support), ENT_QUOTES, 'UTF-8')
+		. '</strong></p>';
 	$html .= '<ul>';
 
 	foreach ($messages as $message) {
@@ -553,15 +565,17 @@ function audit_opquast_html_diagnostic_requirements($check) {
 	return $html;
 }
 
-function audit_opquast_html_generation_error() {
-	$message = audit_opquast_get_pdf_error();
+function audit_opquast_html_generation_error($support = 'PDF', $message = null) {
+	if ($message === null) {
+		$message = audit_opquast_get_pdf_error();
+	}
 
 	if ($message === '') {
 		return '';
 	}
 
 	$html = '<p>' . _T('audit_opquast:info_restitution_generation_impossible') . '</p>';
-	$html .= '<p><strong>Detail technique</strong></p>';
+	$html .= '<p><strong>Detail technique ' . htmlspecialchars((string) $support, ENT_QUOTES, 'UTF-8') . '</strong></p>';
 	$html .= '<ul><li>' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</li></ul>';
 
 	return $html;

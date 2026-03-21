@@ -9,15 +9,7 @@ import sys
 import os
 import csv
 import json
-import io
-import math
 from datetime import datetime
-
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import numpy as np
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -25,9 +17,8 @@ from reportlab.lib.units import mm
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    PageBreak, HRFlowable, Image, KeepTogether
+    PageBreak, HRFlowable, KeepTogether
 )
-from reportlab.platypus.flowables import Flowable
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
 
 # ─── Chemins par défaut ────────────────────────────────────────────────────────
@@ -247,6 +238,172 @@ def format_score(score):
     if score is None:
         return "--"
     return f"{score:.2f}".replace('.', ',')
+
+def format_percent(value):
+    return f"{value:.1f}".replace('.', ',')
+
+def make_single_bar(pct, color, width):
+    filled = max(width * (pct / 100.0), 0)
+    if filled <= 0:
+        bar = Table([[""]], colWidths=[width], rowHeights=[8])
+        bar.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), LIGHT_BG),
+            ("BOX", (0, 0), (-1, -1), 0.3, GREY),
+        ]))
+        return bar
+
+    if filled >= width:
+        bar = Table([[""]], colWidths=[width], rowHeights=[8])
+        bar.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), color),
+            ("BOX", (0, 0), (-1, -1), 0.3, GREY),
+        ]))
+        return bar
+
+    bar = Table([["", ""]], colWidths=[filled, width - filled], rowHeights=[8])
+    bar.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, 0), color),
+        ("BACKGROUND", (1, 0), (1, 0), LIGHT_BG),
+        ("BOX", (0, 0), (-1, -1), 0.3, GREY),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+    ]))
+    return bar
+
+def make_stacked_bar(counts_by_statut, width):
+    total = sum(counts_by_statut.get(statut, 0) for statut in STATUTS)
+    if total <= 0:
+        bar = Table([[""]], colWidths=[width], rowHeights=[8])
+        bar.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), WHITE),
+            ("BOX", (0, 0), (-1, -1), 0.3, GREY),
+        ]))
+        return bar
+
+    widths = []
+    color_row = []
+    for statut in STATUTS:
+        value = counts_by_statut.get(statut, 0)
+        if value <= 0:
+            continue
+        widths.append(width * (value / total))
+        color_row.append(STATUT_COLORS[statut])
+
+    remaining = width - sum(widths)
+    if remaining > 0.5:
+        widths.append(remaining)
+        color_row.append(WHITE)
+
+    bar = Table([[""] * len(widths)], colWidths=widths, rowHeights=[8])
+    style = [
+        ("BOX", (0, 0), (-1, -1), 0.3, GREY),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+    ]
+    for idx, color in enumerate(color_row):
+        style.append(("BACKGROUND", (idx, 0), (idx, 0), color))
+    bar.setStyle(TableStyle(style))
+    return bar
+
+def build_status_distribution_table(counts, total):
+    rows = [[
+        Paragraph(f"<b>{t('section3.chart_pie_title')}</b>", S["bold"]),
+        "",
+        "",
+    ]]
+    bar_width = CONTENT_W * 0.36
+
+    for statut in STATUTS:
+        count = counts[statut]
+        pct = (count / total * 100) if total > 0 else 0
+        rows.append([
+            Paragraph(t(f"statut_labels.{statut}"), S["normal"]),
+            make_single_bar(pct, STATUT_COLORS[statut], bar_width),
+            Paragraph(f"{count} ({format_percent(pct)}%)", S["normal"]),
+        ])
+
+    table = Table(rows, colWidths=[CONTENT_W * 0.22, CONTENT_W * 0.44, CONTENT_W * 0.20])
+    table.setStyle(TableStyle([
+        ("SPAN", (0, 0), (-1, 0)),
+        ("BACKGROUND", (0, 0), (-1, 0), LIGHT_BG),
+        ("BOX", (0, 0), (-1, -1), 0.3, GREY),
+        ("INNERGRID", (0, 1), (-1, -1), 0.2, colors.HexColor("#E5E7EB")),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("LEFTPADDING", (0, 0), (-1, -1), 8),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+    ]))
+    return table
+
+def build_family_distribution_table(family_stats):
+    legend_cells = []
+    for statut in STATUTS:
+        patch = Table([[""]], colWidths=[5 * mm], rowHeights=[4 * mm])
+        patch.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), STATUT_COLORS[statut]),
+            ("BOX", (0, 0), (-1, -1), 0.2, GREY),
+        ]))
+        legend_cells.extend([patch, Paragraph(t(f"statut_labels.{statut}"), S["small"])])
+
+    legend = Table([legend_cells], colWidths=[6 * mm, 33 * mm] * 4)
+    legend.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 2),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+    ]))
+
+    rows = [[
+        Paragraph(f"<b>{t('section3.chart_bar_title')}</b>", S["bold"]),
+        "",
+        "",
+    ], [
+        legend,
+        "",
+        "",
+    ]]
+
+    bar_width = CONTENT_W * 0.34
+    families_sorted = sorted(FAMILIES, key=lambda fam: family_stats[fam]["total"], reverse=True)
+
+    for fam in families_sorted:
+        stats = family_stats[fam]
+        score_display = format_score(stats["score"])
+        if stats["score"] is not None:
+            score_display += "%"
+        rows.append([
+            Paragraph(fam, S["small"]),
+            make_stacked_bar(stats, bar_width),
+            Paragraph(
+                f"{stats['total']} regles - {score_display}",
+                ParagraphStyle(
+                    "family_score",
+                    fontName="Helvetica",
+                    fontSize=7,
+                    textColor=score_color(stats["score"]),
+                    leading=9,
+                )
+            ),
+        ])
+
+    table = Table(rows, colWidths=[CONTENT_W * 0.28, CONTENT_W * 0.40, CONTENT_W * 0.18])
+    table.setStyle(TableStyle([
+        ("SPAN", (0, 0), (-1, 0)),
+        ("SPAN", (0, 1), (-1, 1)),
+        ("BACKGROUND", (0, 0), (-1, 0), LIGHT_BG),
+        ("BOX", (0, 0), (-1, -1), 0.3, GREY),
+        ("INNERGRID", (0, 2), (-1, -1), 0.2, colors.HexColor("#E5E7EB")),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("LEFTPADDING", (0, 0), (-1, -1), 8),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+    ]))
+    return table
 
 # ─── Graphiques Matplotlib ────────────────────────────────────────────────────
 def make_pie_chart(counts):
@@ -755,26 +912,10 @@ def build_section3(counts, total, score, family_stats):
     elements.append(Spacer(1, 10))
 
     # Graphiques camembert + jauge côte à côte
-    pie_buf   = make_pie_chart(counts)
-    gauge_buf = make_gauge_chart(score)
-    chart_w   = CONTENT_W / 2 - 3 * mm
-
-    if pie_buf and gauge_buf:
-        pie_img   = Image(pie_buf,   width=chart_w, height=chart_w * 0.78)
-        gauge_img = Image(gauge_buf, width=chart_w, height=chart_w * 0.78)
-        charts_row = Table([[pie_img, gauge_img]], colWidths=[chart_w + 3*mm, chart_w])
-        charts_row.setStyle(TableStyle([
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ]))
-        elements.append(charts_row)
-        elements.append(Spacer(1, 8))
-
-    # Graphique barres par famille
-    bar_buf = make_bar_chart(family_stats)
-    if bar_buf:
-        bar_img = Image(bar_buf, width=CONTENT_W, height=CONTENT_W * 0.56)
-        elements.append(bar_img)
+    elements.append(Paragraph("Graphiques", S["h2"]))
+    elements.append(build_status_distribution_table(counts, total))
+    elements.append(Spacer(1, 8))
+    elements.append(build_family_distribution_table(family_stats))
 
     return elements
 

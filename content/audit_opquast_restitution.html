@@ -3,6 +3,7 @@
 [(#GET{audit}|oui)
 	#SET{mode,#ENV{restitution_mode}|sinon{compact}}
 	#SET{pdf_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
+	#SET{docx_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
 	[(#GET{mode}|=={edit}|oui)
 		<div class="audit-opquast-export audit-opquast-export--panel audit-opquast-hero-action-panel">
 			<div class="audit-opquast-export__head">
@@ -19,16 +20,27 @@
 
 			<form method="post" action="[(#ENV{id_audit}|audit_opquast_url_restitution_telechargement)]" class="audit-opquast-export-form">
 				<div class="audit-opquast-export-form__options">
-					<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
-						<input type="radio" name="format_restitution" value="doc" disabled="disabled" />
-						<span class="audit-opquast-export-option__content">
-							<strong>DOC</strong>
-							<span><:audit_opquast:info_bientot_disponible:/></span>
-						</span>
-					</label>
+					[(#GET{docx_disponible}|oui)
+						<label class="audit-opquast-export-option">
+							<input type="radio" name="format_restitution" value="docx" checked="checked" />
+							<span class="audit-opquast-export-option__content">
+								<strong>DOCX</strong>
+								<span><:audit_opquast:info_restitution_docx_disponible:/></span>
+							</span>
+						</label>
+					]
+					[(#GET{docx_disponible}|non)
+						<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
+							<input type="radio" name="format_restitution" value="docx" disabled="disabled" />
+							<span class="audit-opquast-export-option__content">
+								<strong>DOCX</strong>
+								<span><:audit_opquast:info_restitution_docx_url_seulement:/></span>
+							</span>
+						</label>
+					]
 					[(#GET{pdf_disponible}|oui)
 						<label class="audit-opquast-export-option">
-							<input type="radio" name="format_restitution" value="pdf" checked="checked" />
+							<input type="radio" name="format_restitution" value="pdf" />
 							<span class="audit-opquast-export-option__content">
 								<strong>PDF</strong>
 								<span><:audit_opquast:info_restitution_pdf_disponible:/></span>
@@ -45,7 +57,7 @@
 						</label>
 					]
 				</div>
-				[(#GET{pdf_disponible}|oui)
+				[(#GET{pdf_disponible}|ou{#GET{docx_disponible}}|oui)
 					<p class="boutons audit-opquast-export-form__footer">
 						<button type="submit"><:audit_opquast:bouton_telecharger_restitution:/></button>
 					</p>

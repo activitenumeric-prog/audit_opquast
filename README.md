@@ -1,7 +1,7 @@
 # Audit OpQuast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.24.3-blue)
+![Version](https://img.shields.io/badge/version-1.26.3-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.24.3`
+- Version courante : `1.26.3`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -38,11 +38,15 @@ Le MVP permet maintenant :
 - de filtrer rapidement les regles via des raccourcis cliquables par statut
 - de naviguer entre les regles precedentes et suivantes dans un audit filtre
 - de saisir un resultat par regle avec statut, commentaire et preuve
-- de generer une restitution `PDF` pour les audits `URL` via Python 3 et les bibliotheques embarquees du plugin
+- de generer une restitution `DOCX` pour les audits `URL` via Python 3, en conservant le template Word et un `document.xml` natif
+- de generer une restitution `PDF` pour les audits `URL` via Python 3 et `reportlab`
 
-## Configuration PDF
+## Configuration DOCX / PDF
 
-La restitution `PDF` repose sur un interpreteur `Python 3` disponible sur la machine serveur.
+La restitution `DOCX` et la restitution `PDF` reposent sur un interpreteur `Python 3` disponible sur la machine serveur.
+
+Le `DOCX` n'utilise que la bibliotheque standard Python, s'appuie sur le template Word fourni avec le plugin et reconstruit un `document.xml` Word natif.
+Le `PDF` utilise en plus la bibliotheque `reportlab`.
 
 Le plugin propose maintenant une configuration dediee dans l'espace prive :
 
@@ -66,11 +70,12 @@ Exemple local Windows :
 define('OPQUAST_PYTHON_BIN', 'C:\\Python313\\python.exe');
 ```
 
-Les bibliotheques Python peuvent rester embarquees dans le plugin dans :
+La bibliotheque Python peut rester embarquee dans le plugin dans :
 
 - `scripts/py_libs`
 
 Le wrapper injecte automatiquement `PYTHONPATH` vers ce dossier s'il existe.
+Le generateur PDF n'utilise plus `numpy` ni `matplotlib`, ce qui le rend plus portable sur les hebergements mutualises.
 - de suivre un resume plus lisible de l'avancement global et par famille
 - de piloter l'audit avec une synthese decisionnelle des non-conformites et familles prioritaires
 - de trier les regles par priorite d'action, numero, famille ou statut
@@ -106,7 +111,7 @@ Le wrapper injecte automatiquement `PYTHONPATH` vers ce dossier s'il existe.
 - de disposer d'un panneau d'export sur la page detail avec `CSV` actif, `Excel` disponible pour les audits `URL`, et `DOC` / `PDF` annonces comme bientot disponibles
 - d'exporter les audits `URL` en `Excel (.xlsx)` selon un modele structure en 4 onglets : tableau de bord, detail, familles et non-conformites
 - de beneficier d'un export Excel plus proche visuellement du modele valide, avec un tableau de bord plus graphique et des feuilles mieux hierarchisees
-- de disposer d'un panneau `Restitution de l'audit` separe de l'export de donnees, avec `PDF` actif pour les audits `URL` et `DOC` maintenu comme bientot disponible
+- de disposer d'un panneau `Restitution de l'audit` separe de l'export de donnees, avec `DOCX` et `PDF` actifs pour les audits `URL`
 - de generer la restitution PDF via un wrapper PHP qui pilote un script Python dedie quand les prerequis sont disponibles
 - de consulter les parametres d'audit dans une card compacte puis d'ouvrir le formulaire d'edition en AJAX
 - d'appliquer en une action le statut `A verifier` ou `Non applicable` a toutes les regles d'une famille

@@ -1,5 +1,36 @@
 # Changelog
 
+## 1.26.3 - 2026-03-21
+
+- aeration du flux texte de la restitution `DOCX`
+- augmentation de l'interligne et des espaces entre paragraphes pour un rendu moins serre
+- conservation du rendu des tableaux natifs issus du template
+
+## 1.26.2 - 2026-03-21
+
+- abandon de l'approche `altChunk` pour la restitution `DOCX`
+- generation native de `word/document.xml` a partir du package Word de reference
+- conservation du template `.docx` (styles, entetes, pieds, theme et assets) avec injection dynamique des contenus de l'audit
+
+## 1.26.1 - 2026-03-21
+
+- bascule de la restitution `DOCX` sur une vraie base `template Word`
+- conservation du package `.docx` de reference (styles, entetes, pieds, assets) lors de la generation
+- injection du contenu dynamique dans ce template pour un rendu plus fidele au document exemple
+
+## 1.26.0 - 2026-03-21
+
+- activation d'une vraie restitution `DOCX` pour les audits de type `URL`
+- ajout d'un generateur Python `DOCX` autonome, sans dependance externe, base sur un document Word OpenXML
+- activation du choix `DOCX` dans le panneau de restitution, en parallele du `PDF`
+
+## 1.25.0 - 2026-03-21
+
+- simplification de la restitution PDF Python pour ne plus dependre que de `reportlab`
+- remplacement des graphiques `numpy` / `matplotlib` par des rendus dessines directement en `reportlab`
+- assouplissement du diagnostic PDF : seule la presence de `reportlab` est maintenant requise
+- meilleure portabilite de la restitution PDF entre environnement local et hebergement mutualise
+
 ## 1.24.3 - 2026-03-21
 
 - assouplissement du controle des modules Python pour eviter les faux negatifs sous Windows quand les bibliotheques sont embarquees dans `scripts/py_libs`
