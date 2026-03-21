@@ -16,6 +16,10 @@ if (!defined('OPQUAST_PYTHON_LIB_DIR')) {
 	define('OPQUAST_PYTHON_LIB_DIR', _DIR_PLUGIN_AUDIT_OPQUAST . 'scripts/py_libs');
 }
 
+if (!defined('OPQUAST_PYTHON_BIN')) {
+	define('OPQUAST_PYTHON_BIN', '');
+}
+
 if (!defined('OPQUAST_TMP_DIR')) {
 	define('OPQUAST_TMP_DIR', _DIR_TMP . 'audit_opquast/');
 }
@@ -39,13 +43,28 @@ function audit_opquast_python_commands() {
 		return $commands;
 	}
 
-	$commands = ['python3', 'python', 'py -3'];
+	$commands = [];
 
-	if (stripos(PHP_OS_FAMILY, 'Windows') !== false) {
-		$commands = ['py -3', 'python', 'python3'];
+	$python_bin = trim((string) OPQUAST_PYTHON_BIN);
+
+	if ($python_bin !== '') {
+		$commands[] = $python_bin;
 	}
 
-	return $commands;
+	$commands = array_merge($commands, ['python3', 'python', 'py -3']);
+
+	if (stripos(PHP_OS_FAMILY, 'Windows') !== false) {
+		$commands = array_values(array_unique(array_merge(
+			$python_bin !== '' ? [$python_bin] : [],
+			['py -3', 'python', 'python3']
+		)));
+	}
+
+	return array_values(array_unique(array_filter($commands, 'strlen')));
+}
+
+function audit_opquast_system_command_available() {
+	return function_exists('proc_open') || function_exists('exec');
 }
 
 function audit_opquast_exec_capture($command, &$output = [], $timeout = OPQUAST_EXEC_TIMEOUT) {
@@ -105,9 +124,15 @@ function audit_opquast_exec_capture($command, &$output = [], $timeout = OPQUAST_
 		return intval($exit_code);
 	}
 
-	exec($command . ' 2>&1', $output, $exit_code);
+	if (function_exists('exec')) {
+		exec($command . ' 2>&1', $output, $exit_code);
 
-	return intval($exit_code);
+		return intval($exit_code);
+	}
+
+	$output[] = 'Aucune fonction d execution systeme disponible (proc_open / exec).';
+
+	return 1;
 }
 
 function audit_opquast_find_python_command() {
@@ -372,8 +397,13 @@ function audit_opquast_check_requirements() {
 
 	$python = audit_opquast_find_python_command();
 
-	if (!$python) {
-		$messages[] = 'Python 3 non trouve.';
+	if (!audit_opquast_system_command_available()) {
+		$messages[] = 'Aucune fonction PHP d execution systeme disponible (proc_open / exec).';
+		$ok = false;
+	} elseif (!$python) {
+		$messages[] = OPQUAST_PYTHON_BIN !== ''
+			? 'Python 3 non trouve au chemin configure : ' . OPQUAST_PYTHON_BIN
+			: 'Python 3 non trouve.';
 		$ok = false;
 	} else {
 		$messages[] = 'Python detecte : ' . $python;
@@ -426,7 +456,7 @@ function audit_opquast_html_diagnostic_requirements($check) {
 	$html .= '<ul>';
 
 	foreach ($messages as $message) {
-		$html .= '<li>' . safehtml((string) $message) . '</li>';
+		$html .= '<li>' . htmlspecialchars((string) $message, ENT_QUOTES, 'UTF-8') . '</li>';
 	}
 
 	$html .= '</ul>';

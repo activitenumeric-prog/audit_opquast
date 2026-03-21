@@ -1,7 +1,7 @@
 # Audit OpQuast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.24.0-blue)
+![Version](https://img.shields.io/badge/version-1.24.1-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.24.0`
+- Version courante : `1.24.1`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -38,6 +38,35 @@ Le MVP permet maintenant :
 - de filtrer rapidement les regles via des raccourcis cliquables par statut
 - de naviguer entre les regles precedentes et suivantes dans un audit filtre
 - de saisir un resultat par regle avec statut, commentaire et preuve
+- de generer une restitution `PDF` pour les audits `URL` via Python 3 et les bibliotheques embarquees du plugin
+
+## Configuration PDF
+
+La restitution `PDF` repose sur un interpreteur `Python 3` disponible sur la machine serveur.
+
+Le plugin detecte automatiquement :
+
+- `python3`
+- `python`
+- `py -3`
+
+Si l'hebergement utilise un chemin explicite, il est possible de le forcer via une constante dans `mes_options.php` :
+
+```php
+define('OPQUAST_PYTHON_BIN', '/bin/python3');
+```
+
+Exemple local Windows :
+
+```php
+define('OPQUAST_PYTHON_BIN', 'C:\\Python313\\python.exe');
+```
+
+Les bibliotheques Python peuvent rester embarquees dans le plugin dans :
+
+- `scripts/py_libs`
+
+Le wrapper injecte automatiquement `PYTHONPATH` vers ce dossier s'il existe.
 - de suivre un resume plus lisible de l'avancement global et par famille
 - de piloter l'audit avec une synthese decisionnelle des non-conformites et familles prioritaires
 - de trier les regles par priorite d'action, numero, famille ou statut

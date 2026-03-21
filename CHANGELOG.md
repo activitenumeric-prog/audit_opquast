@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.24.1 - 2026-03-21
+
+- ajout d'une constante `OPQUAST_PYTHON_BIN` pour forcer un binaire Python explicite selon l'environnement
+- priorisation du chemin configure avant la detection automatique `python3` / `python` / `py -3`
+- message de diagnostic plus precis quand un chemin Python configure n'est pas trouve
+
 ## 1.24.0 - 2026-03-21
 
 - ajout d'une nouvelle chaine de generation `PDF` via un wrapper PHP et un script Python dedies
