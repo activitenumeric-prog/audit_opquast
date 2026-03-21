@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.11.6 - 2026-03-21
+
+- suppression de l'action `Modifier l'audit` dans la liste des audits
+- conservation d'un parcours plus simple avec une seule action `Ouvrir` par card
+
 ## 1.11.5 - 2026-03-21
 
 - remplacement du `h1` de la page liste par `Page des audits`

@@ -1,7 +1,7 @@
 # audit_opquast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.11.5-blue)
+![Version](https://img.shields.io/badge/version-1.11.6-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.11.5`
+- Version courante : `1.11.6`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -64,6 +64,7 @@ Le MVP permet maintenant :
 - d'afficher uniquement la fleche du bouton `Retour en haut`, avec un texte conserve pour l'accessibilite
 - de n'afficher la creation d'audit qu'au clic sur `Creer un nouvel audit`
 - de presenter les audits existants sous forme de cards KPI plus lisibles
+- de proposer un acces direct `Ouvrir` plus simple depuis la liste des audits
 - de faire fonctionner les bascules AJAX aussi sur la page liste des audits
 - d'offrir un formulaire de creation et d'edition d'audit plus lisible, avec une grille plus claire et des actions harmonisees
 - de soumettre correctement le formulaire de creation d'audit sans interception AJAX parasite
