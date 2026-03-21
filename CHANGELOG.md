@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.21.1 - 2026-03-21
+
+- rapprochement visuel de l'export Excel avec le modele valide, surtout sur l'onglet `Tableau de bord`
+- ajout d'un bandeau de tete, d'un bloc score, de tuiles colorees et d'une hierarchie plus graphique sur les feuilles exportees
+
+## 1.21.0 - 2026-03-21
+
+- activation d'un vrai export `Excel (.xlsx)` pour les audits de type `URL`
+- generation d'un classeur structure en quatre feuilles : `Tableau de bord`, `Detail des regles`, `Par famille`, `Non conformites`
+- activation du choix `Excel` dans le panneau d'export pour les audits `URL`, avec maintien de `CSV` en parallele
+
 ## 1.20.0 - 2026-03-21
 
 - ajout d'un score de conformite calcule par famille

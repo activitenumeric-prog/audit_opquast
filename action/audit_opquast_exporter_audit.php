@@ -16,10 +16,10 @@ function action_audit_opquast_exporter_audit_dist($arg = null) {
 
 	$id_audit = intval($arg);
 	$format = trim((string) _request('format')) ?: 'csv';
+	$format = in_array($format, ['csv', 'xlsx'], true) ? $format : 'csv';
 
 	if (
 		!$id_audit
-		|| $format !== 'csv'
 		|| !autoriser('voir', 'audit_opquast')
 	) {
 		include_spip('inc/minipres');
@@ -32,6 +32,33 @@ function action_audit_opquast_exporter_audit_dist($arg = null) {
 	if (!$audit) {
 		include_spip('inc/minipres');
 		echo minipres(_T('audit_opquast:info_audit_introuvable'));
+		exit;
+	}
+
+	if ($format === 'xlsx') {
+		if (($audit['type_cible'] ?? '') !== 'url') {
+			include_spip('inc/minipres');
+			echo minipres(_T('audit_opquast:info_export_excel_url_seulement'));
+			exit;
+		}
+
+		include_spip('inc/audit_opquast_xlsx');
+		$export = audit_opquast_export_xlsx($id_audit);
+
+		if (!$export || empty($export['path']) || !is_file($export['path'])) {
+			include_spip('inc/minipres');
+			echo minipres(_T('audit_opquast:info_export_generation_impossible'));
+			exit;
+		}
+
+		header('Content-Type: ' . ($export['mime'] ?? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
+		header('Content-Disposition: attachment; filename="' . str_replace('"', '', $export['filename'] ?? 'audit-opquast.xlsx') . '"');
+		header('Pragma: public');
+		header('Cache-Control: max-age=0');
+		header('Content-Length: ' . filesize($export['path']));
+
+		readfile($export['path']);
+		@unlink($export['path']);
 		exit;
 	}
 

@@ -2,6 +2,7 @@
 #SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
 [(#GET{audit}|oui)
 	#SET{mode,#ENV{export_mode}|sinon{compact}}
+	#SET{excel_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
 	[(#GET{mode}|=={edit}|oui)
 		<div class="audit-opquast-export audit-opquast-export--panel audit-opquast-hero-action-panel">
 			<div class="audit-opquast-export__head">
@@ -25,13 +26,24 @@
 							<span><:audit_opquast:info_export_csv_disponible:/></span>
 						</span>
 					</label>
-					<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
-						<input type="radio" name="format" value="xlsx" disabled="disabled" />
-						<span class="audit-opquast-export-option__content">
-							<strong>Excel</strong>
-							<span><:audit_opquast:info_bientot_disponible:/></span>
-						</span>
-					</label>
+					[(#GET{excel_disponible}|oui)
+						<label class="audit-opquast-export-option">
+							<input type="radio" name="format" value="xlsx" />
+							<span class="audit-opquast-export-option__content">
+								<strong>Excel</strong>
+								<span><:audit_opquast:info_export_excel_disponible:/></span>
+							</span>
+						</label>
+					]
+					[(#GET{excel_disponible}|non)
+						<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
+							<input type="radio" name="format" value="xlsx" disabled="disabled" />
+							<span class="audit-opquast-export-option__content">
+								<strong>Excel</strong>
+								<span><:audit_opquast:info_export_excel_url_seulement:/></span>
+							</span>
+						</label>
+					]
 					<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
 						<input type="radio" name="format" value="doc" disabled="disabled" />
 						<span class="audit-opquast-export-option__content">
