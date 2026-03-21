@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.16.1 - 2026-03-21
+
+- suppression du titre de regle repete dans le second bloc du formulaire de navigation
+- allègement visuel du bandeau d'introduction pour mieux separer navigation et edition
+
 ## 1.16.0 - 2026-03-21
 
 - refonte visuelle du bloc `Navigation entre les regles` pour mieux separer la navigation, le statut et l'edition
