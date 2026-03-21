@@ -59,7 +59,8 @@ function action_audit_opquast_export_pdf_dist($arg = null) {
 		}
 
 		if (!audit_opquast_export_pdf_action($id_audit)) {
-			echo minipres(_T('audit_opquast:info_restitution_generation_impossible'));
+			$detail = audit_opquast_html_generation_error();
+			echo minipres('', $detail !== '' ? $detail : _T('audit_opquast:info_restitution_generation_impossible'));
 			exit;
 		}
 

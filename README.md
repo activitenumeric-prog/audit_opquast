@@ -1,7 +1,7 @@
 # Audit OpQuast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.24.1-blue)
+![Version](https://img.shields.io/badge/version-1.24.3-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.24.1`
+- Version courante : `1.24.3`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -44,13 +44,17 @@ Le MVP permet maintenant :
 
 La restitution `PDF` repose sur un interpreteur `Python 3` disponible sur la machine serveur.
 
-Le plugin detecte automatiquement :
+Le plugin propose maintenant une configuration dediee dans l'espace prive :
 
-- `python3`
-- `python`
-- `py -3`
+- choix `Local / Externe`
+- champ `Chemin du binaire Python`
 
-Si l'hebergement utilise un chemin explicite, il est possible de le forcer via une constante dans `mes_options.php` :
+Comportement :
+
+- `Local` : le plugin tente la detection automatique (`python3`, `python`, `py -3`) si aucun chemin n'est saisi
+- `Externe` : le plugin utilise automatiquement `/bin/python3` si aucun chemin n'est saisi
+
+Il reste possible de forcer un chemin global via une constante dans `mes_options.php` :
 
 ```php
 define('OPQUAST_PYTHON_BIN', '/bin/python3');

@@ -1,6 +1,9 @@
 <div class="formulaire_spip formulaire_configurer formulaire_#FORM">
 
 	<h3 class="titrem"><:audit_opquast:cfg_titre_parametrages:/></h3>
+	#SET{python_env,#ENV{python_environment,#CONFIG{audit_opquast/python_environment,local}}}
+	#SET{python_bin_defaut,''}
+	[(#GET{python_env}|=={externe}|oui)#SET{python_bin_defaut,/bin/python3}]
 
 	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
 	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
@@ -10,9 +13,19 @@
 		#ACTION_FORMULAIRE
 
 		<div class="editer-groupe">
-			[(#SAISIE{input, exemple,
-				label=<:audit_opquast:cfg_exemple:/>,
-				explication=<:audit_opquast:cfg_exemple_explication:/>})]
+			[(#SAISIE{radio, python_environment,
+				label=<:audit_opquast:cfg_python_environment_label:/>,
+				explication=<:audit_opquast:cfg_python_environment_explication:/>,
+				defaut=#CONFIG{audit_opquast/python_environment,local},
+				data=#ARRAY{
+					local,<:audit_opquast:cfg_python_environment_local:/>,
+					externe,<:audit_opquast:cfg_python_environment_external:/>
+				}})]
+			[(#SAISIE{input, python_bin,
+				label=<:audit_opquast:cfg_python_bin_label:/>,
+				explication=<:audit_opquast:cfg_python_bin_explication:/>,
+				placeholder=#GET{python_bin_defaut},
+				defaut=#ENV{python_bin,#CONFIG{audit_opquast/python_bin,#GET{python_bin_defaut}}}})]
 		</div>
 
 		<input type="hidden" name="_meta_casier" value="audit_opquast" />

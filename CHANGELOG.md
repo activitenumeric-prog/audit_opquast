@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.24.3 - 2026-03-21
+
+- assouplissement du controle des modules Python pour eviter les faux negatifs sous Windows quand les bibliotheques sont embarquees dans `scripts/py_libs`
+- la verification des modules `reportlab`, `matplotlib` et `numpy` ne bloque plus si le module est bien present dans le plugin
+
+## 1.24.2 - 2026-03-21
+
+- ajout d'un choix d'environnement `Local / Externe` dans la configuration du plugin pour la restitution PDF
+- ajout d'un champ `Chemin du binaire Python` modifiable depuis la configuration
+- utilisation automatique de `/bin/python3` quand l'environnement externe est choisi sans chemin explicite
+
 ## 1.24.1 - 2026-03-21
 
 - ajout d'une constante `OPQUAST_PYTHON_BIN` pour forcer un binaire Python explicite selon l'environnement
