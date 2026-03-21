@@ -1,0 +1,166 @@
+{
+  "cover": {
+    "tag": "RAPPORT D'AUDIT QUALITÉ WEB",
+    "subtitle": "Référentiel Opquast — 245 Bonnes Pratiques",
+    "url_label": "URL auditée",
+    "score_label": "Score de conformité",
+    "score_detail_conforme": "Conformes",
+    "score_detail_non_conforme": "Non conformes",
+    "score_detail_a_verifier": "À vérifier",
+    "score_detail_non_applicable": "Non applicables",
+    "footer_date_label": "Date",
+    "footer_type_label": "Type de cible",
+    "footer_statut_label": "Statut audit"
+  },
+  "header": {
+    "confidential": "Confidentiel",
+    "page_label": "Page"
+  },
+  "section1": {
+    "title": "1. Contexte et objectifs",
+    "intro": "Opquast (Open Quality Standards) est un référentiel de bonnes pratiques qualité web, reconnu internationalement. Il regroupe <b>245 règles</b> organisées en <b>14 familles thématiques</b>, conçues pour améliorer l'expérience utilisateur, l'accessibilité, la performance et la sécurité des sites web.",
+    "families_label": "Les 14 familles Opquast",
+    "families": [
+      "Contenus", "Données personnelles", "E-Commerce", "Formulaires",
+      "Identification et contact", "Images et médias", "Internationalisation",
+      "Liens", "Navigation", "Newsletter", "Présentation",
+      "Serveur et performances", "Structure et code", "Sécurité"
+    ],
+    "objectives_title": "Objectifs de cet audit",
+    "objectives": [
+      ["Évaluation qualité", "Mesurer le niveau de conformité du site au référentiel Opquast 245 règles."],
+      ["Identification des écarts", "Lister toutes les non-conformités et les points à vérifier manuellement."],
+      ["Priorisation", "Établir un plan d'action priorisé pour corriger les écarts identifiés."],
+      ["Recommandations", "Fournir des préconisations concrètes pour améliorer durablement la qualité web."],
+      ["Suivi", "Disposer d'une base de référence pour mesurer les progrès lors d'audits ultérieurs."]
+    ]
+  },
+  "section2": {
+    "title": "2. Méthodologie",
+    "perimeter_title": "Périmètre de l'audit",
+    "perimeter_keys": [
+      "Référentiel", "Version", "Nombre de règles", "Familles", "Méthode d'évaluation", "Langue", "Format d'export"
+    ],
+    "perimeter_values": [
+      "Opquast — Open Quality Standards", "v4 (2020)", "245 règles", "14 familles thématiques", "Inspection experte manuelle et semi-automatisée", "Français", "CSV → PDF"
+    ],
+    "statuts_title": "Les 4 statuts d'évaluation",
+    "statuts": [
+      ["Conforme", "La règle est pleinement respectée sur la cible auditée."],
+      ["Non conforme", "La règle n'est pas respectée. Une correction est nécessaire."],
+      ["À vérifier", "La conformité ne peut être déterminée sans test utilisateur ou vérification manuelle approfondie."],
+      ["Non applicable", "La règle ne concerne pas le contexte ou le type de cible audité."]
+    ],
+    "score_title": "Formule du score de conformité",
+    "score_formula": "Score = Conformes / (Conformes + Non conformes) × 100",
+    "score_note": "Seules les règles évaluées comme « Conforme » ou « Non conforme » entrent dans le calcul du score."
+  },
+  "section3": {
+    "title": "3. Synthèse des résultats",
+    "kpi_labels": ["Score global", "Conformes", "Non conformes", "À vérifier", "Non applicables"],
+    "chart_pie_title": "Répartition des statuts",
+    "chart_gauge_title": "Jauge de conformité",
+    "chart_bar_title": "Résultats par famille",
+    "chart_bar_xlabel": "Nombre de règles",
+    "legend_title": "Légende",
+    "gauge_label_low": "Insuffisant",
+    "gauge_label_mid": "Moyen",
+    "gauge_label_high": "Bon",
+    "gauge_label_top": "Excellent"
+  },
+  "section4": {
+    "title": "4. Résultats par famille",
+    "table_headers": ["Famille", "Conf.", "Non conf.", "À vér.", "N/A", "Total", "Score"],
+    "total_label": "TOTAL",
+    "legend_green": "Score ≥ 80% — Bon",
+    "legend_orange": "Score 50–79% — Moyen",
+    "legend_red": "Score < 50% — Insuffisant"
+  },
+  "section5": {
+    "title": "5. Non-conformités et recommandations",
+    "banner_text": "{count} non-conformité(s) identifiée(s)",
+    "rule_label": "Règle n°",
+    "constat_label": "Constat",
+    "correction_label": "Proposition de correction",
+    "doc_label": "Documentation",
+    "no_nonconformities": "Aucune non-conformité détectée. Excellent travail !"
+  },
+  "section6": {
+    "title": "6. Plan d'action priorisé",
+    "nc_table_title": "Non-conformités à corriger (par priorité)",
+    "nc_table_headers": ["Priorité", "N° Règle", "Famille", "Intitulé", "Commentaire"],
+    "av_table_title": "Top 5 familles avec règles « À vérifier »",
+    "av_table_headers": ["Rang", "Famille", "Nb À vérifier", "Action recommandée"],
+    "av_action": "Planifier une vérification manuelle approfondie"
+  },
+  "section7": {
+    "title": "7. Recommandations générales",
+    "intro": "Au-delà des non-conformités identifiées, voici des recommandations générales pour maintenir et améliorer la qualité web de manière durable.",
+    "recommendations": [
+      ["Audit régulier", "Planifier des audits Opquast à chaque évolution majeure du site (refonte, nouveau module, migration) pour détecter rapidement les régressions."],
+      ["Formation équipe", "Former les équipes de développement et de contenu aux bonnes pratiques Opquast pour intégrer la qualité dès la conception."],
+      ["Automatisation", "Mettre en place des tests automatisés (accessibilité, performance, liens brisés) pour surveiller en continu les indicateurs clés."],
+      ["Priorisation métier", "Concentrer les efforts de correction en priorité sur les familles ayant le score le plus bas et l'impact utilisateur le plus fort."],
+      ["Documentation", "Documenter les décisions de non-application de certaines règles pour justifier les choix lors des prochains audits."],
+      ["Suivi des progrès", "Utiliser ce rapport comme baseline et comparer les scores lors des audits suivants pour mesurer l'amélioration continue."]
+    ]
+  },
+  "section8": {
+    "title": "8. Annexe — Liste complète des règles",
+    "table_headers": ["N°", "Intitulé de la règle", "Statut"],
+    "intro": "Cette annexe liste l'intégralité des {total} règles auditées, organisées par famille thématique."
+  },
+  "statut_labels": {
+    "Conforme": "Conforme",
+    "Non conforme": "Non conforme",
+    "A verifier": "À vérifier",
+    "Non applicable": "Non applicable"
+  },
+  "corrections": {
+    "by_rule": {
+      "1":  "Vérifier que le titre de chaque page est unique et décrit clairement son contenu. Utiliser un format cohérent : « Titre de la page — Nom du site ».",
+      "2":  "Rédiger une balise meta description unique pour chaque page (150-160 caractères), reflétant fidèlement le contenu de la page.",
+      "3":  "S'assurer que chaque page possède un seul élément <h1> décrivant clairement son sujet principal.",
+      "4":  "Structurer les titres de manière hiérarchique (h1 > h2 > h3) sans sauter de niveau. Ne jamais utiliser les balises Hn à des fins de mise en forme.",
+      "5":  "Vérifier que le contenu de chaque page est bien indexable par les moteurs de recherche (pas de blocage robots.txt, pas de noindex involontaire).",
+      "6":  "S'assurer que l'URL de chaque page est lisible, significative, sans paramètres inutiles et utilise des tirets pour séparer les mots.",
+      "7":  "Corriger toutes les erreurs de validation HTML/CSS signalées par le validateur W3C. Utiliser un DOCTYPE HTML5 valide.",
+      "8":  "Vérifier que les données structurées (Schema.org) sont présentes, valides et adaptées au type de contenu.",
+      "9":  "S'assurer que la langue principale de la page est correctement déclarée dans l'attribut lang de la balise <html>.",
+      "10": "Vérifier que les images décoratives ont un attribut alt vide (alt=\"\") et que les images informatives ont un texte alternatif descriptif.",
+      "11": "Fournir des transcriptions textuelles pour tous les contenus audio et vidéo, et des sous-titres synchronisés pour les vidéos.",
+      "12": "S'assurer que le rapport de contraste entre texte et fond est d'au moins 4.5:1 pour le texte normal et 3:1 pour le texte large (WCAG AA).",
+      "13": "Vérifier que tous les éléments interactifs sont accessibles au clavier (tabulation, entrée, espace). L'ordre de tabulation doit être logique.",
+      "14": "S'assurer que les formulaires sont correctement balisés : chaque champ a un label associé, les champs obligatoires sont signalés, les erreurs sont clairement identifiées.",
+      "15": "Vérifier que tous les liens ont un intitulé explicite décrivant la destination ou l'action. Éviter les libellés génériques (« cliquez ici », « en savoir plus »).",
+      "16": "S'assurer que les liens ouvrant dans un nouvel onglet en informent l'utilisateur (via texte visible ou attribut title).",
+      "17": "Vérifier que les liens externes sont signalés comme tels. Privilégier l'ouverture dans le même onglet sauf cas justifié.",
+      "18": "Corriger tous les liens brisés (erreur 404 ou autre). Mettre en place une surveillance automatique des liens.",
+      "19": "Optimiser les images (compression WebP/AVIF, lazy loading, srcset responsive). Viser un score PageSpeed ≥ 80.",
+      "20": "Activer la mise en cache navigateur, la compression gzip/brotli et le CDN. Minimiser CSS/JS.",
+      "21": "Migrer le site en HTTPS. Vérifier la validité du certificat SSL et la redirection 301 de HTTP vers HTTPS.",
+      "22": "S'assurer que le site utilise une politique de sécurité des contenus (CSP) et les en-têtes HTTP de sécurité recommandés.",
+      "23": "Publier une politique de confidentialité complète, accessible depuis toutes les pages, conforme au RGPD.",
+      "24": "Implémenter un bandeau de consentement aux cookies conforme au RGPD (opt-in explicite, granularité par catégorie).",
+      "25": "Vérifier que les mentions légales obligatoires sont présentes, complètes et à jour (éditeur, hébergeur, directeur de publication).",
+      "26": "S'assurer que les coordonnées de contact sont facilement accessibles depuis toutes les pages du site."
+    },
+    "generic_by_family": {
+      "Contenus": "Réviser et améliorer la qualité rédactionnelle des contenus. S'assurer que les textes sont clairs, bien structurés et libres de droits.",
+      "Données personnelles": "Mettre en conformité le site avec le RGPD : politique de confidentialité, consentement cookies, droits des utilisateurs.",
+      "E-Commerce": "Vérifier les mentions obligatoires e-commerce : prix TTC, CGV accessibles, processus de commande clair, politique de retour.",
+      "Formulaires": "Améliorer l'ergonomie et l'accessibilité des formulaires : labels explicites, validation en temps réel, messages d'erreur compréhensibles.",
+      "Identification et contact": "S'assurer que les informations de contact et les mentions légales sont complètes, à jour et facilement accessibles.",
+      "Images et médias": "Optimiser tous les médias : compression des images, alternatives textuelles, sous-titres vidéo, transcriptions audio.",
+      "Internationalisation": "Vérifier la déclaration de langue, les encodages, les formats de date/heure et les traductions si le site est multilingue.",
+      "Liens": "Auditer et corriger tous les liens : intitulés explicites, pas de liens brisés, indication ouverture nouvel onglet.",
+      "Navigation": "Améliorer la cohérence et l'utilisabilité de la navigation : fil d'Ariane, menus cohérents, indication de la page active.",
+      "Newsletter": "Vérifier la conformité des newsletters : opt-in explicite, désabonnement facile, mentions légales dans les emails.",
+      "Présentation": "Vérifier que la mise en page est cohérente, lisible et adaptative (responsive design). Contrôler les contrastes et la typographie.",
+      "Serveur et performances": "Optimiser les performances serveur : temps de réponse, mise en cache, compression, CDN, Core Web Vitals.",
+      "Structure et code": "Corriger les erreurs de validation HTML/CSS, structurer correctement le balisage sémantique, optimiser les balises méta.",
+      "Sécurité": "Renforcer la sécurité : HTTPS, en-têtes HTTP sécurisés, CSP, protection contre les failles courantes (XSS, CSRF)."
+    },
+    "generic_fallback": "Analyser en détail cette règle dans le contexte du site audité et mettre en place les corrections nécessaires en accord avec les recommandations officielles Opquast (https://checklists.opquast.com/fr/)."
+  }
+}

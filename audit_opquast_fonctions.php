@@ -1058,6 +1058,20 @@ function audit_opquast_url_export_telechargement($id_audit) {
 	);
 }
 
+function audit_opquast_url_restitution_telechargement($id_audit) {
+	$id_audit = intval($id_audit);
+
+	if (!$id_audit) {
+		return '';
+	}
+
+	return generer_action_auteur(
+		'audit_opquast_export_pdf',
+		(string) $id_audit,
+		audit_opquast_url_audit($id_audit)
+	);
+}
+
 function audit_opquast_url_enregistrer_resultat($id_audit, $id_regle) {
 	$id_audit = intval($id_audit);
 	$id_regle = intval($id_regle);

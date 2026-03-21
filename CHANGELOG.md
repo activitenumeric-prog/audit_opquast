@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.24.0 - 2026-03-21
+
+- ajout d'une nouvelle chaine de generation `PDF` via un wrapper PHP et un script Python dedies
+- activation du format `PDF` dans `Restitution de l'audit` pour les audits de type `URL`, avec `DOC` maintenu en `bientot disponible`
+- ajout d'une verification des prerequis Python et des modules necessaires avant generation
+
 ## 1.23.1 - 2026-03-21
 
 - retour du panneau `Restitution de l'audit` a un etat d'attente avec `DOC` et `PDF` de nouveau marques `bientot disponible`

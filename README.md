@@ -1,7 +1,7 @@
 # Audit OpQuast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.23.1-blue)
+![Version](https://img.shields.io/badge/version-1.24.0-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.23.1`
+- Version courante : `1.24.0`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -73,7 +73,8 @@ Le MVP permet maintenant :
 - de disposer d'un panneau d'export sur la page detail avec `CSV` actif, `Excel` disponible pour les audits `URL`, et `DOC` / `PDF` annonces comme bientot disponibles
 - d'exporter les audits `URL` en `Excel (.xlsx)` selon un modele structure en 4 onglets : tableau de bord, detail, familles et non-conformites
 - de beneficier d'un export Excel plus proche visuellement du modele valide, avec un tableau de bord plus graphique et des feuilles mieux hierarchisees
-- de disposer d'un panneau `Restitution de l'audit` separe de l'export de donnees, avec `DOC` et `PDF` annonces comme bientot disponibles
+- de disposer d'un panneau `Restitution de l'audit` separe de l'export de donnees, avec `PDF` actif pour les audits `URL` et `DOC` maintenu comme bientot disponible
+- de generer la restitution PDF via un wrapper PHP qui pilote un script Python dedie quand les prerequis sont disponibles
 - de consulter les parametres d'audit dans une card compacte puis d'ouvrir le formulaire d'edition en AJAX
 - d'appliquer en une action le statut `A verifier` ou `Non applicable` a toutes les regles d'une famille
 - d'afficher des badges de statut colores avec un contraste accessible pour les regles
