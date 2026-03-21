@@ -75,6 +75,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = [
 	'label_points_priorite' => 'points de priorite',
 	'label_position_regle' => 'Regle',
 	'label_progression' => 'Progression',
+	'label_score_conformite' => 'Score de conformite',
 	'label_regles_a_verifier_prioritaires' => 'Regles a verifier en priorite',
 	'label_regles_traitees' => 'Regles traitees',
 	'label_total_regles' => 'Total des regles',

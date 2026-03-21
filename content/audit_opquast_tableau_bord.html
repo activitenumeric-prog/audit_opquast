@@ -33,11 +33,12 @@
 					<span class="audit-opquast-hero__kpi-label"><:audit_opquast:label_regles_traitees:/></span>
 				</div>
 				<div class="audit-opquast-hero__kpi audit-opquast-hero__kpi--progress">
-					<strong class="audit-opquast-hero__kpi-value">[(#GET{resume}|table_valeur{progression})]%</strong>
-					<span class="audit-opquast-hero__kpi-label"><:audit_opquast:label_progression:/></span>
+					<strong class="audit-opquast-hero__kpi-value">[(#GET{resume}|table_valeur{score_conformite}|audit_opquast_formater_score)][(#GET{resume}|table_valeur{score_conformite}|oui)%]</strong>
+					<span class="audit-opquast-hero__kpi-label"><:audit_opquast:label_score_conformite:/></span>
 				</div>
 			</div>
 		</div>
+		<p class="audit-opquast-hero__progress-label"><:audit_opquast:label_progression:/> : [(#GET{resume}|table_valeur{progression})]%</p>
 		<div class="audit-opquast-progress audit-opquast-progress--hero" aria-hidden="true">
 			<span style="width:[(#GET{resume}|table_valeur{progression})]%;"></span>
 		</div>

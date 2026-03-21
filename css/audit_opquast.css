@@ -158,7 +158,7 @@
 	padding: 1rem;
 	border-radius: 0.85rem;
 	background: rgba(255, 255, 255, 0.88);
-	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
 }
 
 .audit-opquast-hero__label {
@@ -191,7 +191,7 @@
 	padding: 1rem 1.1rem;
 	border-radius: 0.9rem;
 	background: #ffffff;
-	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
 }
 
 .audit-opquast-hero__kpi--progress {
@@ -662,10 +662,6 @@
 	margin-top: 1rem;
 }
 
-.audit-opquast-hero__summary {
-	margin-top: 1rem;
-}
-
 .audit-opquast-hero__params {
 	margin-top: 1rem;
 	padding-top: 1rem;
@@ -739,6 +735,12 @@
 	padding: 0;
 	margin: 0;
 	list-style: none;
+}
+
+ul.audit-opquast-hero__summary {
+	margin-top: 1rem;
+	padding-top: 1rem;
+	border-top: 1px solid rgba(35, 122, 87, 0.12);
 }
 
 .audit-opquast-summary__item {
@@ -1241,6 +1243,15 @@
 	color: #8a3d00;
 	font-weight: 600;
 	text-decoration: none;
+}
+
+.audit-opquast-family-kpi__link:hover,
+.audit-opquast-family-kpi__link:focus,
+.audit-opquast-family-kpi__bulk-button:hover,
+.audit-opquast-family-kpi__bulk-button:focus {
+	border-color: #d3b08c;
+	background: #ffefe0;
+	color: #7a3a05;
 }
 
 .audit-opquast-rule-item--priority {

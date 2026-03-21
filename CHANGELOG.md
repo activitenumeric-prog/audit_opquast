@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.19.1 - 2026-03-21
+
+- affichage du score de conformite avec deux decimales pour un suivi plus precis
+
+## 1.19.0 - 2026-03-21
+
+- remplacement de la KPI `Progression` du bloc de tete par un `Score de conformite`
+- ajout de l'affichage `Progression : XX%` juste au-dessus de la barre de progression
+- affichage de `--` tant qu'aucune regle conforme ou non conforme n'entre dans le calcul du score
+
+## 1.18.2 - 2026-03-21
+
+- harmonisation du hover des actions `Tout passer...` avec celui de `Voir les regles de cette famille`
+
+## 1.18.1 - 2026-03-21
+
+- ajout d'une separation visuelle entre la barre de progression et les KPI du resume
+
 ## 1.18.0 - 2026-03-21
 
 - integration des KPI du resume directement dans le bloc de tete de l'audit

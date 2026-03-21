@@ -50,6 +50,14 @@ function audit_opquast_classe_badge_statut_verification($valeur = null) {
 	return $classes[$valeur] ?? '';
 }
 
+function audit_opquast_formater_score($valeur) {
+	if ($valeur === null || $valeur === '') {
+		return '--';
+	}
+
+	return number_format((float) $valeur, 2, '.', '');
+}
+
 function audit_opquast_tri_regles($valeur = null) {
 	$tris = [
 		'priorite' => _T('audit_opquast:tri_regles_priorite'),
@@ -279,6 +287,7 @@ function audit_opquast_resume_audit($id_audit) {
 		'total_regles' => 0,
 		'traitees' => 0,
 		'progression' => 0,
+		'score_conformite' => null,
 		'conforme' => 0,
 		'non_conforme' => 0,
 		'non_applicable' => 0,
@@ -298,6 +307,10 @@ function audit_opquast_resume_audit($id_audit) {
 	$resume['progression'] = $resume['total_regles']
 		? intval(round(($resume['traitees'] / $resume['total_regles']) * 100))
 		: 0;
+	$total_conformite = $resume['conforme'] + $resume['non_conforme'];
+	$resume['score_conformite'] = $total_conformite
+		? round(($resume['conforme'] / $total_conformite) * 100, 2)
+		: null;
 
 	return $resume;
 }
