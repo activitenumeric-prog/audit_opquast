@@ -481,6 +481,15 @@
 	font-weight: 700;
 }
 
+.audit-opquast-audit-card__action--danger {
+	color: #b42318;
+}
+
+.audit-opquast-audit-card__action--danger:hover,
+.audit-opquast-audit-card__action--danger:focus {
+	color: #912018;
+}
+
 .audit-opquast-card__surtitle,
 .audit-opquast-rule-item__family,
 .audit-opquast-card__target,

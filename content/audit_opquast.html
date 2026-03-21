@@ -57,6 +57,11 @@
 						</div>
 						<p class="audit-opquast-audit-card__actions">
 							<a href="[(#VALEUR{id_audit}|audit_opquast_url_audit)]"><:audit_opquast:bouton_ouvrir_audit:/></a>
+							<a
+								href="[(#VALEUR{id_audit}|audit_opquast_url_supprimer_audit)]"
+								class="audit-opquast-audit-card__action--danger"
+								onclick="return confirm('[(#VAL{audit_opquast:confirmation_supprimer_audit}|_T|attribut_html)]');"
+							><:audit_opquast:bouton_supprimer_audit:/></a>
 						</p>
 					</li>
 				</BOUCLE_audits>

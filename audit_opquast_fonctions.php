@@ -4,6 +4,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
+include_spip('inc/actions');
+
 function audit_opquast_statuts_audit($valeur = null) {
 	$statuts = [
 		'brouillon' => _T('audit_opquast:statut_audit_brouillon'),
@@ -822,4 +824,18 @@ function audit_opquast_url_creation_region($mode = '') {
 	}
 
 	return generer_url_public('audit_opquast_creation', http_build_query($args, '', '&'));
+}
+
+function audit_opquast_url_supprimer_audit($id_audit) {
+	$id_audit = intval($id_audit);
+
+	if (!$id_audit) {
+		return audit_opquast_url_liste();
+	}
+
+	return generer_action_auteur(
+		'audit_opquast_supprimer_audit',
+		(string) $id_audit,
+		audit_opquast_url_liste()
+	);
 }

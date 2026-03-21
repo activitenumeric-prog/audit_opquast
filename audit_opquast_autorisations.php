@@ -27,6 +27,10 @@ function autoriser_audit_opquast_modifier_dist($faire, $type, $id, $qui, $opt) {
 	return audit_opquast_auteur_autorise($qui);
 }
 
+function autoriser_audit_opquast_supprimer_dist($faire, $type, $id, $qui, $opt) {
+	return audit_opquast_auteur_autorise($qui);
+}
+
 function autoriser_audit_opquast_configurer_dist($faire, $type, $id, $qui, $opt) {
 	return autoriser('webmestre', $type, $id, $qui, $opt);
 }

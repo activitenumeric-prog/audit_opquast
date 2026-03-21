@@ -1,11 +1,11 @@
 <paquet
 	prefix="audit_opquast"
-	version="1.11.6"
+	version="1.12.0"
 	etat="dev"
 	compatibilite="[4.0.0;4.4.*]"
 	logo="prive/themes/spip/images/audit_opquast-xx.svg"
 	documentation=""
-	schema="1.11.6"
+	schema="1.12.0"
 >
 	<nom>Audit Opquast</nom>
 	<auteur>Mikael Folio</auteur>

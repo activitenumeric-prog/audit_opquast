@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.12.0 - 2026-03-21
+
+- ajout d'une action `Supprimer` sur chaque card de la liste des audits
+- suppression complete de l'audit et de tous ses resultats lies apres confirmation
+
 ## 1.11.6 - 2026-03-21
 
 - suppression de l'action `Modifier l'audit` dans la liste des audits
