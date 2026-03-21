@@ -1,0 +1,70 @@
+[(#REM) Panneau d'export de l'audit]
+#SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
+[(#GET{audit}|oui)
+	#SET{mode,#ENV{export_mode}|sinon{compact}}
+	[(#GET{mode}|=={edit}|oui)
+		<div class="bloc audit-opquast-bloc audit-opquast-export audit-opquast-export--panel">
+			<div class="audit-opquast-export__head">
+				<div>
+					<h2><:audit_opquast:info_export_audit:/></h2>
+					<p class="audit-opquast-export__intro"><:audit_opquast:info_export_intro:/></p>
+				</div>
+				<a
+					class="audit-opquast-params__toggle audit-opquast-export__toggle"
+					href="[(#ENV{id_audit}|audit_opquast_url_audit_export)]"
+					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_export_region)]"
+				><:audit_opquast:bouton_fermer:/>&nbsp;<span aria-hidden="true">×</span></a>
+			</div>
+
+			<form method="post" action="[(#ENV{id_audit}|audit_opquast_url_export_telechargement)]" class="audit-opquast-export-form">
+				<div class="audit-opquast-export-form__options">
+					<label class="audit-opquast-export-option">
+						<input type="radio" name="format" value="csv" checked="checked" />
+						<span class="audit-opquast-export-option__content">
+							<strong>CSV</strong>
+							<span><:audit_opquast:info_export_csv_disponible:/></span>
+						</span>
+					</label>
+					<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
+						<input type="radio" name="format" value="xlsx" disabled="disabled" />
+						<span class="audit-opquast-export-option__content">
+							<strong>Excel</strong>
+							<span><:audit_opquast:info_bientot_disponible:/></span>
+						</span>
+					</label>
+					<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
+						<input type="radio" name="format" value="doc" disabled="disabled" />
+						<span class="audit-opquast-export-option__content">
+							<strong>DOC</strong>
+							<span><:audit_opquast:info_bientot_disponible:/></span>
+						</span>
+					</label>
+					<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
+						<input type="radio" name="format" value="pdf" disabled="disabled" />
+						<span class="audit-opquast-export-option__content">
+							<strong>PDF</strong>
+							<span><:audit_opquast:info_bientot_disponible:/></span>
+						</span>
+					</label>
+				</div>
+
+				<p class="boutons audit-opquast-export-form__footer">
+					<button type="submit"><:audit_opquast:bouton_telecharger_export:/></button>
+				</p>
+			</form>
+		</div>
+	]
+	[(#GET{mode}|=={edit}|non)
+		<div class="bloc audit-opquast-bloc audit-opquast-export audit-opquast-export--compact">
+			<div>
+				<h2><:audit_opquast:info_export_audit:/></h2>
+				<p class="audit-opquast-export__intro"><:audit_opquast:info_export_compact:/></p>
+			</div>
+			<a
+				class="audit-opquast-creation__toggle audit-opquast-export__toggle"
+				href="[(#ENV{id_audit}|audit_opquast_url_audit_export{edit})]"
+				data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_export_region{edit})]"
+			><:audit_opquast:bouton_exporter_audit:/></a>
+		</div>
+	]
+]

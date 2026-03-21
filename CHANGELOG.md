@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.17.0 - 2026-03-21
+
+- ajout d'un panneau `Exporter l'audit` sur la page detail avec bascule AJAX
+- activation du format `CSV` et affichage des formats `Excel`, `DOC` et `PDF` comme bientot disponibles
+- ajout d'un export CSV securise contenant les regles et les resultats de l'audit
+
 ## 1.16.1 - 2026-03-21
 
 - suppression du titre de regle repete dans le second bloc du formulaire de navigation

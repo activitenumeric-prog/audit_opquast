@@ -10,6 +10,15 @@
 		<p class="audit-opquast-intro"><a href="[(#VAL|audit_opquast_url_liste)]"><:audit_opquast:lien_retour_liste:/></a></p>
 
 		<div
+			id="audit-opquast-export-region"
+			class="audit-opquast-export-region"
+			data-audit-opquast-export-region="oui"
+			data-export-page="audit_opquast_export"
+		>
+			<INCLURE{fond=content/audit_opquast_export, env} />
+		</div>
+
+		<div
 			id="audit-opquast-dashboard-region"
 			class="audit-opquast-dashboard-region"
 			data-audit-opquast-dashboard-region="oui"

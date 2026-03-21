@@ -406,6 +406,33 @@
 		});
 	}
 
+	function initExportRegion(region) {
+		if (!region) {
+			return;
+		}
+
+		if (region.dataset.auditOpquastExportInit === 'oui') {
+			return;
+		}
+		region.dataset.auditOpquastExportInit = 'oui';
+
+		region.addEventListener('click', function (event) {
+			var link = event.target.closest('a.audit-opquast-export__toggle');
+
+			if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+				return;
+			}
+
+			var ajaxUrl = link.getAttribute('data-ajax-href') || buildAjaxUrl(link.href, region.dataset.exportPage || 'audit_opquast_export');
+			var fullUrl = preserveCurrentDebugParams(link.href);
+
+			ajaxUrl = preserveCurrentDebugParams(ajaxUrl);
+
+			event.preventDefault();
+			navigate(region, ajaxUrl, fullUrl, 'replace');
+		});
+	}
+
 	function buildFormUrl(form, pageName) {
 		var url = new URL(form.getAttribute('action') || window.location.href, window.location.origin);
 		var formData = new FormData(form);
@@ -429,7 +456,21 @@
 		region.dataset.auditOpquastResultsInit = 'oui';
 
 		region.addEventListener('click', function (event) {
+			var closeLink = event.target.closest('.audit-opquast-rule-nav__close');
 			var shortcut = event.target.closest('.audit-opquast-shortcut');
+
+			if (closeLink && !event.defaultPrevented && !event.metaKey && !event.ctrlKey && !event.shiftKey && event.button === 0) {
+				var closeAjaxUrl = closeLink.getAttribute('data-ajax-href') || buildAjaxUrl(closeLink.href, region.dataset.resultsPage || 'audit_opquast_resultats');
+				var closeFullUrl = preserveCurrentDebugParams(closeLink.href);
+
+				closeAjaxUrl = preserveCurrentDebugParams(closeAjaxUrl);
+
+				event.preventDefault();
+				navigate(region, closeAjaxUrl, closeFullUrl, 'push').then(function () {
+					scrollToRegion(region);
+				});
+				return;
+			}
 
 			if (!shortcut || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
 				return;
@@ -497,6 +538,7 @@
 		initNavigation(root.querySelector('[data-audit-opquast-results-region] [data-audit-opquast-navigation-region]'));
 		initParamsRegion(root.querySelector('[data-audit-opquast-params-region]'));
 		initCreationRegion(root.querySelector('[data-audit-opquast-creation-region]'));
+		initExportRegion(root.querySelector('[data-audit-opquast-export-region]'));
 		initResultsRegion(root.querySelector('[data-audit-opquast-results-region]'));
 	}
 

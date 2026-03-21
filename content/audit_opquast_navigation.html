@@ -10,7 +10,14 @@
 	]
 
 	<div class="bloc audit-opquast-bloc">
-		<h2><:audit_opquast:info_navigation_regles:/></h2>
+		<div class="audit-opquast-bloc__head">
+			<h2><:audit_opquast:info_navigation_regles:/></h2>
+			<a
+				class="audit-opquast-params__toggle audit-opquast-rule-nav__close"
+				href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre)]#audit-opquast-resultats-region"
+				data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_resultats)]"
+			><:audit_opquast:bouton_fermer:/>&nbsp;<span aria-hidden="true">×</span></a>
+		</div>
 		<div class="audit-opquast-rule-nav">
 			<div class="audit-opquast-rule-nav__meta">
 				<p class="audit-opquast-rule-position">
