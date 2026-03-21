@@ -63,6 +63,8 @@ def load_csv(path):
 
 def normalize_status(label):
     value = (label or "").strip()
+    if value in ("\u00c0 v\u00e9rifier", "A v\u00e9rifier", "A verifier"):
+        return "A verifier"
     aliases = {
         "À vérifier": "A verifier",
         "A vérifier": "A verifier",
@@ -237,7 +239,7 @@ def table(rows, widths, border="FFFFFF"):
 
 def section_title(text):
     return table(
-        [[cell(paragraph(text, color="2C3E50", size=28, italic=True, after=80), DOC_WIDTH, fill="F8F9FA", border="D5D8DC")]],
+        [[cell(paragraph(text, color="2C3E50", size=28, italic=True, after=110, line=320, keep_next=True), DOC_WIDTH, fill="F8F9FA", border="D5D8DC")]],
         [DOC_WIDTH],
         border="D5D8DC",
     )
@@ -351,7 +353,7 @@ def build_context_section():
     return "".join(
         [
             section_title("1. Contexte et objectifs de l'audit"),
-            paragraph("Qu'est-ce qu'Opquast ?", color="163A69", size=32, bold=True, after=40),
+            paragraph("Qu'est-ce qu'Opquast ?", color="163A69", size=32, bold=True, after=60, line=320, keep_next=True),
             paragraph(
                 "Opquast (Open Quality Standards) est un referentiel de bonnes pratiques pour la qualite web, developpe pour structurer l'evaluation de la qualite numerique. Il rassemble 245 regles verifiables, organisees en familles thematiques et centrees sur l'experience utilisateur finale.",
                 size=18,
@@ -362,7 +364,7 @@ def build_context_section():
                 size=18,
                 after=160,
             ),
-            paragraph("Objectifs de cet audit", color="163A69", size=30, bold=True, after=50),
+            paragraph("Objectifs de cet audit", color="163A69", size=30, bold=True, after=70, line=320, keep_next=True),
             two_column_cards(cards),
         ]
     )
@@ -425,9 +427,9 @@ def build_methodology_section(row, summary, date_short):
     return "".join(
         [
             section_title("2. Methodologie"),
-            paragraph("Perimetre de l'audit", color="163A69", size=30, bold=True, after=50),
+            paragraph("Perimetre de l'audit", color="163A69", size=30, bold=True, after=70, line=320, keep_next=True),
             perimeter,
-            paragraph("Les 4 statuts possibles", color="163A69", size=30, bold=True, after=50),
+            paragraph("Les 4 statuts possibles", color="163A69", size=30, bold=True, after=70, line=320, keep_next=True),
             two_column_cards(status_cards),
         ]
     )
@@ -473,7 +475,7 @@ def build_synthesis_section(summary):
             ),
             paragraph("", after=80),
             two_column_cards(tiles),
-            paragraph("Graphiques", color="163A69", size=30, bold=True, after=40),
+            paragraph("Graphiques", color="163A69", size=30, bold=True, after=60, line=320, keep_next=True),
             table(
                 [
                     [cell(paragraph("Repartition des statuts", color="163A69", size=22, bold=True, after=30), DOC_WIDTH, border="D5D8DC", span=4)],

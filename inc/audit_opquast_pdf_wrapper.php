@@ -48,6 +48,20 @@ function audit_opquast_get_python_probe_details() {
 	return trim((string) ($GLOBALS['audit_opquast_python_probe_details'] ?? ''));
 }
 
+function audit_opquast_python_environment_configured() {
+	include_spip('inc/config');
+
+	return function_exists('lire_config')
+		? trim((string) lire_config('audit_opquast/python_environment', 'local'))
+		: 'local';
+}
+
+function audit_opquast_python_environment_label() {
+	return audit_opquast_python_environment_configured() === 'externe'
+		? 'Externe'
+		: 'Local';
+}
+
 function audit_opquast_python_commands() {
 	static $commands = null;
 
@@ -82,11 +96,7 @@ function audit_opquast_python_bin_configured() {
 		return $python_bin;
 	}
 
-	include_spip('inc/config');
-
-	$python_env = function_exists('lire_config')
-		? trim((string) lire_config('audit_opquast/python_environment', 'local'))
-		: 'local';
+	$python_env = audit_opquast_python_environment_configured();
 	$python_bin = function_exists('lire_config')
 		? trim((string) lire_config('audit_opquast/python_bin', ''))
 		: '';
@@ -484,6 +494,7 @@ function audit_opquast_check_requirements() {
 	$ok = true;
 
 	$python = audit_opquast_find_python_command();
+	$messages[] = 'Environnement configure : ' . audit_opquast_python_environment_label();
 
 	if (!audit_opquast_system_command_available()) {
 		$messages[] = 'Aucune fonction PHP d execution systeme disponible (proc_open / exec).';

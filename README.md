@@ -1,7 +1,7 @@
 # Audit OpQuast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.26.3-blue)
+![Version](https://img.shields.io/badge/version-1.27.0-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.26.3`
+- Version courante : `1.27.0`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -108,7 +108,7 @@ Le generateur PDF n'utilise plus `numpy` ni `matplotlib`, ce qui le rend plus po
 - d'ajouter un score de conformite sur chaque famille, avec affichage `--` si le calcul n'est pas possible
 - de beneficier d'un bloc `Navigation entre les regles` plus lisible avec un formulaire plus dense et mieux hierarchise
 - de supprimer la repetition du titre de regle entre l'entete de navigation et le formulaire
-- de disposer d'un panneau d'export sur la page detail avec `CSV` actif, `Excel` disponible pour les audits `URL`, et `DOC` / `PDF` annonces comme bientot disponibles
+- de disposer d'un panneau d'export sur la page detail avec `CSV` et `Excel` actifs pour les audits `URL`
 - d'exporter les audits `URL` en `Excel (.xlsx)` selon un modele structure en 4 onglets : tableau de bord, detail, familles et non-conformites
 - de beneficier d'un export Excel plus proche visuellement du modele valide, avec un tableau de bord plus graphique et des feuilles mieux hierarchisees
 - de disposer d'un panneau `Restitution de l'audit` separe de l'export de donnees, avec `DOCX` et `PDF` actifs pour les audits `URL`

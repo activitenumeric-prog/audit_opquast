@@ -1,6 +1,6 @@
 <paquet
 	prefix="audit_opquast"
-	version="1.26.3"
+	version="1.27.0"
 	etat="dev"
 	compatibilite="[4.0.0;4.4.*]"
 	logo="prive/themes/spip/images/audit_opquast-xx.svg"

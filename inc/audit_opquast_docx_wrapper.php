@@ -150,6 +150,7 @@ function audit_opquast_check_docx_requirements() {
 	$ok = true;
 
 	$python = audit_opquast_find_python_command();
+	$messages[] = 'Environnement configure : ' . audit_opquast_python_environment_label();
 
 	if (!audit_opquast_system_command_available()) {
 		$messages[] = 'Aucune fonction PHP d execution systeme disponible (proc_open / exec).';
@@ -179,8 +180,8 @@ function audit_opquast_check_docx_requirements() {
 	}
 
 	$messages[] = is_dir(OPQUAST_PYTHON_LIB_DIR)
-		? 'Bibliotheques Python embarquees detectees : ' . OPQUAST_PYTHON_LIB_DIR
-		: 'Aucune bibliotheque Python embarquee detectee, utilisation des bibliotheques systeme si disponibles.';
+		? 'Bibliotheques Python embarquees detectees : ' . OPQUAST_PYTHON_LIB_DIR . ' (optionnelles pour le DOCX).'
+		: 'Aucune bibliotheque Python embarquee detectee. Le DOCX n en a pas besoin, mais le PDF peut en utiliser selon l environnement.';
 
 	return [
 		'ok' => $ok,

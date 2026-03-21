@@ -1,0 +1,5 @@
+﻿Audit;URL cible;Type de cible;Statut audit;Numero regle;Intitule;Famille;Statut;Commentaire;Preuve ou note;Source
+Test audit;https://newsplugins.test;URL;Brouillon;1;Chaque page dispose d'un titre pertinent.;Contenus;Conforme;Titre present.;Capture d'ecran.;https://example.test/r1
+Test audit;https://newsplugins.test;URL;Brouillon;197;Toutes les pages utilisent le protocole HTTPS.;Securite;Non conforme;Une ressource reste chargee en HTTP.;Corriger le lien de ressource.;https://example.test/r197
+Test audit;https://newsplugins.test;URL;Brouillon;128;L'indicatif international est disponible pour tous les numeros de telephone.;Internationalisation;A verifier;Controle manuel a finaliser.;Verifier sur mobile.;https://example.test/r128
+Test audit;https://newsplugins.test;URL;Brouillon;88;La regle ne s'applique pas a cette page.;Formulaires;Non applicable;Pas de formulaire sur la cible.;RAS.;

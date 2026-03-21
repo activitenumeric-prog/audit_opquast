@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.27.0 - 2026-03-21
+
+- aeration du flux texte de la restitution `DOCX`, avec interligne et espacements de paragraphes ajustes
+- clarifications editoriales sur les restitutions `DOCX` / `PDF` et sur la configuration de l'environnement Python
+- diagnostics Python plus explicites selon l'environnement configure, avec message `Local / Externe`
+- correction du bouton `Fermer ×` du panneau de restitution
+- mise a jour de la documentation pour refleter l'etat stabilise des exports et restitutions `URL`
+
 ## 1.26.3 - 2026-03-21
 
 - aeration du flux texte de la restitution `DOCX`
