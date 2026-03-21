@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.15.9 - 2026-03-21
+
+- conservation explicite des champs `famille`, `q` et `tri` dans le formulaire de navigation
+- suppression des bascules parasites du sous-ensemble filtre vers le referentiel complet apres sauvegarde AJAX
+
+## 1.15.8 - 2026-03-21
+
+- gel temporaire de la position et des liens precedente/suivante de la regle courante apres sauvegarde
+- retour au classement reel des regles au clic de navigation suivant
+
 ## 1.15.7 - 2026-03-21
 
 - conservation de la regle courante apres sauvegarde si elle reste visible dans le sous-ensemble filtre

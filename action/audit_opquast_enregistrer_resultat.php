@@ -35,6 +35,13 @@ function action_audit_opquast_enregistrer_resultat_dist($arg = null) {
 	}
 
 	$maintenant = date('Y-m-d H:i:s');
+	$filtres = audit_opquast_parametres_filtres([
+		'q' => trim((string) _request('q')),
+		'famille' => trim((string) _request('famille')),
+		'statut_verification' => trim((string) _request('statut_verification_filtre')),
+		'tri' => trim((string) _request('tri')),
+	]);
+	$navigation_avant = audit_opquast_navigation_regle($id_audit, $id_regle);
 	$set = [
 		'id_audit' => $id_audit,
 		'id_regle' => $id_regle,
@@ -57,19 +64,27 @@ function action_audit_opquast_enregistrer_resultat_dist($arg = null) {
 		sql_insertq('spip_audit_opquast_resultats', $set);
 	}
 
-	$filtres = audit_opquast_parametres_filtres([
-		'q' => trim((string) _request('q')),
-		'famille' => trim((string) _request('famille')),
-		'statut_verification' => trim((string) _request('statut_verification_filtre')),
-		'tri' => trim((string) _request('tri')),
-	]);
 	$id_regle_redirect = audit_opquast_regle_redirect_apres_resultat($id_audit, $id_regle, $filtres);
+	$redirect = audit_opquast_url_audit_filtre($id_audit, $id_regle_redirect, $filtres);
+
+	if (
+		$id_regle_redirect === $id_regle
+		&& audit_opquast_regle_visible_dans_filtres($id_audit, $id_regle, $filtres)
+		&& !empty($navigation_avant['position'])
+	) {
+		include_spip('inc/utils');
+		$redirect = parametre_url($redirect, 'navigation_freeze', 'oui', '&');
+		$redirect = parametre_url($redirect, 'navigation_freeze_position', intval($navigation_avant['position']), '&');
+		$redirect = parametre_url($redirect, 'navigation_freeze_total', intval($navigation_avant['total'] ?? 0), '&');
+		$redirect = parametre_url($redirect, 'navigation_freeze_precedente_id', intval($navigation_avant['precedente_id_regle'] ?? 0), '&');
+		$redirect = parametre_url($redirect, 'navigation_freeze_suivante_id', intval($navigation_avant['suivante_id_regle'] ?? 0), '&');
+	}
 
 	header('Content-Type: application/json; charset=UTF-8');
 	echo json_encode([
 		'ok' => true,
 		'message' => _T('audit_opquast:message_resultat_enregistre'),
-		'redirect' => audit_opquast_url_audit_filtre($id_audit, $id_regle_redirect, $filtres),
+		'redirect' => $redirect,
 		'id_regle' => $id_regle_redirect,
 	]);
 	exit;

@@ -4,6 +4,10 @@
 	#SET{courante_id,#GET{navigation}|table_valeur{courante_id_regle}}
 	#SET{precedente_id,#GET{navigation}|table_valeur{precedente_id_regle}}
 	#SET{suivante_id,#GET{navigation}|table_valeur{suivante_id_regle}}
+	[(#ENV{navigation_freeze}|=={oui}|oui)
+		#SET{precedente_id,#ENV{navigation_freeze_precedente_id}}
+		#SET{suivante_id,#ENV{navigation_freeze_suivante_id}}
+	]
 
 	<div class="bloc audit-opquast-bloc">
 		<h2><:audit_opquast:info_navigation_regles:/></h2>
@@ -11,7 +15,7 @@
 			<div class="audit-opquast-rule-nav__meta">
 				<p class="audit-opquast-rule-position">
 					<span class="audit-opquast-rule-position__label"><:audit_opquast:label_position_regle:/></span>
-					<strong class="audit-opquast-rule-position__value">[(#GET{navigation}|table_valeur{position})] / [(#GET{navigation}|table_valeur{total})]</strong>
+					<strong class="audit-opquast-rule-position__value">[(#ENV{navigation_freeze}|=={oui}|?{#ENV{navigation_freeze_position},#GET{navigation}|table_valeur{position}})] / [(#ENV{navigation_freeze}|=={oui}|?{#ENV{navigation_freeze_total},#GET{navigation}|table_valeur{total}})]</strong>
 				</p>
 				[(#GET{navigation}|table_valeur{courante_numero}|oui)
 					<p class="audit-opquast-rule-nav__current">
