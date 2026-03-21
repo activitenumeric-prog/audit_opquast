@@ -1,6 +1,7 @@
 [(#REM) Bloc de navigation chargeable en AJAX]
 [(#ENV{id_regle}|oui)
 	#SET{navigation,#ENV{id_audit}|audit_opquast_navigation_regle{#ENV{id_regle}}}
+	#SET{courante_id,#GET{navigation}|table_valeur{courante_id_regle}}
 	#SET{precedente_id,#GET{navigation}|table_valeur{precedente_id_regle}}
 	#SET{suivante_id,#GET{navigation}|table_valeur{suivante_id_regle}}
 
@@ -44,7 +45,7 @@
 			</div>
 		</div>
 		<div class="ajax">
-			#FORMULAIRE_EDITER_AUDIT_OPQUAST_RESULTAT{#ENV{id_audit},#ENV{id_regle}}
+			#FORMULAIRE_EDITER_AUDIT_OPQUAST_RESULTAT{#ENV{id_audit},#GET{courante_id}}
 		</div>
 	</div>
 ]

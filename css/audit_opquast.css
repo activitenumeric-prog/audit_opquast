@@ -52,6 +52,36 @@
 	pointer-events: auto;
 }
 
+.audit-opquast-toast {
+	position: fixed;
+	right: 1.25rem;
+	bottom: 4.5rem;
+	max-width: min(26rem, calc(100vw - 2rem));
+	padding: 0.85rem 1rem;
+	border: 1px solid #cfe7d4;
+	border-radius: 0.85rem;
+	background: #f2fbf4;
+	box-shadow: 0 0.5rem 1.4rem rgba(0, 0, 0, 0.14);
+	color: #1f5f2f;
+	font-weight: 600;
+	opacity: 0;
+	transform: translateY(0.5rem);
+	pointer-events: none;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	z-index: 55;
+}
+
+.audit-opquast-toast.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.audit-opquast-toast--error {
+	border-color: #efcccc;
+	background: #fff3f3;
+	color: #8e2222;
+}
+
 .audit-opquast-intro {
 	margin-bottom: 1.5rem;
 }
@@ -1117,6 +1147,13 @@
 		right: 0.85rem;
 		bottom: 0.85rem;
 		padding: 0.65rem 0.85rem;
+	}
+
+	.audit-opquast-toast {
+		right: 0.85rem;
+		left: 0.85rem;
+		bottom: 4rem;
+		max-width: none;
 	}
 
 	.audit-opquast-hero {

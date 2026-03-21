@@ -571,37 +571,54 @@ function audit_opquast_navigation_regle($id_audit, $id_regle) {
 		'suivante_titre' => '',
 	];
 
-	if (!$id_regle || !$total) {
+	if (!$total) {
 		return $navigation;
 	}
+
+	if (!$id_regle) {
+		$id_regle = intval($regles[0]['id_regle'] ?? 0);
+	}
+
+	$index_courant = null;
 
 	foreach ($regles as $index => $regle) {
 		if (intval($regle['id_regle'] ?? 0) !== $id_regle) {
 			continue;
 		}
 
-		$navigation['position'] = $index + 1;
-		$navigation['courante_id_regle'] = intval($regle['id_regle'] ?? 0);
-		$navigation['courante_numero'] = $regle['numero'] ?? '';
-		$navigation['courante_titre'] = $regle['titre'] ?? '';
-		$navigation['courante_statut_verification'] = $regle['statut_verification'] ?? 'a_verifier';
-		$navigation['courante_statut_label'] = audit_opquast_statuts_verification($navigation['courante_statut_verification']);
-
-		if (isset($regles[$index - 1])) {
-			$precedente = $regles[$index - 1];
-			$navigation['precedente_id_regle'] = intval($precedente['id_regle'] ?? 0);
-			$navigation['precedente_numero'] = $precedente['numero'] ?? '';
-			$navigation['precedente_titre'] = $precedente['titre'] ?? '';
-		}
-
-		if (isset($regles[$index + 1])) {
-			$suivante = $regles[$index + 1];
-			$navigation['suivante_id_regle'] = intval($suivante['id_regle'] ?? 0);
-			$navigation['suivante_numero'] = $suivante['numero'] ?? '';
-			$navigation['suivante_titre'] = $suivante['titre'] ?? '';
-		}
-
+		$index_courant = $index;
 		break;
+	}
+
+	if ($index_courant === null) {
+		$index_courant = 0;
+	}
+
+	$regle = $regles[$index_courant] ?? [];
+
+	if (!$regle) {
+		return $navigation;
+	}
+
+	$navigation['position'] = $index_courant + 1;
+	$navigation['courante_id_regle'] = intval($regle['id_regle'] ?? 0);
+	$navigation['courante_numero'] = $regle['numero'] ?? '';
+	$navigation['courante_titre'] = $regle['titre'] ?? '';
+	$navigation['courante_statut_verification'] = $regle['statut_verification'] ?? 'a_verifier';
+	$navigation['courante_statut_label'] = audit_opquast_statuts_verification($navigation['courante_statut_verification']);
+
+	if (isset($regles[$index_courant - 1])) {
+		$precedente = $regles[$index_courant - 1];
+		$navigation['precedente_id_regle'] = intval($precedente['id_regle'] ?? 0);
+		$navigation['precedente_numero'] = $precedente['numero'] ?? '';
+		$navigation['precedente_titre'] = $precedente['titre'] ?? '';
+	}
+
+	if (isset($regles[$index_courant + 1])) {
+		$suivante = $regles[$index_courant + 1];
+		$navigation['suivante_id_regle'] = intval($suivante['id_regle'] ?? 0);
+		$navigation['suivante_numero'] = $suivante['numero'] ?? '';
+		$navigation['suivante_titre'] = $suivante['titre'] ?? '';
 	}
 
 	return $navigation;
@@ -633,6 +650,41 @@ function audit_opquast_premiere_regle_visible($id_audit, $filtres = []) {
 	}
 
 	return intval($regles[0]['id_regle'] ?? 0);
+}
+
+function audit_opquast_regle_suivante_visible($id_audit, $id_regle, $filtres = []) {
+	$id_regle = intval($id_regle);
+	$regles = audit_opquast_lister_regles_audit($id_audit, $filtres);
+
+	if (!$id_regle || !$regles) {
+		return 0;
+	}
+
+	foreach ($regles as $index => $regle) {
+		if (intval($regle['id_regle'] ?? 0) !== $id_regle) {
+			continue;
+		}
+
+		return intval($regles[$index + 1]['id_regle'] ?? 0);
+	}
+
+	return 0;
+}
+
+function audit_opquast_regle_redirect_apres_resultat($id_audit, $id_regle, $filtres = []) {
+	$id_regle = intval($id_regle);
+
+	if (audit_opquast_regle_visible_dans_filtres($id_audit, $id_regle, $filtres)) {
+		return $id_regle;
+	}
+
+	$id_regle_redirect = audit_opquast_regle_suivante_visible($id_audit, $id_regle, $filtres);
+
+	if ($id_regle_redirect) {
+		return $id_regle_redirect;
+	}
+
+	return audit_opquast_premiere_regle_visible($id_audit, $filtres);
 }
 
 function audit_opquast_raccourcis_statuts($id_audit) {
@@ -824,6 +876,21 @@ function audit_opquast_url_creation_region($mode = '') {
 	}
 
 	return generer_url_public('audit_opquast_creation', http_build_query($args, '', '&'));
+}
+
+function audit_opquast_url_enregistrer_resultat($id_audit, $id_regle) {
+	$id_audit = intval($id_audit);
+	$id_regle = intval($id_regle);
+
+	if (!$id_audit || !$id_regle) {
+		return '';
+	}
+
+	return generer_action_auteur(
+		'audit_opquast_enregistrer_resultat',
+		$id_audit . '-' . $id_regle,
+		audit_opquast_url_audit($id_audit, $id_regle)
+	);
 }
 
 function audit_opquast_url_supprimer_audit($id_audit) {

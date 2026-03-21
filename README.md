@@ -1,7 +1,7 @@
 # audit_opquast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.14.0-blue)
+![Version](https://img.shields.io/badge/version-1.15.7-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.14.0`
+- Version courante : `1.15.7`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -48,6 +48,14 @@ Le MVP permet maintenant :
 - d'espacer davantage chaque bloc principal pour aérer la lecture
 - d'acceder aux pages publiques via `spip.php?page=audit_opquast` et `spip.php?page=audit_opquast_audit`
 - de naviguer entre les regles sans recharger toute la page grace a l'AJAX
+- d'enregistrer un resultat en AJAX et d'enchainer automatiquement sur la regle suivante visible
+- de conserver une confirmation lisible grace a un toast global apres enregistrement AJAX
+- de corriger la redirection AJAX apres sauvegarde pour conserver une URL valide
+- de conserver la position sur le bloc de navigation apres une sauvegarde AJAX
+- de resynchroniser le tableau de bord et les regles du referentiel apres chaque changement de statut en AJAX
+- de conserver les filtres actifs apres sauvegarde AJAX, notamment en vue famille
+- de fiabiliser la regle courante de navigation quand une regle sort du filtre actif
+- de conserver la regle courante apres sauvegarde tant qu'elle reste visible dans le filtre actif
 - de consulter les parametres d'audit dans une card compacte puis d'ouvrir le formulaire d'edition en AJAX
 - d'appliquer en une action le statut `A verifier` ou `Non applicable` a toutes les regles d'une famille
 - d'afficher des badges de statut colores avec un contraste accessible pour les regles

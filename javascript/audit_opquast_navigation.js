@@ -8,13 +8,50 @@
 	}
 
 	function preserveCurrentDebugParams(urlString) {
-		var url = new URL(urlString, window.location.origin);
+		var normalizedUrlString = String(urlString || '')
+			.replace(/&amp;/g, '&')
+			.replace(/&#38;/g, '&');
+		var url = new URL(normalizedUrlString, window.location.origin);
 		var currentUrl = new URL(window.location.href);
 		var varMode = currentUrl.searchParams.get('var_mode');
 
 		if (varMode && !url.searchParams.get('var_mode')) {
 			url.searchParams.set('var_mode', varMode);
 		}
+
+		return url.toString();
+	}
+
+	function ensureHash(urlString, hash) {
+		var url = new URL(urlString, window.location.origin);
+
+		if (hash) {
+			url.hash = hash;
+		}
+
+		return url.toString();
+	}
+
+	function preserveSubmittedFilters(urlString, formData) {
+		var url = new URL(urlString, window.location.origin);
+		var filterMapping = {
+			q: 'q',
+			famille: 'famille',
+			tri: 'tri',
+			statut_verification_filtre: 'statut_verification'
+		};
+
+		Object.keys(filterMapping).forEach(function (fieldName) {
+			var searchParam = filterMapping[fieldName];
+			var value = String(formData.get(fieldName) || '').trim();
+
+			if (value) {
+				url.searchParams.set(searchParam, value);
+				return;
+			}
+
+			url.searchParams.delete(searchParam);
+		});
 
 		return url.toString();
 	}
@@ -27,6 +64,69 @@
 	function updateRegion(region, html) {
 		region.innerHTML = html;
 		initDynamicRegions(region);
+	}
+
+	function refreshRegion(region, ajaxUrl) {
+		if (!region || !ajaxUrl) {
+			return Promise.resolve();
+		}
+
+		setLoading(region, true);
+
+		return window.fetch(ajaxUrl, {
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest'
+			},
+			credentials: 'same-origin'
+		})
+			.then(function (response) {
+				if (!response.ok) {
+					throw new Error('Refresh HTTP ' + response.status);
+				}
+
+				return response.text();
+			})
+			.then(function (html) {
+				updateRegion(region, html);
+			})
+			.finally(function () {
+				setLoading(region, false);
+			});
+	}
+
+	function showToast(message, type) {
+		var toast;
+
+		if (!message) {
+			return;
+		}
+
+		toast = document.querySelector('[data-audit-opquast-toast]');
+
+		if (!toast) {
+			toast = document.createElement('div');
+			toast.className = 'audit-opquast-toast';
+			toast.setAttribute('data-audit-opquast-toast', 'oui');
+			toast.setAttribute('role', 'status');
+			toast.setAttribute('aria-live', 'polite');
+			document.body.appendChild(toast);
+		}
+
+		toast.textContent = message;
+		toast.classList.remove('is-visible', 'audit-opquast-toast--error');
+
+		if (type === 'error') {
+			toast.classList.add('audit-opquast-toast--error');
+		}
+
+		window.clearTimeout(showToast._timer);
+		window.requestAnimationFrame(function () {
+			toast.classList.add('is-visible');
+		});
+
+		showToast._timer = window.setTimeout(function () {
+			toast.classList.remove('is-visible');
+		}, 2600);
 	}
 
 	function scrollToRegion(region) {
@@ -102,6 +202,84 @@
 
 			event.preventDefault();
 			navigate(region, ajaxUrl, fullUrl, 'push');
+		});
+
+		region.addEventListener('submit', function (event) {
+			var form = event.target.closest('.formulaire_editer_audit_opquast_resultat form');
+			var ajaxSaveUrl;
+			var payload;
+			var fullUrl;
+			var ajaxUrl;
+
+			if (!form) {
+				return;
+			}
+
+			ajaxSaveUrl = form.getAttribute('data-ajax-save-url');
+
+			if (!ajaxSaveUrl) {
+				return;
+			}
+
+			event.preventDefault();
+			setLoading(region, true);
+
+			payload = new FormData(form);
+			ajaxSaveUrl = preserveCurrentDebugParams(ajaxSaveUrl);
+
+			window.fetch(ajaxSaveUrl, {
+				method: 'POST',
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest'
+				},
+				body: payload,
+				credentials: 'same-origin'
+			})
+				.then(function (response) {
+					if (!response.ok) {
+						throw new Error('Save HTTP ' + response.status);
+					}
+
+					return response.json();
+				})
+				.then(function (data) {
+					if (!data || !data.ok || !data.redirect) {
+						throw new Error('Save payload');
+					}
+
+					showToast(data.message);
+
+					fullUrl = ensureHash(
+						preserveSubmittedFilters(
+							preserveCurrentDebugParams(data.redirect),
+							payload
+						),
+						region.id || 'audit-opquast-navigation-region'
+					);
+					var resultsRegion = document.querySelector('[data-audit-opquast-results-region]');
+					var dashboardRegion = document.querySelector('[data-audit-opquast-dashboard-region]');
+					var resultsAjaxUrl = preserveCurrentDebugParams(
+						buildAjaxUrl(fullUrl, (resultsRegion && resultsRegion.dataset.resultsPage) || 'audit_opquast_resultats')
+					);
+					var dashboardAjaxUrl = preserveCurrentDebugParams(
+						buildAjaxUrl(fullUrl, (dashboardRegion && dashboardRegion.dataset.dashboardPage) || 'audit_opquast_tableau_bord')
+					);
+					var navigationTargetSelector = '[data-audit-opquast-navigation-region]';
+
+					return Promise.all([
+						resultsRegion ? navigate(resultsRegion, resultsAjaxUrl, fullUrl, 'push') : Promise.resolve(),
+						dashboardRegion ? refreshRegion(dashboardRegion, dashboardAjaxUrl) : Promise.resolve()
+					]).then(function () {
+						scrollToRegion(document.querySelector(navigationTargetSelector));
+					});
+				})
+				.catch(function () {
+					showToast('Erreur pendant l\'enregistrement.', 'error');
+					form.submit();
+				})
+				.finally(function () {
+					setLoading(region, false);
+				});
 		});
 
 		window.addEventListener('popstate', function () {
@@ -316,6 +494,7 @@
 		}
 
 		initNavigation(root.querySelector('[data-audit-opquast-navigation-region]'));
+		initNavigation(root.querySelector('[data-audit-opquast-results-region] [data-audit-opquast-navigation-region]'));
 		initParamsRegion(root.querySelector('[data-audit-opquast-params-region]'));
 		initCreationRegion(root.querySelector('[data-audit-opquast-creation-region]'));
 		initResultsRegion(root.querySelector('[data-audit-opquast-results-region]'));

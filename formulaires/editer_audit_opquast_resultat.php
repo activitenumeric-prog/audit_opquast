@@ -83,11 +83,7 @@ function formulaires_editer_audit_opquast_resultat_traiter_dist($id_audit, $id_r
 	}
 
 	$filtres = audit_opquast_parametres_filtres();
-	$id_regle_redirect = $id_regle;
-
-	if (!audit_opquast_regle_visible_dans_filtres($id_audit, $id_regle_redirect, $filtres)) {
-		$id_regle_redirect = audit_opquast_premiere_regle_visible($id_audit, $filtres);
-	}
+	$id_regle_redirect = audit_opquast_regle_redirect_apres_resultat($id_audit, $id_regle, $filtres);
 
 	return [
 		'message_ok' => _T('audit_opquast:message_resultat_enregistre'),

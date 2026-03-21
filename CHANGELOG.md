@@ -1,5 +1,45 @@
 # Changelog
 
+## 1.15.7 - 2026-03-21
+
+- conservation de la regle courante apres sauvegarde si elle reste visible dans le sous-ensemble filtre
+- passage a la regle suivante seulement quand la regle modifiee sort reellement du filtre actif
+
+## 1.15.6 - 2026-03-21
+
+- fallback automatique sur la premiere regle visible quand la regle demandee n'appartient plus au sous-ensemble filtre
+- alignement du formulaire et du bloc `Navigation entre les regles` sur la meme regle courante resolue
+
+## 1.15.5 - 2026-03-21
+
+- conservation explicite des filtres soumis apres sauvegarde AJAX d'une regle
+- maintien du contexte `famille`, `tri`, `recherche` et `statut` lors du passage a la regle suivante visible
+
+## 1.15.4 - 2026-03-21
+
+- resynchronisation en AJAX du tableau de bord, de la navigation et de la liste des regles apres un changement de statut
+- mise a jour immediate des KPI, priorites, familles et badges sans rechargement complet de la page
+
+## 1.15.3 - 2026-03-21
+
+- conservation de la position de lecture sur le bloc `Navigation entre les regles` apres enregistrement AJAX
+- suppression du retour parasite en haut de page apres passage automatique a la regle suivante
+
+## 1.15.2 - 2026-03-21
+
+- correction de l'URL de redirection apres enregistrement AJAX pour eliminer les `&amp;` parasites
+- suppression du cas `Audit introuvable` provoque par une URL de detail mal recomposee
+
+## 1.15.1 - 2026-03-21
+
+- remplacement de la confirmation fugace apres sauvegarde AJAX par un toast global lisible
+- conservation de la navigation automatique vers la regle suivante sans perdre le retour visuel de sauvegarde
+
+## 1.15.0 - 2026-03-21
+
+- enregistrement AJAX des resultats de regle sans rechargement complet de la page
+- enchainement automatique vers la regle suivante visible apres sauvegarde, avec fallback standard sans JavaScript
+
 ## 1.14.0 - 2026-03-21
 
 - fusion du bloc de synthese et du bloc des parametres dans un bloc de tete unique
