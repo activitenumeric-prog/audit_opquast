@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.28.0 - 2026-03-21
+
+- ajout d'un premier MVP pour les audits de type `Site`
+- ajout d'un champ `URLs du site` dans le formulaire d'audit, avec normalisation et synchronisation des URLs
+- creation ou reutilisation automatique d'audits `URL` enfants relies a l'audit `Site`
+- aggregation des KPI du tableau de bord du site a partir des audits enfants
+- affichage d'une liste des URLs auditees a la place de la navigation par regles sur les audits `Site`
+- limitation explicite des exports de donnees au perimetre `URL` dans ce premier lot `Site`
+
 ## 1.27.0 - 2026-03-21
 
 - aeration du flux texte de la restitution `DOCX`, avec interligne et espacements de paragraphes ajustes

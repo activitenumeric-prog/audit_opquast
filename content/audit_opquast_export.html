@@ -2,6 +2,7 @@
 #SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
 [(#GET{audit}|oui)
 	#SET{mode,#ENV{export_mode}|sinon{compact}}
+	#SET{csv_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
 	#SET{excel_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
 	[(#GET{mode}|=={edit}|oui)
 		<div class="audit-opquast-export audit-opquast-export--panel audit-opquast-hero-action-panel">
@@ -19,13 +20,24 @@
 
 			<form method="post" action="[(#ENV{id_audit}|audit_opquast_url_export_telechargement)]" class="audit-opquast-export-form">
 				<div class="audit-opquast-export-form__options">
-					<label class="audit-opquast-export-option">
-						<input type="radio" name="format" value="csv" checked="checked" />
-						<span class="audit-opquast-export-option__content">
-							<strong>CSV</strong>
-							<span><:audit_opquast:info_export_csv_disponible:/></span>
-						</span>
-					</label>
+					[(#GET{csv_disponible}|oui)
+						<label class="audit-opquast-export-option">
+							<input type="radio" name="format" value="csv" checked="checked" />
+							<span class="audit-opquast-export-option__content">
+								<strong>CSV</strong>
+								<span><:audit_opquast:info_export_csv_disponible:/></span>
+							</span>
+						</label>
+					]
+					[(#GET{csv_disponible}|non)
+						<label class="audit-opquast-export-option audit-opquast-export-option--disabled">
+							<input type="radio" name="format" value="csv" disabled="disabled" />
+							<span class="audit-opquast-export-option__content">
+								<strong>CSV</strong>
+								<span><:audit_opquast:info_export_csv_url_seulement:/></span>
+							</span>
+						</label>
+					]
 					[(#GET{excel_disponible}|oui)
 						<label class="audit-opquast-export-option">
 							<input type="radio" name="format" value="xlsx" />
@@ -46,9 +58,11 @@
 					]
 				</div>
 
-				<p class="boutons audit-opquast-export-form__footer">
-					<button type="submit"><:audit_opquast:bouton_telecharger_export:/></button>
-				</p>
+				[(#GET{csv_disponible}|ou{#GET{excel_disponible}}|oui)
+					<p class="boutons audit-opquast-export-form__footer">
+						<button type="submit"><:audit_opquast:bouton_telecharger_export:/></button>
+					</p>
+				]
 			</form>
 		</div>
 	]

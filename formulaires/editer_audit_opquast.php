@@ -18,6 +18,7 @@ function formulaires_editer_audit_opquast_charger_dist($id_audit = 0) {
 		'id_audit' => $id_audit,
 		'titre' => '',
 		'url_cible' => '',
+		'urls_site' => '',
 		'type_cible' => 'url',
 		'statut' => 'brouillon',
 	];
@@ -26,6 +27,7 @@ function formulaires_editer_audit_opquast_charger_dist($id_audit = 0) {
 		$audit = audit_opquast_lire_audit($id_audit);
 		if ($audit) {
 			$valeurs = array_merge($valeurs, $audit);
+			$valeurs['urls_site'] = audit_opquast_urls_site_texte($audit);
 		}
 	}
 
@@ -39,14 +41,26 @@ function formulaires_editer_audit_opquast_charger_dist($id_audit = 0) {
 }
 
 function formulaires_editer_audit_opquast_verifier_dist($id_audit = 0) {
+	include_spip('audit_opquast_fonctions');
+
 	$erreurs = [];
+	$type_cible = trim((string) _request('type_cible')) ?: 'url';
+	$url_cible = trim((string) _request('url_cible'));
 
 	if (!trim((string) _request('titre'))) {
 		$erreurs['titre'] = _T('info_obligatoire');
 	}
 
-	if (!trim((string) _request('url_cible'))) {
+	if (!$url_cible) {
 		$erreurs['url_cible'] = _T('info_obligatoire');
+	}
+
+	if ($type_cible === 'site') {
+		$urls = audit_opquast_normaliser_urls_site((string) _request('urls_site'), $url_cible);
+
+		if (!$urls) {
+			$erreurs['urls_site'] = _T('info_obligatoire');
+		}
 	}
 
 	return $erreurs;
@@ -65,10 +79,20 @@ function formulaires_editer_audit_opquast_traiter_dist($id_audit = 0) {
 	}
 
 	$maintenant = date('Y-m-d H:i:s');
+	$type_cible = trim((string) _request('type_cible')) ?: 'url';
+	$url_cible = trim((string) _request('url_cible'));
+	$urls_site = audit_opquast_normaliser_urls_site((string) _request('urls_site'), $url_cible);
+	$resume = '';
+
+	if ($type_cible === 'site') {
+		$resume = json_encode(['urls_site' => $urls_site], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	}
+
 	$set = [
 		'titre' => trim((string) _request('titre')),
-		'url_cible' => trim((string) _request('url_cible')),
-		'type_cible' => trim((string) _request('type_cible')) ?: 'url',
+		'url_cible' => $url_cible,
+		'resume' => $resume,
+		'type_cible' => $type_cible,
 		'statut' => trim((string) _request('statut')) ?: 'brouillon',
 		'date_modif' => $maintenant,
 	];
@@ -79,6 +103,11 @@ function formulaires_editer_audit_opquast_traiter_dist($id_audit = 0) {
 		$set['date_creation'] = $maintenant;
 		$set['id_auteur'] = intval($GLOBALS['visiteur_session']['id_auteur'] ?? 0);
 		$id_audit = intval(sql_insertq('spip_audit_opquast_audits', $set));
+	}
+
+	if ($type_cible === 'site' && $id_audit) {
+		$audit = audit_opquast_lire_audit($id_audit);
+		audit_opquast_sync_audit_site_urls($audit, $urls_site);
 	}
 
 	$id_regle = intval(_request('id_regle'));

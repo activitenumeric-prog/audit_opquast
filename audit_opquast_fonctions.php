@@ -93,7 +93,7 @@ function audit_opquast_lister_audits($valeur = null) {
 	$audits = sql_allfetsel(
 		'id_audit, titre, url_cible, type_cible, statut, date_creation, date_modif, id_auteur',
 		'spip_audit_opquast_audits',
-		'',
+		"NOT (objet='audit_opquast' AND id_objet>0 AND type_cible='url')",
 		'',
 		'date_modif DESC, id_audit DESC'
 	);
@@ -112,6 +112,194 @@ function audit_opquast_lire_audit($id_audit) {
 	$audit = sql_fetsel('*', 'spip_audit_opquast_audits', 'id_audit=' . $id_audit);
 
 	return is_array($audit) ? $audit : [];
+}
+
+function audit_opquast_resume_payload($audit) {
+	$resume = trim((string) ($audit['resume'] ?? ''));
+
+	if ($resume === '') {
+		return [];
+	}
+
+	$data = json_decode($resume, true);
+
+	return is_array($data) ? $data : [];
+}
+
+function audit_opquast_normaliser_urls_site($texte, $fallback = '') {
+	$urls = preg_split('/\r\n|\r|\n/', trim((string) $texte)) ?: [];
+	$fallback = trim((string) $fallback);
+
+	if (!$urls && $fallback !== '') {
+		$urls = [$fallback];
+	}
+
+	$normalisees = [];
+	$uniques = [];
+
+	foreach ($urls as $url) {
+		$url = trim((string) $url);
+
+		if ($url === '') {
+			continue;
+		}
+
+		if (!preg_match(',^https?://,i', $url)) {
+			continue;
+		}
+
+		$cle = strtolower($url);
+
+		if (isset($uniques[$cle])) {
+			continue;
+		}
+
+		$uniques[$cle] = true;
+		$normalisees[] = $url;
+	}
+
+	return $normalisees;
+}
+
+function audit_opquast_urls_site($audit) {
+	if (!is_array($audit) || empty($audit['id_audit'])) {
+		return [];
+	}
+
+	$payload = audit_opquast_resume_payload($audit);
+	$urls = [];
+
+	if (!empty($payload['urls_site']) && is_array($payload['urls_site'])) {
+		$urls = audit_opquast_normaliser_urls_site(implode("\n", $payload['urls_site']));
+	}
+
+	if ($urls) {
+		return $urls;
+	}
+
+	include_spip('base/abstract_sql');
+
+	$enfants = sql_allfetsel(
+		'url_cible',
+		'spip_audit_opquast_audits',
+		"objet='audit_opquast' AND id_objet=" . intval($audit['id_audit']) . " AND type_cible='url'",
+		'',
+		'id_audit ASC'
+	);
+
+	foreach ($enfants as $enfant) {
+		$url = trim((string) ($enfant['url_cible'] ?? ''));
+		if ($url !== '') {
+			$urls[] = $url;
+		}
+	}
+
+	return audit_opquast_normaliser_urls_site(implode("\n", $urls), (string) ($audit['url_cible'] ?? ''));
+}
+
+function audit_opquast_urls_site_texte($audit) {
+	return implode("\n", audit_opquast_urls_site($audit));
+}
+
+function audit_opquast_compter_urls_site($audit) {
+	return count(audit_opquast_urls_site($audit));
+}
+
+function audit_opquast_titre_audit_url_enfant($titre_parent, $url) {
+	$libelle = preg_replace(',^https?://,i', '', trim((string) $url));
+	$libelle = trim((string) $libelle, '/');
+
+	return trim((string) $titre_parent) . ' - ' . $libelle;
+}
+
+function audit_opquast_sync_audit_site_urls($audit, $urls) {
+	include_spip('base/abstract_sql');
+
+	if (!is_array($audit) || empty($audit['id_audit'])) {
+		return;
+	}
+
+	$id_parent = intval($audit['id_audit']);
+	$titre_parent = trim((string) ($audit['titre'] ?? 'Audit site'));
+	$statut_parent = trim((string) ($audit['statut'] ?? 'brouillon')) ?: 'brouillon';
+	$id_auteur = intval($audit['id_auteur'] ?? ($GLOBALS['visiteur_session']['id_auteur'] ?? 0));
+	$maintenant = date('Y-m-d H:i:s');
+
+	foreach ($urls as $url) {
+		$url = trim((string) $url);
+
+		if ($url === '') {
+			continue;
+		}
+
+		$existant = sql_fetsel(
+			'id_audit, statut',
+			'spip_audit_opquast_audits',
+			"objet='audit_opquast' AND id_objet=" . $id_parent . " AND type_cible='url' AND url_cible=" . sql_quote($url)
+		);
+
+		$set = [
+			'titre' => audit_opquast_titre_audit_url_enfant($titre_parent, $url),
+			'url_cible' => $url,
+			'type_cible' => 'url',
+			'objet' => 'audit_opquast',
+			'id_objet' => $id_parent,
+			'statut' => trim((string) ($existant['statut'] ?? '')) ?: $statut_parent,
+			'date_modif' => $maintenant,
+			'id_auteur' => $id_auteur,
+		];
+
+		if ($existant) {
+			sql_updateq('spip_audit_opquast_audits', $set, 'id_audit=' . intval($existant['id_audit']));
+			continue;
+		}
+
+		$set['date_creation'] = $maintenant;
+		sql_insertq('spip_audit_opquast_audits', $set);
+	}
+}
+
+function audit_opquast_lister_audits_site_enfants($id_audit) {
+	include_spip('base/abstract_sql');
+
+	$audit = is_array($id_audit) ? $id_audit : audit_opquast_lire_audit($id_audit);
+
+	if (!$audit || ($audit['type_cible'] ?? '') !== 'site') {
+		return [];
+	}
+
+	$urls = audit_opquast_urls_site($audit);
+
+	if (!$urls) {
+		return [];
+	}
+
+	$enfants = sql_allfetsel(
+		'*',
+		'spip_audit_opquast_audits',
+		"objet='audit_opquast' AND id_objet=" . intval($audit['id_audit']) . " AND type_cible='url'",
+		'',
+		'id_audit ASC'
+	);
+
+	$par_url = [];
+	foreach ($enfants as $enfant) {
+		$par_url[trim((string) ($enfant['url_cible'] ?? ''))] = $enfant;
+	}
+
+	$liste = [];
+	foreach ($urls as $url) {
+		$enfant = $par_url[$url] ?? [];
+		$id_enfant = intval($enfant['id_audit'] ?? 0);
+		$resume = $id_enfant ? audit_opquast_resume_audit($id_enfant) : [];
+		$liste[] = array_merge($enfant, [
+			'url_cible' => $url,
+			'resume' => $resume,
+			'url_ouvrir' => $id_enfant ? generer_url_public('audit_opquast_audit', 'id_audit=' . $id_enfant) : '',
+		]);
+	}
+
+	return $liste;
 }
 
 function audit_opquast_est_url_externe($valeur) {
@@ -282,6 +470,7 @@ function audit_opquast_appliquer_statut_famille($id_audit, $famille, $statut_ver
 function audit_opquast_resume_audit($id_audit) {
 	include_spip('base/abstract_sql');
 	$id_audit = intval($id_audit);
+	$audit = $id_audit ? audit_opquast_lire_audit($id_audit) : [];
 
 	$resume = [
 		'total_regles' => 0,
@@ -294,7 +483,31 @@ function audit_opquast_resume_audit($id_audit) {
 		'a_verifier' => 0,
 	];
 
-	if (!$id_audit) {
+	if (!$id_audit || !$audit) {
+		return $resume;
+	}
+
+	if (($audit['type_cible'] ?? '') === 'site') {
+		$enfants = audit_opquast_lister_audits_site_enfants($audit);
+
+		foreach ($enfants as $enfant) {
+			$resume_enfant = $enfant['resume'] ?? [];
+			$resume['total_regles'] += intval($resume_enfant['total_regles'] ?? 0);
+			$resume['traitees'] += intval($resume_enfant['traitees'] ?? 0);
+			$resume['conforme'] += intval($resume_enfant['conforme'] ?? 0);
+			$resume['non_conforme'] += intval($resume_enfant['non_conforme'] ?? 0);
+			$resume['non_applicable'] += intval($resume_enfant['non_applicable'] ?? 0);
+		}
+
+		$resume['a_verifier'] = max(0, $resume['total_regles'] - $resume['traitees']);
+		$resume['progression'] = $resume['total_regles']
+			? intval(round(($resume['traitees'] / $resume['total_regles']) * 100))
+			: 0;
+		$total_conformite = $resume['conforme'] + $resume['non_conforme'];
+		$resume['score_conformite'] = $total_conformite
+			? round(($resume['conforme'] / $total_conformite) * 100, 2)
+			: null;
+
 		return $resume;
 	}
 
@@ -518,6 +731,78 @@ function audit_opquast_lister_regles_mvp($id_audit) {
 }
 
 function audit_opquast_resume_familles($id_audit) {
+	$audit = audit_opquast_lire_audit($id_audit);
+
+	if (($audit['type_cible'] ?? '') === 'site') {
+		$familles = [];
+		$enfants = audit_opquast_lister_audits_site_enfants($audit);
+
+		foreach ($enfants as $enfant) {
+			$id_audit_enfant = intval($enfant['id_audit'] ?? 0);
+
+			if (!$id_audit_enfant) {
+				continue;
+			}
+
+			foreach (audit_opquast_resume_familles($id_audit_enfant) as $famille) {
+				$nom = $famille['famille'] ?? '';
+
+				if ($nom === '') {
+					continue;
+				}
+
+				if (!isset($familles[$nom])) {
+					$familles[$nom] = [
+						'famille' => $nom,
+						'total_regles' => 0,
+						'traitees' => 0,
+						'progression' => 0,
+						'score_conformite' => null,
+						'conforme' => 0,
+						'non_conforme' => 0,
+						'non_applicable' => 0,
+						'a_verifier' => 0,
+						'priorite' => 0,
+					];
+				}
+
+				$familles[$nom]['total_regles'] += intval($famille['total_regles'] ?? 0);
+				$familles[$nom]['traitees'] += intval($famille['traitees'] ?? 0);
+				$familles[$nom]['conforme'] += intval($famille['conforme'] ?? 0);
+				$familles[$nom]['non_conforme'] += intval($famille['non_conforme'] ?? 0);
+				$familles[$nom]['non_applicable'] += intval($famille['non_applicable'] ?? 0);
+				$familles[$nom]['a_verifier'] += intval($famille['a_verifier'] ?? 0);
+				$familles[$nom]['priorite'] += intval($famille['priorite'] ?? 0);
+			}
+		}
+
+		foreach ($familles as &$famille) {
+			$famille['progression'] = $famille['total_regles']
+				? intval(round(($famille['traitees'] / $famille['total_regles']) * 100))
+				: 0;
+			$total_conformite = $famille['conforme'] + $famille['non_conforme'];
+			$famille['score_conformite'] = $total_conformite
+				? round(($famille['conforme'] / $total_conformite) * 100, 2)
+				: null;
+		}
+		unset($famille);
+
+		uasort($familles, function ($a, $b) {
+			if ($a['priorite'] !== $b['priorite']) {
+				return $b['priorite'] <=> $a['priorite'];
+			}
+			if ($a['non_conforme'] !== $b['non_conforme']) {
+				return $b['non_conforme'] <=> $a['non_conforme'];
+			}
+			if ($a['a_verifier'] !== $b['a_verifier']) {
+				return $b['a_verifier'] <=> $a['a_verifier'];
+			}
+			return strcasecmp((string) $a['famille'], (string) $b['famille']);
+		});
+
+		return array_values($familles);
+	}
+
 	$regles = audit_opquast_lister_regles_audit($id_audit, ['tri' => 'priorite']);
 	$familles = [];
 
@@ -586,7 +871,7 @@ function audit_opquast_resume_familles($id_audit) {
 }
 
 function audit_opquast_synthese_decisionnelle($id_audit) {
-	$regles = audit_opquast_lister_regles_audit($id_audit, ['tri' => 'priorite']);
+	$audit = audit_opquast_lire_audit($id_audit);
 	$familles = audit_opquast_resume_familles($id_audit);
 	$synthese = [
 		'nb_non_conformes' => 0,
@@ -594,6 +879,63 @@ function audit_opquast_synthese_decisionnelle($id_audit) {
 		'familles_prioritaires' => array_slice($familles, 0, 3),
 		'regles_prioritaires' => [],
 	];
+
+	if (($audit['type_cible'] ?? '') === 'site') {
+		$regles_prioritaires = [];
+		$enfants = audit_opquast_lister_audits_site_enfants($audit);
+
+		foreach ($enfants as $enfant) {
+			$id_audit_enfant = intval($enfant['id_audit'] ?? 0);
+
+			if (!$id_audit_enfant) {
+				continue;
+			}
+
+			$regles = audit_opquast_lister_regles_audit($id_audit_enfant, ['tri' => 'priorite']);
+
+			foreach ($regles as $regle) {
+				if ($regle['statut_verification'] === 'non_conforme') {
+					$synthese['nb_non_conformes']++;
+				} elseif ($regle['statut_verification'] === 'a_verifier') {
+					$synthese['nb_a_verifier']++;
+				}
+
+				if (!in_array($regle['statut_verification'], ['non_conforme', 'a_verifier'], true)) {
+					continue;
+				}
+
+				$regle['id_audit_enfant'] = $id_audit_enfant;
+				$regle['url_cible'] = $enfant['url_cible'] ?? '';
+				$regle['url_ouvrir_audit'] = generer_url_public('audit_opquast_audit', 'id_audit=' . $id_audit_enfant);
+				$regle['url_ouvrir_navigation'] = generer_url_public('audit_opquast_navigation', 'id_audit=' . $id_audit_enfant . '&id_regle=' . intval($regle['id_regle'] ?? 0));
+				$regles_prioritaires[] = $regle;
+			}
+		}
+
+		usort($regles_prioritaires, function ($a, $b) {
+			$ordre = audit_opquast_statut_ordre($a['statut_verification'] ?? '') <=> audit_opquast_statut_ordre($b['statut_verification'] ?? '');
+
+			if ($ordre !== 0) {
+				return $ordre;
+			}
+
+			$url = strcasecmp((string) ($a['url_cible'] ?? ''), (string) ($b['url_cible'] ?? ''));
+			if ($url !== 0) {
+				return $url;
+			}
+
+			return intval($a['numero'] ?? 0) <=> intval($b['numero'] ?? 0);
+		});
+
+		$synthese['regles_prioritaires'] = array_slice($regles_prioritaires, 0, 5);
+		$top = $synthese['familles_prioritaires'][0] ?? [];
+		$synthese['famille_prioritaire_nom'] = $top['famille'] ?? '';
+		$synthese['famille_prioritaire_non_conforme'] = intval($top['non_conforme'] ?? 0);
+
+		return $synthese;
+	}
+
+	$regles = audit_opquast_lister_regles_audit($id_audit, ['tri' => 'priorite']);
 
 	foreach ($regles as $regle) {
 		if ($regle['statut_verification'] === 'non_conforme') {

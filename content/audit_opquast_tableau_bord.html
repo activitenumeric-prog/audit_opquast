@@ -4,6 +4,8 @@
 	#SET{resume,#ENV{id_audit}|audit_opquast_resume_audit}
 	#SET{familles_resume,#ENV{id_audit}|audit_opquast_resume_familles}
 	#SET{synthese,#ENV{id_audit}|audit_opquast_synthese_decisionnelle}
+	#SET{est_site,#GET{audit}|table_valeur{type_cible}|=={site}}
+	#SET{nb_urls_site,#GET{audit}|audit_opquast_compter_urls_site}
 
 	<div class="bloc audit-opquast-bloc audit-opquast-bloc--hero" id="parametres-audit">
 		<div class="audit-opquast-hero">
@@ -24,6 +26,9 @@
 					]
 					[(#GET{audit}|table_valeur{url_cible}|audit_opquast_est_url_externe|non)
 						<p class="audit-opquast-hero__url">[(#GET{audit}|table_valeur{url_cible})]</p>
+					]
+					[(#GET{est_site}|oui)
+						<p class="audit-opquast-hero__label"><:audit_opquast:label_urls_auditees:/>&nbsp;: [(#GET{nb_urls_site})]</p>
 					]
 				</div>
 			</div>
@@ -67,6 +72,12 @@
 				<strong class="audit-opquast-summary__value">[(#GET{resume}|table_valeur{a_verifier})]</strong>
 				<span class="audit-opquast-summary__label"><:audit_opquast:label_a_verifier:/></span>
 			</li>
+			[(#GET{est_site}|oui)
+				<li class="audit-opquast-summary__item">
+					<strong class="audit-opquast-summary__value">[(#GET{nb_urls_site})]</strong>
+					<span class="audit-opquast-summary__label"><:audit_opquast:label_urls_auditees:/></span>
+				</li>
+			]
 		</ul>
 		<div class="audit-opquast-hero__params">
 			[(#ENV{parametres_mode}|=={edit}|oui)
@@ -169,20 +180,29 @@
 			</div>
 			<div>
 				<h3><:audit_opquast:info_regles_prioritaires:/></h3>
-				<B_regles_prioritaires>
-					<ul class="audit-opquast-priority-list">
-						<BOUCLE_regles_prioritaires(DATA){source table, #GET{synthese}|table_valeur{regles_prioritaires}}>
-							<li>
-								<a
-									class="audit-opquast-rule-item__edit-link"
-									href="[(#ENV{id_audit}|audit_opquast_url_audit_prioritaire{#VALEUR{id_regle}})]#audit-opquast-navigation-region"
-									data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_prioritaire{#VALEUR{id_regle}})]"
-								>#VALEUR{numero}. #VALEUR{titre}</a>
-								<span>#VALEUR{famille}</span>
-								<span>[(#VALEUR{statut_verification}|audit_opquast_statuts_verification)]</span>
-							</li>
-						</BOUCLE_regles_prioritaires>
-					</ul>
+						<B_regles_prioritaires>
+							<ul class="audit-opquast-priority-list">
+								<BOUCLE_regles_prioritaires(DATA){source table, #GET{synthese}|table_valeur{regles_prioritaires}}>
+									<li>
+										[(#VALEUR{url_ouvrir_audit}|oui)
+											<a
+												class="audit-opquast-rule-item__edit-link"
+												href="#VALEUR{url_ouvrir_audit}#audit-opquast-navigation-region"
+											>#VALEUR{numero}. #VALEUR{titre}</a>
+										]
+										[(#VALEUR{url_ouvrir_audit}|non)
+											<a
+												class="audit-opquast-rule-item__edit-link"
+												href="[(#ENV{id_audit}|audit_opquast_url_audit_prioritaire{#VALEUR{id_regle}})]#audit-opquast-navigation-region"
+												data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_prioritaire{#VALEUR{id_regle}})]"
+											>#VALEUR{numero}. #VALEUR{titre}</a>
+										]
+										<span>#VALEUR{famille}</span>
+										[(#VALEUR{url_cible}|oui)<span>#VALEUR{url_cible}</span>]
+										<span>[(#VALEUR{statut_verification}|audit_opquast_statuts_verification)]</span>
+									</li>
+								</BOUCLE_regles_prioritaires>
+							</ul>
 				</B_regles_prioritaires>
 					<p><:audit_opquast:info_aucune_priorite_regle:/></p>
 				<//B_regles_prioritaires>
@@ -236,17 +256,21 @@
 							</li>
 						</ul>
 						<p class="audit-opquast-family-kpi__actions">
-							<a
-								class="audit-opquast-family-kpi__link"
-								href="[(#ENV{id_audit}|audit_opquast_url_audit_famille{#VALEUR{famille}})]#audit-opquast-resultats-region"
-								data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_resultats_famille{#VALEUR{famille}})]"
-							><:audit_opquast:lien_voir_regles_famille:/></a>
+							[(#GET{est_site}|non)
+								<a
+									class="audit-opquast-family-kpi__link"
+									href="[(#ENV{id_audit}|audit_opquast_url_audit_famille{#VALEUR{famille}})]#audit-opquast-resultats-region"
+									data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_resultats_famille{#VALEUR{famille}})]"
+								><:audit_opquast:lien_voir_regles_famille:/></a>
+							]
 						</p>
-						<div class="audit-opquast-family-kpi__bulk-form">
-							<div class="ajax">
-								#FORMULAIRE_APPLIQUER_STATUT_FAMILLE_AUDIT_OPQUAST{#ENV{id_audit},#VALEUR{famille}}
+						[(#GET{est_site}|non)
+							<div class="audit-opquast-family-kpi__bulk-form">
+								<div class="ajax">
+									#FORMULAIRE_APPLIQUER_STATUT_FAMILLE_AUDIT_OPQUAST{#ENV{id_audit},#VALEUR{famille}}
+								</div>
 							</div>
-						</div>
+						]
 					</li>
 				</BOUCLE_familles_resume>
 			</ul>

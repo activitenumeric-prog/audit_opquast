@@ -1,7 +1,7 @@
 # Audit OpQuast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.27.0-blue)
+![Version](https://img.shields.io/badge/version-1.28.0-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.27.0`
+- Version courante : `1.28.0`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -29,6 +29,7 @@ Le plugin pose les bases d'un outil d'audit dans SPIP avec :
 Le MVP permet maintenant :
 
 - de creer un audit avec un titre, une cible et un statut
+- de creer un audit `Site` avec une liste d'URLs auditees
 - d'afficher la liste des audits existants
 - d'afficher pour chaque audit une progression et le nombre de regles deja traitees
 - d'afficher une carte de synthese d'audit plus lisible, alignee a gauche, avec 2 KPI visibles
@@ -40,6 +41,8 @@ Le MVP permet maintenant :
 - de saisir un resultat par regle avec statut, commentaire et preuve
 - de generer une restitution `DOCX` pour les audits `URL` via Python 3, en conservant le template Word et un `document.xml` natif
 - de generer une restitution `PDF` pour les audits `URL` via Python 3 et `reportlab`
+- d'agreger les KPI d'un audit `Site` a partir de ses audits `URL` enfants
+- d'ouvrir chaque URL d'un audit `Site` dans le parcours de verification `URL` deja stabilise
 
 ## Configuration DOCX / PDF
 
@@ -76,6 +79,20 @@ La bibliotheque Python peut rester embarquee dans le plugin dans :
 
 Le wrapper injecte automatiquement `PYTHONPATH` vers ce dossier s'il existe.
 Le generateur PDF n'utilise plus `numpy` ni `matplotlib`, ce qui le rend plus portable sur les hebergements mutualises.
+
+## Type de cible : Site
+
+Le premier MVP `Site` repose sur une logique simple :
+
+- l'audit parent `Site` stocke une liste d'URLs
+- chaque URL cree ou reutilise un audit enfant de type `URL`
+- le tableau de bord du site agrege les KPI des audits enfants
+- la zone de resultats du site liste directement les URLs auditees et permet d'ouvrir chaque audit enfant
+
+Dans ce premier lot :
+
+- la saisie detaillee des regles reste portee par les audits enfants `URL`
+- les exports et restitutions restent limites au perimetre `URL`
 - de suivre un resume plus lisible de l'avancement global et par famille
 - de piloter l'audit avec une synthese decisionnelle des non-conformites et familles prioritaires
 - de trier les regles par priorite d'action, numero, famille ou statut

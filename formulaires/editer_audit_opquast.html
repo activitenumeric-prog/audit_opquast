@@ -30,6 +30,13 @@
 					<input type="text" class="text" name="url_cible" id="url_cible" value="#ENV{url_cible}" />
 				</div>
 
+				<div class="editer editer_urls_site audit-opquast-audit-form__field audit-opquast-audit-form__field--full[ (#ENV**{erreurs}|table_valeur{urls_site}|oui)erreur]">
+					<label for="urls_site"><:audit_opquast:champ_urls_site_label:/></label>
+					<p class="explication"><:audit_opquast:explication_urls_site:/></p>
+					[<span class="erreur_message">(#ENV**{erreurs}|table_valeur{urls_site})</span>]
+					<textarea name="urls_site" id="urls_site" class="textarea" rows="6">#ENV{urls_site}</textarea>
+				</div>
+
 				<div class="editer editer_type_cible audit-opquast-audit-form__field">
 					<label for="type_cible"><:audit_opquast:champ_type_cible_label:/></label>
 					<select name="type_cible" id="type_cible">
