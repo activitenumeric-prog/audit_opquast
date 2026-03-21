@@ -1,0 +1,8 @@
+<header class="clearfix header" role="banner">
+	[(#ENV{home,'non'}|=={oui}|?{
+	<h1 class="spip_logo_site">[(#LOGO_SITE_SPIP|image_reduire{224,96})][(#ENV{titre_entete}|sinon{#NOM_SITE_SPIP})]</h1>
+	,
+	<strong class="h1 spip_logo_site"><a rel="start home" href="#URL_SITE_SPIP/" title="<:accueil_site:>">[(#LOGO_SITE_SPIP
+            |image_reduire{224,96})][(#ENV{titre_entete}|sinon{#NOM_SITE_SPIP})]</a></strong>
+	})][<p id="slogan">(#ENV{slogan_entete}|sinon{#SLOGAN_SITE_SPIP})</p>]
+</header>

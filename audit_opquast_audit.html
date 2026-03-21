@@ -1,6 +1,6 @@
 [(#REM) Page publique racine pour le detail d'un audit]
-<INCLURE{fond=inclure/head, env, home=no, titrepage=<:audit_opquast:titre_page_detail_audit:/>, meta_description=<:audit_opquast:audit_opquast_description:/>, type-page=page, composition=audit_opquast_audit} />
-<INCLURE{fond=inclure/header, home=no, env} />
+<INCLURE{fond=inc/head, env, home=no, titrepage=<:audit_opquast:titre_page_detail_audit:/>, meta_description=<:audit_opquast:audit_opquast_description:/>, type-page=page, composition=audit_opquast_audit} />
+<INCLURE{fond=inc/header, home=no, env, titre_entete=<:audit_opquast:audit_opquast_titre:/>, slogan_entete=<:audit_opquast:audit_opquast_description:/>} />
 
 <main role="main" id="contenu">
 	<div class="fr-container">
@@ -8,4 +8,4 @@
 	</div>
 </main>
 
-<INCLURE{fond=inclure/footer, self=#SELF, env, home=no} />
+<INCLURE{fond=inc/footer, self=#SELF, env, home=no} />

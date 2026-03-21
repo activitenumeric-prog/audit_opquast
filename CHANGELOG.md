@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.5 - 2026-03-21
+
+- remplacement du `h1` de la page liste par `Page des audits`
+- remplacement de l'introduction de la page liste par un texte d'action plus explicite
+
+## 1.11.4 - 2026-03-21
+
+- affichage du titre et du slogan du plugin dans le header des pages publiques `audit_opquast`
+- alignement de la page liste sur les inclusions `inc/` du plugin pour un rendu cohérent avec la page detail
+
 ## 1.11.3 - 2026-03-21
 
 - ajout du titre de l'audit dans le `h1` de la page detail
