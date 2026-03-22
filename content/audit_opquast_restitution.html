@@ -3,7 +3,7 @@
 [(#GET{audit}|oui)
 	#SET{mode,#ENV{restitution_mode}|sinon{compact}}
 	#SET{pdf_disponible,#GET{audit}|table_valeur{type_cible}|in_array{#LISTE{url,site}}}
-	#SET{docx_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
+	#SET{docx_disponible,#GET{audit}|table_valeur{type_cible}|in_array{#LISTE{url,site}}}
 	[(#GET{mode}|=={edit}|oui)
 		<div class="audit-opquast-export audit-opquast-export--panel audit-opquast-hero-action-panel">
 			<div class="audit-opquast-export__head">
@@ -34,7 +34,7 @@
 							<input type="radio" name="format_restitution" value="docx" disabled="disabled" />
 							<span class="audit-opquast-export-option__content">
 								<strong>DOCX</strong>
-								<span><:audit_opquast:info_restitution_docx_url_seulement:/></span>
+								<span><:audit_opquast:info_restitution_docx_url_site_seulement:/></span>
 							</span>
 						</label>
 					]

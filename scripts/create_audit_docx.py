@@ -133,6 +133,35 @@ def build_family_summary(data):
     return families
 
 
+def build_site_context(data):
+    urls = {}
+    order = []
+    for row in data:
+        url = row["url"]
+        if url not in urls:
+            urls[url] = []
+            order.append(url)
+        urls[url].append(row)
+
+    url_entries = []
+    for url in order:
+        rows = urls[url]
+        url_entries.append(
+            {
+                "url": url,
+                "rows": rows,
+                "summary": summarize(rows),
+                "family_summary": build_family_summary(rows),
+            }
+        )
+
+    return {
+        "summary": summarize(data),
+        "family_summary": build_family_summary(data),
+        "urls": url_entries,
+    }
+
+
 def format_score(value):
     if value is None:
         return "--"
@@ -762,6 +791,94 @@ def build_body(context):
     return "".join(parts)
 
 
+def build_site_body(context):
+    row = context["row"]
+    site = context["site"]
+    summary = site["summary"]
+    urls = site["urls"]
+
+    widths = [2200, 1400, 1400, 1400, 1400, 1798]
+    compare_rows = [[
+        cell(paragraph("URL", align="center", bold=True, size=16), widths[0], fill="EEF4F8", border="D5D8DC"),
+        cell(paragraph("Conforme", align="center", bold=True, size=16), widths[1], fill="EEF4F8", border="D5D8DC"),
+        cell(paragraph("Non conforme", align="center", bold=True, size=16), widths[2], fill="EEF4F8", border="D5D8DC"),
+        cell(paragraph("A verifier", align="center", bold=True, size=16), widths[3], fill="EEF4F8", border="D5D8DC"),
+        cell(paragraph("N/A", align="center", bold=True, size=16), widths[4], fill="EEF4F8", border="D5D8DC"),
+        cell(paragraph("Score", align="center", bold=True, size=16), widths[5], fill="EEF4F8", border="D5D8DC"),
+    ]]
+
+    for entry in urls:
+        counts = entry["summary"]["counts"]
+        compare_rows.append([
+            cell(paragraph(strip_scheme(entry["url"]), size=16), widths[0], border="D5D8DC"),
+            cell(paragraph(str(counts["Conforme"]), align="center", size=16), widths[1], border="D5D8DC"),
+            cell(paragraph(str(counts["Non conforme"]), align="center", size=16), widths[2], border="D5D8DC"),
+            cell(paragraph(str(counts["A verifier"]), align="center", size=16), widths[3], border="D5D8DC"),
+            cell(paragraph(str(counts["Non applicable"]), align="center", size=16), widths[4], border="D5D8DC"),
+            cell(paragraph(format_score(entry["summary"]["score"]), align="center", size=16), widths[5], border="D5D8DC"),
+        ])
+
+    parts = [
+        build_cover(summary, row, context["date_long"]),
+        page_break(),
+        build_toc(),
+        page_break(),
+        section_title("1. Contexte et objectifs de l'audit"),
+        paragraph(
+            "Cet audit de type Site consolide plusieurs URLs auditees individuellement. Chaque URL conserve ses 245 regles, ses propres statuts et ses propres preuves.",
+            size=18,
+            after=100,
+        ),
+        paragraph(
+            f"{len(urls)} URL(s) auditees sont prises en compte dans cette restitution.",
+            size=18,
+            after=120,
+        ),
+        page_break(),
+        section_title("2. Methodologie"),
+        paragraph(
+            "Le detail des regles reste evalue page par page. Le score global du site est calcule sur l'ensemble des URLs auditees selon la formule : conformes / (conformes + non conformes).",
+            size=18,
+            after=100,
+        ),
+        build_methodology_section(row, summary, context["date_short"]),
+        page_break(),
+        section_title("3. Synthese des resultats"),
+        build_synthesis_section(summary),
+        page_break(),
+        section_title("4. Comparatif des URLs"),
+        paragraph(
+            "Le tableau ci-dessous compare les statuts et le score de conformite de chaque URL auditée.",
+            size=18,
+            after=70,
+        ),
+        table(compare_rows, widths, border="D5D8DC"),
+        page_break(),
+        section_title("5. Non-conformites et recommandations"),
+        build_non_conformities_section(context["data"]),
+        page_break(),
+        section_title("6. Plan d'action priorise"),
+        build_action_plan_section(context["data"]),
+        page_break(),
+        section_title("7. Recommandations generales"),
+        build_recommendations_section(summary),
+        page_break(),
+        section_title("8. Annexe - Detail par URL"),
+    ]
+
+    for entry in urls:
+        parts.append(paragraph(entry["url"], color="163A69", size=24, bold=True, after=40, line=320, keep_next=True))
+        parts.append(paragraph(
+            f"Score : {format_score(entry['summary']['score'])} - Regles traitees : {entry['summary']['treated']} / {entry['summary']['total']}",
+            size=18,
+            after=40,
+        ))
+        parts.append(build_annex_section(entry["rows"]))
+        parts.append(paragraph("", after=80))
+
+    return "".join(parts)
+
+
 def read_docx_entries(path):
     with zipfile.ZipFile(path, "r") as archive:
         return {entry.filename: archive.read(entry.filename) for entry in archive.infolist()}
@@ -798,17 +915,34 @@ def main(csv_path, docx_path):
 
     data = parse_rows(rows)
     now = datetime.now()
+    site = build_site_context(data) if data and (data[0].get("type", "").lower() == "site") else None
     context = {
         "data": data,
         "row": data[0],
         "summary": summarize(data),
         "family_summary": build_family_summary(data),
+        "site": site,
         "date_long": format_date_long(now),
         "date_short": now.strftime("%d/%m/%Y"),
         "date_iso": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
 
-    write_docx(docx_path, context)
+    if site:
+        entries = read_docx_entries(TEMPLATE_DOCX)
+        entries["word/document.xml"] = build_document_xml(entries["word/document.xml"], build_site_body(context))
+        if "word/header1.xml" in entries:
+            entries["word/header1.xml"] = update_header(entries["word/header1.xml"], context["row"])
+        if "word/footer1.xml" in entries:
+            entries["word/footer1.xml"] = update_footer(entries["word/footer1.xml"], context["row"], context["date_long"])
+        if "docProps/core.xml" in entries:
+            entries["docProps/core.xml"] = update_core(entries["docProps/core.xml"], context["row"], context["date_iso"])
+        entries.pop("word/afchunk.html", None)
+        with zipfile.ZipFile(docx_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            for name, content in entries.items():
+                archive.writestr(name, content)
+    else:
+        write_docx(docx_path, context)
+
     print(f"[Opquast DOCX] DOCX genere : {docx_path}")
     return 0
 
