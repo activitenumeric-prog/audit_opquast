@@ -19,6 +19,7 @@ function action_audit_opquast_enregistrer_resultat_dist($arg = null) {
 	$parts = explode('-', $arg, 2);
 	$id_audit = intval($parts[0] ?? 0);
 	$id_regle = intval($parts[1] ?? 0);
+	$id_audit_site = intval(_request('id_audit_site'));
 
 	if (
 		!$id_audit
@@ -65,7 +66,9 @@ function action_audit_opquast_enregistrer_resultat_dist($arg = null) {
 	}
 
 	$id_regle_redirect = audit_opquast_regle_redirect_apres_resultat($id_audit, $id_regle, $filtres);
-	$redirect = audit_opquast_url_audit_filtre($id_audit, $id_regle_redirect, $filtres);
+	$redirect = $id_audit_site
+		? audit_opquast_url_site($id_audit_site, $id_audit, $id_regle_redirect, $filtres)
+		: audit_opquast_url_audit_filtre($id_audit, $id_regle_redirect, $filtres);
 
 	if (
 		$id_regle_redirect === $id_regle

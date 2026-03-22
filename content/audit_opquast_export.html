@@ -2,7 +2,7 @@
 #SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
 [(#GET{audit}|oui)
 	#SET{mode,#ENV{export_mode}|sinon{compact}}
-	#SET{csv_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
+	#SET{csv_disponible,#GET{audit}|table_valeur{type_cible}|in_array{#LISTE{url,site}}}
 	#SET{excel_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
 	[(#GET{mode}|=={edit}|oui)
 		<div class="audit-opquast-export audit-opquast-export--panel audit-opquast-hero-action-panel">

@@ -6,11 +6,12 @@
 	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
 	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
 
-	<form method="post" action="#ENV{action}" data-ajax-save-url="[(#ENV{id_audit}|audit_opquast_url_enregistrer_resultat{#ENV{id_regle}})]">
+	<form method="post" action="#ENV{action}" data-ajax-save-url="[(#ENV{id_audit}|audit_opquast_url_enregistrer_resultat{#ENV{id_regle},#ENV{id_audit_site}})]">
 		<div class="audit-opquast-resultat-form__body">
 			#ACTION_FORMULAIRE
 			<input type="hidden" name="id_audit" value="#ENV{id_audit}" />
 			<input type="hidden" name="id_regle" value="#ENV{id_regle}" />
+			[(#ENV{id_audit_site}|oui)<input type="hidden" name="id_audit_site" value="#ENV{id_audit_site}" />]
 			<input type="hidden" name="q" value="#ENV{q}" />
 			<input type="hidden" name="famille" value="#ENV{famille}" />
 			<input type="hidden" name="statut_verification_filtre" value="#ENV{statut_verification_filtre}" />

@@ -1,11 +1,21 @@
 [(#REM) Bloc de tete rechargeable en AJAX apres changement de statut]
 #SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
 [(#GET{audit}|oui)
-	#SET{resume,#ENV{id_audit}|audit_opquast_resume_audit}
-	#SET{familles_resume,#ENV{id_audit}|audit_opquast_resume_familles}
-	#SET{synthese,#ENV{id_audit}|audit_opquast_synthese_decisionnelle}
 	#SET{est_site,#GET{audit}|table_valeur{type_cible}|=={site}}
 	#SET{nb_urls_site,#GET{audit}|audit_opquast_compter_urls_site}
+	#SET{audits_site,#ENV{id_audit}|audit_opquast_lister_audits_site_enfants}
+	#SET{id_audit_actif_site,#ENV{id_audit}|audit_opquast_site_id_audit_actif{#ENV{id_audit_url}}}
+	#SET{resume_site,#ENV{id_audit}|audit_opquast_resume_audit}
+	#SET{resume,#GET{resume_site}}
+	#SET{familles_resume,#ENV{id_audit}|audit_opquast_resume_familles}
+	#SET{synthese,#ENV{id_audit}|audit_opquast_synthese_decisionnelle}
+	#SET{score_conformite_affiche,#GET{resume}|table_valeur{score_conformite}}
+	[(#GET{est_site}|oui)
+		#SET{resume,#GET{id_audit_actif_site}|audit_opquast_resume_audit}
+		#SET{familles_resume,#GET{id_audit_actif_site}|audit_opquast_resume_familles}
+		#SET{synthese,#GET{id_audit_actif_site}|audit_opquast_synthese_decisionnelle}
+		#SET{score_conformite_affiche,#GET{resume_site}|table_valeur{score_conformite}}
+	]
 
 	<div class="bloc audit-opquast-bloc audit-opquast-bloc--hero" id="parametres-audit">
 		<div class="audit-opquast-hero">
@@ -20,15 +30,37 @@
 					</p>
 				</div>
 				<div class="audit-opquast-hero__target">
-					<p class="audit-opquast-hero__label"><:audit_opquast:champ_url_cible_label:/></p>
-					[(#GET{audit}|table_valeur{url_cible}|audit_opquast_est_url_externe|oui)
-						<p class="audit-opquast-hero__url"><a href="[(#GET{audit}|table_valeur{url_cible})]" target="_blank" rel="noopener">[(#GET{audit}|table_valeur{url_cible})]</a></p>
-					]
-					[(#GET{audit}|table_valeur{url_cible}|audit_opquast_est_url_externe|non)
-						<p class="audit-opquast-hero__url">[(#GET{audit}|table_valeur{url_cible})]</p>
-					]
 					[(#GET{est_site}|oui)
-						<p class="audit-opquast-hero__label"><:audit_opquast:label_urls_auditees:/>&nbsp;: [(#GET{nb_urls_site})]</p>
+						<p class="audit-opquast-hero__label"><:audit_opquast:champ_urls_site_label:/></p>
+						<B_audits_site_hero>
+							<form method="get" action="[(#ENV{id_audit}|audit_opquast_url_site)]" class="audit-opquast-hero__select-form" data-audit-opquast-site-select-form="oui">
+								<input type="hidden" name="id_audit" value="#ENV{id_audit}" />
+								[(#ENV{id_regle}|oui)<input type="hidden" name="id_regle" value="#ENV{id_regle}" />]
+								[(#ENV{q}|oui)<input type="hidden" name="q" value="#ENV{q}" />]
+								[(#ENV{famille}|oui)<input type="hidden" name="famille" value="#ENV{famille}" />]
+								[(#ENV{statut_verification}|oui)<input type="hidden" name="statut_verification" value="#ENV{statut_verification}" />]
+								[(#ENV{tri}|oui)<input type="hidden" name="tri" value="#ENV{tri}" />]
+								<p class="audit-opquast-hero__select-wrap">
+									<select class="audit-opquast-hero__select" name="id_audit_url" aria-label="<:audit_opquast:champ_urls_site_label:/>" data-audit-opquast-site-select="oui">
+										<BOUCLE_audits_site_hero(DATA){source table, #GET{audits_site}}>
+											<option value="#VALEUR{id_audit}"[(#VALEUR{id_audit}|=={#GET{id_audit_actif_site}}|oui) selected="selected"]>#VALEUR{url_cible}</option>
+										</BOUCLE_audits_site_hero>
+									</select>
+								</p>
+							</form>
+						</B_audits_site_hero>
+							<p class="audit-opquast-hero__url">[(#GET{audit}|table_valeur{url_cible})]</p>
+						<//B_audits_site_hero>
+						<p class="audit-opquast-hero__meta"><:audit_opquast:label_urls_auditees:/>&nbsp;: [(#GET{nb_urls_site})]</p>
+					]
+					[(#GET{est_site}|non)
+						<p class="audit-opquast-hero__label"><:audit_opquast:champ_url_cible_label:/></p>
+						[(#GET{audit}|table_valeur{url_cible}|audit_opquast_est_url_externe|oui)
+							<p class="audit-opquast-hero__url"><a href="[(#GET{audit}|table_valeur{url_cible})]" target="_blank" rel="noopener">[(#GET{audit}|table_valeur{url_cible})]</a></p>
+						]
+						[(#GET{audit}|table_valeur{url_cible}|audit_opquast_est_url_externe|non)
+							<p class="audit-opquast-hero__url">[(#GET{audit}|table_valeur{url_cible})]</p>
+						]
 					]
 				</div>
 			</div>
@@ -38,8 +70,8 @@
 					<span class="audit-opquast-hero__kpi-label"><:audit_opquast:label_regles_traitees:/></span>
 				</div>
 				<div class="audit-opquast-hero__kpi audit-opquast-hero__kpi--progress">
-					<strong class="audit-opquast-hero__kpi-value">[(#GET{resume}|table_valeur{score_conformite}|audit_opquast_formater_score)][(#GET{resume}|table_valeur{score_conformite}|oui)%]</strong>
-					<span class="audit-opquast-hero__kpi-label"><:audit_opquast:label_score_conformite:/></span>
+					<strong class="audit-opquast-hero__kpi-value">[(#GET{score_conformite_affiche}|audit_opquast_formater_score)][(#GET{score_conformite_affiche}|oui)%]</strong>
+					<span class="audit-opquast-hero__kpi-label">[(#GET{est_site}|?{<:audit_opquast:label_score_global:/>,<:audit_opquast:label_score_conformite:/>})]</span>
 				</div>
 			</div>
 		</div>
@@ -188,14 +220,24 @@
 											<a
 												class="audit-opquast-rule-item__edit-link"
 												href="#VALEUR{url_ouvrir_audit}#audit-opquast-navigation-region"
+												[(#VALEUR{url_ouvrir_navigation}|oui)data-ajax-href="#VALEUR{url_ouvrir_navigation}"]
 											>#VALEUR{numero}. #VALEUR{titre}</a>
 										]
 										[(#VALEUR{url_ouvrir_audit}|non)
-											<a
-												class="audit-opquast-rule-item__edit-link"
-												href="[(#ENV{id_audit}|audit_opquast_url_audit_prioritaire{#VALEUR{id_regle}})]#audit-opquast-navigation-region"
-												data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_prioritaire{#VALEUR{id_regle}})]"
-											>#VALEUR{numero}. #VALEUR{titre}</a>
+											[(#GET{est_site}|oui)
+												<a
+													class="audit-opquast-rule-item__edit-link"
+													href="[(#ENV{id_audit}|audit_opquast_url_site{#GET{id_audit_actif_site},#VALEUR{id_regle}})]#audit-opquast-navigation-region"
+													data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_site_navigation_filtre{#GET{id_audit_actif_site},#VALEUR{id_regle}})]"
+												>#VALEUR{numero}. #VALEUR{titre}</a>
+											]
+											[(#GET{est_site}|non)
+												<a
+													class="audit-opquast-rule-item__edit-link"
+													href="[(#ENV{id_audit}|audit_opquast_url_audit_prioritaire{#VALEUR{id_regle}})]#audit-opquast-navigation-region"
+													data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_prioritaire{#VALEUR{id_regle}})]"
+												>#VALEUR{numero}. #VALEUR{titre}</a>
+											]
 										]
 										<span>#VALEUR{famille}</span>
 										[(#VALEUR{url_cible}|oui)<span>#VALEUR{url_cible}</span>]
@@ -256,6 +298,13 @@
 							</li>
 						</ul>
 						<p class="audit-opquast-family-kpi__actions">
+							[(#GET{est_site}|oui)
+								<a
+									class="audit-opquast-family-kpi__link"
+									href="[(#ENV{id_audit}|audit_opquast_url_site_famille{#GET{id_audit_actif_site},#VALEUR{famille}})]#audit-opquast-resultats-region"
+									data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_site_resultats_famille{#GET{id_audit_actif_site},#VALEUR{famille}})]"
+								><:audit_opquast:lien_voir_regles_famille:/></a>
+							]
 							[(#GET{est_site}|non)
 								<a
 									class="audit-opquast-family-kpi__link"
@@ -264,6 +313,13 @@
 								><:audit_opquast:lien_voir_regles_famille:/></a>
 							]
 						</p>
+						[(#GET{est_site}|oui)
+							<div class="audit-opquast-family-kpi__bulk-form">
+								<div class="ajax">
+									#FORMULAIRE_APPLIQUER_STATUT_FAMILLE_AUDIT_OPQUAST{#GET{id_audit_actif_site},#VALEUR{famille},#ENV{id_audit}}
+								</div>
+							</div>
+						]
 						[(#GET{est_site}|non)
 							<div class="audit-opquast-family-kpi__bulk-form">
 								<div class="ajax">

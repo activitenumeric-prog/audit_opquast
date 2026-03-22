@@ -3,6 +3,7 @@
 		<div>
 			#ACTION_FORMULAIRE
 			<input type="hidden" name="id_audit" value="#ENV{id_audit}" />
+			[(#ENV{id_audit_site}|oui)<input type="hidden" name="id_audit_site" value="#ENV{id_audit_site}" />]
 			<input type="hidden" name="famille_cible" value="#ENV{famille_cible}" />
 			<input type="hidden" name="id_regle" value="#ENV{id_regle}" />
 			<input type="hidden" name="q" value="#ENV{q}" />

@@ -176,6 +176,34 @@
 	word-break: break-word;
 }
 
+.audit-opquast-hero__select-wrap {
+	margin: 0.45rem 0 0;
+}
+
+.audit-opquast-hero__select-form {
+	margin: 0;
+}
+
+.audit-opquast .audit-opquast-hero__select {
+	width: 100%;
+	max-width: 42rem;
+	min-height: 2.85rem;
+	padding: 0.65rem 0.85rem;
+	border: 1px solid #d7cdc0;
+	border-radius: 0.8rem;
+	background: #fff;
+	font-size: 1rem;
+	line-height: 1.4;
+}
+
+.audit-opquast-hero__meta {
+	margin: 0.7rem 0 0;
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: #4b5c4f;
+	text-transform: uppercase;
+}
+
 .audit-opquast-hero__stats {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));

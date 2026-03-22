@@ -4,7 +4,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
-function formulaires_editer_audit_opquast_resultat_charger_dist($id_audit, $id_regle) {
+function formulaires_editer_audit_opquast_resultat_charger_dist($id_audit, $id_regle, $id_audit_site = 0) {
 	include_spip('inc/autoriser');
 	include_spip('audit_opquast_fonctions');
 
@@ -26,6 +26,7 @@ function formulaires_editer_audit_opquast_resultat_charger_dist($id_audit, $id_r
 	return [
 		'id_audit' => $id_audit,
 		'id_regle' => $id_regle,
+		'id_audit_site' => intval($id_audit_site),
 		'statut_verification' => $resultat['statut_verification'] ?? 'a_verifier',
 		'commentaire' => $resultat['commentaire'] ?? '',
 		'preuve' => $resultat['preuve'] ?? '',
@@ -40,7 +41,7 @@ function formulaires_editer_audit_opquast_resultat_charger_dist($id_audit, $id_r
 	];
 }
 
-function formulaires_editer_audit_opquast_resultat_verifier_dist($id_audit, $id_regle) {
+function formulaires_editer_audit_opquast_resultat_verifier_dist($id_audit, $id_regle, $id_audit_site = 0) {
 	$erreurs = [];
 
 	if (!trim((string) _request('statut_verification'))) {
@@ -50,7 +51,7 @@ function formulaires_editer_audit_opquast_resultat_verifier_dist($id_audit, $id_
 	return $erreurs;
 }
 
-function formulaires_editer_audit_opquast_resultat_traiter_dist($id_audit, $id_regle) {
+function formulaires_editer_audit_opquast_resultat_traiter_dist($id_audit, $id_regle, $id_audit_site = 0) {
 	include_spip('inc/autoriser');
 	include_spip('inc/utils');
 	include_spip('base/abstract_sql');
@@ -90,6 +91,8 @@ function formulaires_editer_audit_opquast_resultat_traiter_dist($id_audit, $id_r
 
 	return [
 		'message_ok' => _T('audit_opquast:message_resultat_enregistre'),
-		'redirect' => audit_opquast_url_audit_filtre($id_audit, $id_regle_redirect),
+		'redirect' => intval($id_audit_site)
+			? audit_opquast_url_site(intval($id_audit_site), $id_audit, $id_regle_redirect)
+			: audit_opquast_url_audit_filtre($id_audit, $id_regle_redirect),
 	];
 }

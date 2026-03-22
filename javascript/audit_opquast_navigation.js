@@ -289,7 +289,7 @@
 
 			var page = new URL(window.location.href).searchParams.get('page');
 
-			if (page && page !== 'audit_opquast_audit') {
+			if (page && page !== 'audit_opquast_audit' && page !== 'audit_opquast_site') {
 				return;
 			}
 
@@ -467,6 +467,53 @@
 		});
 	}
 
+	function initSiteAuditSelector(root) {
+		if (!root) {
+			return;
+		}
+
+		root.querySelectorAll('[data-audit-opquast-site-select]').forEach(function (select) {
+			if (select.dataset.auditOpquastSiteSelectInit === 'oui') {
+				return;
+			}
+
+			select.dataset.auditOpquastSiteSelectInit = 'oui';
+			select.addEventListener('change', function () {
+				var form = select.form || select.closest('form');
+				var currentUrl = new URL(window.location.href);
+				var currentPage = currentUrl.searchParams.get('page');
+
+				if (!form) {
+					return;
+				}
+
+				if (!currentPage || currentPage === 'audit_opquast_site') {
+					var auditIdField = form.querySelector('input[name="id_audit"]');
+					var ruleIdField = form.querySelector('input[name="id_regle"]');
+
+					if (auditIdField && auditIdField.value) {
+						currentUrl.searchParams.set('id_audit', auditIdField.value);
+					}
+
+					if (select.value) {
+						currentUrl.searchParams.set('id_audit_url', select.value);
+					} else {
+						currentUrl.searchParams.delete('id_audit_url');
+					}
+
+					if (ruleIdField && ruleIdField.value) {
+						currentUrl.searchParams.set('id_regle', ruleIdField.value);
+					}
+
+					window.location.assign(preserveCurrentDebugParams(currentUrl.toString()));
+					return;
+				}
+
+				form.submit();
+			});
+		});
+	}
+
 	function initExportRegion(region) {
 		if (!region) {
 			return;
@@ -583,7 +630,8 @@
 			}
 
 			var ajaxUrl = preserveCurrentDebugParams(buildFormUrl(form, region.dataset.resultsPage || 'audit_opquast_resultats'));
-			var fullUrl = preserveCurrentDebugParams(buildFormUrl(form, 'audit_opquast_audit'));
+			var detailPage = region.dataset.detailPage || new URL(window.location.href).searchParams.get('page') || 'audit_opquast_audit';
+			var fullUrl = preserveCurrentDebugParams(buildFormUrl(form, detailPage));
 
 			event.preventDefault();
 			navigate(region, ajaxUrl, fullUrl, 'push');
@@ -632,6 +680,7 @@
 		initRestitutionRegion(root.querySelector('[data-audit-opquast-restitution-region]'));
 		initResultsRegion(root.querySelector('[data-audit-opquast-results-region]'));
 		initAuditForm(root);
+		initSiteAuditSelector(root);
 	}
 
 	document.addEventListener('DOMContentLoaded', function () {

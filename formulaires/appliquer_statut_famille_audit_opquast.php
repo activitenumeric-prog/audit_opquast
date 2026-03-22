@@ -4,7 +4,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
-function formulaires_appliquer_statut_famille_audit_opquast_charger_dist($id_audit, $famille) {
+function formulaires_appliquer_statut_famille_audit_opquast_charger_dist($id_audit, $famille, $id_audit_site = 0) {
 	include_spip('inc/autoriser');
 
 	if (!autoriser('modifier', 'audit_opquast')) {
@@ -13,6 +13,7 @@ function formulaires_appliquer_statut_famille_audit_opquast_charger_dist($id_aud
 
 	return [
 		'id_audit' => intval($id_audit),
+		'id_audit_site' => intval($id_audit_site),
 		'famille_cible' => trim((string) $famille),
 		'id_regle' => intval(_request('id_regle')),
 		'q' => trim((string) _request('q')),
@@ -22,7 +23,7 @@ function formulaires_appliquer_statut_famille_audit_opquast_charger_dist($id_aud
 	];
 }
 
-function formulaires_appliquer_statut_famille_audit_opquast_verifier_dist($id_audit, $famille) {
+function formulaires_appliquer_statut_famille_audit_opquast_verifier_dist($id_audit, $famille, $id_audit_site = 0) {
 	$erreurs = [];
 	$statut_cible = trim((string) _request('statut_cible'));
 
@@ -33,7 +34,7 @@ function formulaires_appliquer_statut_famille_audit_opquast_verifier_dist($id_au
 	return $erreurs;
 }
 
-function formulaires_appliquer_statut_famille_audit_opquast_traiter_dist($id_audit, $famille) {
+function formulaires_appliquer_statut_famille_audit_opquast_traiter_dist($id_audit, $famille, $id_audit_site = 0) {
 	include_spip('inc/autoriser');
 	include_spip('audit_opquast_fonctions');
 
@@ -47,7 +48,10 @@ function formulaires_appliquer_statut_famille_audit_opquast_traiter_dist($id_aud
 	$id_auteur = intval($GLOBALS['visiteur_session']['id_auteur'] ?? 0);
 	$nb = audit_opquast_appliquer_statut_famille($id_audit, $famille, $statut_cible, $id_auteur);
 	$id_regle = intval(_request('id_regle'));
-	$redirect = audit_opquast_url_audit_filtre($id_audit, $id_regle) . '#resume-familles';
+	$id_audit_site = intval($id_audit_site ?: _request('id_audit_site'));
+	$redirect = $id_audit_site
+		? audit_opquast_url_site($id_audit_site, $id_audit, $id_regle, ['famille' => $famille]) . '#resume-familles'
+		: audit_opquast_url_audit_filtre($id_audit, $id_regle, ['famille' => $famille]) . '#resume-familles';
 
 	return [
 		'message_ok' => _T(

@@ -1,6 +1,7 @@
 [(#REM) Bloc de navigation chargeable en AJAX]
 [(#ENV{id_regle}|oui)
 	#SET{navigation,#ENV{id_audit}|audit_opquast_navigation_regle{#ENV{id_regle}}}
+	#SET{est_site,#ENV{id_audit_site}|oui}
 	#SET{courante_id,#GET{navigation}|table_valeur{courante_id_regle}}
 	#SET{precedente_id,#GET{navigation}|table_valeur{precedente_id_regle}}
 	#SET{suivante_id,#GET{navigation}|table_valeur{suivante_id_regle}}
@@ -12,11 +13,20 @@
 	<div class="bloc audit-opquast-bloc">
 		<div class="audit-opquast-bloc__head">
 			<h2><:audit_opquast:info_navigation_regles:/></h2>
-			<a
-				class="audit-opquast-params__toggle audit-opquast-rule-nav__close"
-				href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre)]#audit-opquast-resultats-region"
-				data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_resultats)]"
-			><:audit_opquast:bouton_fermer:/>&nbsp;<span aria-hidden="true">×</span></a>
+			[(#GET{est_site}|oui)
+				<a
+					class="audit-opquast-params__toggle audit-opquast-rule-nav__close"
+					href="[(#ENV{id_audit_site}|audit_opquast_url_site{#ENV{id_audit}})]#audit-opquast-resultats-region"
+					data-ajax-href="[(#ENV{id_audit_site}|audit_opquast_url_site_resultats{#ENV{id_audit}})]"
+				><:audit_opquast:bouton_fermer:/>&nbsp;<span aria-hidden="true">&times;</span></a>
+			]
+			[(#GET{est_site}|non)
+				<a
+					class="audit-opquast-params__toggle audit-opquast-rule-nav__close"
+					href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre)]#audit-opquast-resultats-region"
+					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_resultats)]"
+				><:audit_opquast:bouton_fermer:/>&nbsp;<span aria-hidden="true">&times;</span></a>
+			]
 		</div>
 		<div class="audit-opquast-rule-nav">
 			<div class="audit-opquast-rule-nav__meta">
@@ -35,28 +45,50 @@
 				]
 			</div>
 			<div class="audit-opquast-rule-nav__actions">
-			[(#GET{precedente_id}|oui)
-				<a
-					class="audit-opquast-rule-nav__link"
-					href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#GET{precedente_id}})]"
-					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_filtre{#GET{precedente_id}})]"
-				>
-					&larr; <:audit_opquast:lien_regle_precedente:/>
-				</a>
-			]
-			[(#GET{suivante_id}|oui)
-				<a
-					class="audit-opquast-rule-nav__link"
-					href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#GET{suivante_id}})]"
-					data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_filtre{#GET{suivante_id}})]"
-				>
-					<:audit_opquast:lien_regle_suivante:/> &rarr;
-				</a>
-			]
+				[(#GET{precedente_id}|oui)
+					[(#GET{est_site}|oui)
+						<a
+							class="audit-opquast-rule-nav__link"
+							href="[(#ENV{id_audit_site}|audit_opquast_url_site{#ENV{id_audit},#GET{precedente_id}})]"
+							data-ajax-href="[(#ENV{id_audit_site}|audit_opquast_url_site_navigation_filtre{#ENV{id_audit},#GET{precedente_id}})]"
+						>
+							&larr; <:audit_opquast:lien_regle_precedente:/>
+						</a>
+					]
+					[(#GET{est_site}|non)
+						<a
+							class="audit-opquast-rule-nav__link"
+							href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#GET{precedente_id}})]"
+							data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_filtre{#GET{precedente_id}})]"
+						>
+							&larr; <:audit_opquast:lien_regle_precedente:/>
+						</a>
+					]
+				]
+				[(#GET{suivante_id}|oui)
+					[(#GET{est_site}|oui)
+						<a
+							class="audit-opquast-rule-nav__link"
+							href="[(#ENV{id_audit_site}|audit_opquast_url_site{#ENV{id_audit},#GET{suivante_id}})]"
+							data-ajax-href="[(#ENV{id_audit_site}|audit_opquast_url_site_navigation_filtre{#ENV{id_audit},#GET{suivante_id}})]"
+						>
+							<:audit_opquast:lien_regle_suivante:/> &rarr;
+						</a>
+					]
+					[(#GET{est_site}|non)
+						<a
+							class="audit-opquast-rule-nav__link"
+							href="[(#ENV{id_audit}|audit_opquast_url_audit_filtre{#GET{suivante_id}})]"
+							data-ajax-href="[(#ENV{id_audit}|audit_opquast_url_navigation_filtre{#GET{suivante_id}})]"
+						>
+							<:audit_opquast:lien_regle_suivante:/> &rarr;
+						</a>
+					]
+				]
 			</div>
 		</div>
 		<div class="ajax">
-			#FORMULAIRE_EDITER_AUDIT_OPQUAST_RESULTAT{#ENV{id_audit},#GET{courante_id}}
+			#FORMULAIRE_EDITER_AUDIT_OPQUAST_RESULTAT{#ENV{id_audit},#GET{courante_id},#ENV{id_audit_site}}
 		</div>
 	</div>
 ]

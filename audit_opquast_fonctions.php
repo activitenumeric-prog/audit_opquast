@@ -309,6 +309,32 @@ function audit_opquast_lister_audits_site_enfants($id_audit) {
 	return $liste;
 }
 
+function audit_opquast_site_audit_actif($id_audit_site, $id_audit_url = 0) {
+	$id_audit_url = intval($id_audit_url);
+	$enfants = audit_opquast_lister_audits_site_enfants($id_audit_site);
+	$premier = [];
+
+	foreach ($enfants as $enfant) {
+		$id_enfant = intval($enfant['id_audit'] ?? 0);
+
+		if (!$premier && $id_enfant) {
+			$premier = $enfant;
+		}
+
+		if ($id_enfant && $id_enfant === $id_audit_url) {
+			return $enfant;
+		}
+	}
+
+	return $premier ?: ($enfants[0] ?? []);
+}
+
+function audit_opquast_site_id_audit_actif($id_audit_site, $id_audit_url = 0) {
+	$audit = audit_opquast_site_audit_actif($id_audit_site, $id_audit_url);
+
+	return intval($audit['id_audit'] ?? 0);
+}
+
 function audit_opquast_est_url_externe($valeur) {
 	$valeur = trim((string) $valeur);
 
@@ -366,11 +392,10 @@ function audit_opquast_nom_fichier_export_audit($audit, $format = 'csv') {
 	return 'audit-opquast-' . $titre . '.' . $format;
 }
 
-function audit_opquast_donnees_export_audit($id_audit) {
+function audit_opquast_donnees_export_audit_url($audit, $audit_parent = []) {
 	include_spip('base/abstract_sql');
 
-	$id_audit = intval($id_audit);
-	$audit = audit_opquast_lire_audit($id_audit);
+	$id_audit = intval($audit['id_audit'] ?? 0);
 
 	if (!$id_audit || !$audit) {
 		return [];
@@ -385,18 +410,49 @@ function audit_opquast_donnees_export_audit($id_audit) {
 	);
 
 	$rows = audit_opquast_normaliser_regles($rows);
+	$audit_export = $audit_parent ?: $audit;
 
 	foreach ($rows as &$row) {
-		$row['audit_titre'] = $audit['titre'] ?? '';
+		$row['audit_titre'] = $audit_export['titre'] ?? '';
 		$row['url_cible'] = $audit['url_cible'] ?? '';
-		$row['type_cible'] = audit_opquast_types_cible($audit['type_cible'] ?? '');
-		$row['statut_audit'] = audit_opquast_statuts_audit($audit['statut'] ?? '');
+		$row['type_cible'] = audit_opquast_types_cible($audit_export['type_cible'] ?? '');
+		$row['statut_audit'] = audit_opquast_statuts_audit($audit_export['statut'] ?? '');
 		$row['statut_verification'] = audit_opquast_statuts_verification($row['statut_verification'] ?? 'a_verifier');
 		$row['preuve'] = trim((string) ($row['preuve'] ?? ''));
 	}
 	unset($row);
 
 	return $rows;
+}
+
+function audit_opquast_donnees_export_audit($id_audit) {
+	$id_audit = intval($id_audit);
+	$audit = audit_opquast_lire_audit($id_audit);
+
+	if (!$id_audit || !$audit) {
+		return [];
+	}
+
+	if (($audit['type_cible'] ?? '') === 'site') {
+		$rows = [];
+
+		foreach (audit_opquast_lister_audits_site_enfants($audit) as $audit_enfant) {
+			$id_audit_enfant = intval($audit_enfant['id_audit'] ?? 0);
+
+			if (!$id_audit_enfant) {
+				continue;
+			}
+
+			$rows = array_merge(
+				$rows,
+				audit_opquast_donnees_export_audit_url($audit_enfant, $audit)
+			);
+		}
+
+		return $rows;
+	}
+
+	return audit_opquast_donnees_export_audit_url($audit);
 }
 
 function audit_opquast_appliquer_statut_famille($id_audit, $famille, $statut_verification, $id_auteur = 0) {
@@ -913,8 +969,16 @@ function audit_opquast_synthese_decisionnelle($id_audit) {
 
 				$regle['id_audit_enfant'] = $id_audit_enfant;
 				$regle['url_cible'] = $enfant['url_cible'] ?? '';
-				$regle['url_ouvrir_audit'] = audit_opquast_url_audit($id_audit_enfant);
-				$regle['url_ouvrir_navigation'] = generer_url_public('audit_opquast_navigation', 'id_audit=' . $id_audit_enfant . '&id_regle=' . intval($regle['id_regle'] ?? 0));
+				$regle['url_ouvrir_audit'] = audit_opquast_url_site(
+					intval($audit['id_audit'] ?? 0),
+					$id_audit_enfant,
+					intval($regle['id_regle'] ?? 0)
+				);
+				$regle['url_ouvrir_navigation'] = audit_opquast_url_site_navigation_filtre(
+					intval($audit['id_audit'] ?? 0),
+					$id_audit_enfant,
+					intval($regle['id_regle'] ?? 0)
+				);
 				$regles_prioritaires[] = $regle;
 			}
 		}
@@ -1144,6 +1208,25 @@ function audit_opquast_raccourcis_statuts($id_audit) {
 	return $statuts;
 }
 
+function audit_opquast_raccourcis_statuts_site($id_audit_site, $id_audit_url = 0) {
+	$id_audit_url = audit_opquast_site_id_audit_actif($id_audit_site, $id_audit_url);
+
+	if (!$id_audit_url) {
+		return [];
+	}
+
+	$statuts = audit_opquast_raccourcis_statuts($id_audit_url);
+
+	foreach ($statuts as &$statut) {
+		$statut['url'] = audit_opquast_url_site($id_audit_site, $id_audit_url, 0, [
+			'statut_verification' => $statut['cle'],
+		]);
+	}
+	unset($statut);
+
+	return $statuts;
+}
+
 function audit_opquast_url_audit($id_audit, $id_regle = 0) {
 	include_spip('inc/utils');
 
@@ -1154,6 +1237,62 @@ function audit_opquast_url_audit($id_audit, $id_regle = 0) {
 	}
 
 	return generer_url_public(audit_opquast_page_detail_audit($id_audit), http_build_query($args, '', '&'));
+}
+
+function audit_opquast_url_site($id_audit_site, $id_audit_url = 0, $id_regle = 0, $overrides = []) {
+	include_spip('inc/utils');
+
+	$args = array_merge(
+		['id_audit' => intval($id_audit_site)],
+		audit_opquast_parametres_filtres($overrides)
+	);
+
+	if (intval($id_audit_url)) {
+		$args['id_audit_url'] = intval($id_audit_url);
+	}
+
+	if (intval($id_regle)) {
+		$args['id_regle'] = intval($id_regle);
+	}
+
+	return generer_url_public('audit_opquast_site', http_build_query($args, '', '&'));
+}
+
+function audit_opquast_url_site_resultats($id_audit_site, $id_audit_url = 0, $overrides = []) {
+	include_spip('inc/utils');
+
+	$args = array_merge(
+		['id_audit' => intval($id_audit_site)],
+		audit_opquast_parametres_filtres(array_merge([
+			'id_regle' => null,
+		], $overrides))
+	);
+
+	if (intval($id_audit_url)) {
+		$args['id_audit_url'] = intval($id_audit_url);
+	}
+
+	unset($args['id_regle']);
+
+	return generer_url_public('audit_opquast_resultats', http_build_query($args, '', '&'));
+}
+
+function audit_opquast_url_site_navigation_filtre($id_audit_site, $id_audit_url = 0, $id_regle = 0, $overrides = []) {
+	include_spip('inc/utils');
+
+	$args = array_merge(
+		[
+			'id_audit' => intval($id_audit_site),
+			'id_audit_url' => intval($id_audit_url),
+		],
+		audit_opquast_parametres_filtres($overrides)
+	);
+
+	if (intval($id_regle)) {
+		$args['id_regle'] = intval($id_regle);
+	}
+
+	return generer_url_public('audit_opquast_navigation', http_build_query($args, '', '&'));
 }
 
 function audit_opquast_url_audit_filtre($id_audit, $id_regle = 0, $overrides = []) {
@@ -1216,6 +1355,24 @@ function audit_opquast_url_resultats_famille($id_audit, $famille = '') {
 	);
 
 	return generer_url_public('audit_opquast_resultats', http_build_query($args, '', '&'));
+}
+
+function audit_opquast_url_site_famille($id_audit_site, $id_audit_url = 0, $famille = '') {
+	return audit_opquast_url_site($id_audit_site, $id_audit_url, 0, [
+		'famille' => trim((string) $famille),
+		'id_regle' => null,
+		'q' => null,
+		'statut_verification' => null,
+	]);
+}
+
+function audit_opquast_url_site_resultats_famille($id_audit_site, $id_audit_url = 0, $famille = '') {
+	return audit_opquast_url_site_resultats($id_audit_site, $id_audit_url, [
+		'famille' => trim((string) $famille),
+		'id_regle' => null,
+		'q' => null,
+		'statut_verification' => null,
+	]);
 }
 
 function audit_opquast_url_resultats($id_audit, $overrides = []) {
@@ -1421,18 +1578,23 @@ function audit_opquast_url_restitution_telechargement($id_audit) {
 	);
 }
 
-function audit_opquast_url_enregistrer_resultat($id_audit, $id_regle) {
+function audit_opquast_url_enregistrer_resultat($id_audit, $id_regle, $id_audit_site = 0) {
 	$id_audit = intval($id_audit);
 	$id_regle = intval($id_regle);
+	$id_audit_site = intval($id_audit_site);
 
 	if (!$id_audit || !$id_regle) {
 		return '';
 	}
 
+	$redirect = $id_audit_site
+		? audit_opquast_url_site($id_audit_site, $id_audit, $id_regle)
+		: audit_opquast_url_audit($id_audit, $id_regle);
+
 	return generer_action_auteur(
 		'audit_opquast_enregistrer_resultat',
 		$id_audit . '-' . $id_regle,
-		audit_opquast_url_audit($id_audit, $id_regle)
+		$redirect
 	);
 }
 
