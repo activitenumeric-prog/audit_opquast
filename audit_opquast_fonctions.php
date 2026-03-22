@@ -1280,10 +1280,13 @@ function audit_opquast_url_site_resultats($id_audit_site, $id_audit_url = 0, $ov
 function audit_opquast_url_site_navigation_filtre($id_audit_site, $id_audit_url = 0, $id_regle = 0, $overrides = []) {
 	include_spip('inc/utils');
 
+	$id_audit_site = intval($id_audit_site);
+	$id_audit_url = intval($id_audit_url);
+
 	$args = array_merge(
 		[
-			'id_audit' => intval($id_audit_site),
-			'id_audit_url' => intval($id_audit_url),
+			'id_audit' => $id_audit_url,
+			'id_audit_site' => $id_audit_site,
 		],
 		audit_opquast_parametres_filtres($overrides)
 	);
@@ -1371,6 +1374,22 @@ function audit_opquast_url_site_resultats_famille($id_audit_site, $id_audit_url 
 		'famille' => trim((string) $famille),
 		'id_regle' => null,
 		'q' => null,
+		'statut_verification' => null,
+	]);
+}
+
+function audit_opquast_url_audit_famille_action($id_audit, $famille = '') {
+	return audit_opquast_url_audit_filtre($id_audit, 0, [
+		'q' => null,
+		'famille' => trim((string) $famille),
+		'statut_verification' => null,
+	]);
+}
+
+function audit_opquast_url_site_famille_action($id_audit_site, $id_audit_url = 0, $famille = '') {
+	return audit_opquast_url_site($id_audit_site, $id_audit_url, 0, [
+		'q' => null,
+		'famille' => trim((string) $famille),
 		'statut_verification' => null,
 	]);
 }
@@ -1594,6 +1613,25 @@ function audit_opquast_url_enregistrer_resultat($id_audit, $id_regle, $id_audit_
 	return generer_action_auteur(
 		'audit_opquast_enregistrer_resultat',
 		$id_audit . '-' . $id_regle,
+		$redirect
+	);
+}
+
+function audit_opquast_url_appliquer_statut_famille($id_audit, $id_audit_site = 0) {
+	$id_audit = intval($id_audit);
+	$id_audit_site = intval($id_audit_site);
+
+	if (!$id_audit) {
+		return '';
+	}
+
+	$redirect = $id_audit_site
+		? audit_opquast_url_site($id_audit_site, $id_audit)
+		: audit_opquast_url_audit($id_audit);
+
+	return generer_action_auteur(
+		'audit_opquast_appliquer_statut_famille',
+		(string) $id_audit,
 		$redirect
 	);
 }

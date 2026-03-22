@@ -490,7 +490,7 @@
 
 .audit-opquast-audit-cards {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 1.25rem;
 	list-style: none;
 	margin: 0;
@@ -575,10 +575,6 @@
 
 .audit-opquast-audit-card__kpi--neutral {
 	background: #f5f7fa;
-}
-
-.audit-opquast-audit-card__kpi--wide {
-	grid-column: 1 / -1;
 }
 
 .audit-opquast-audit-card__kpi strong {
@@ -1375,6 +1371,10 @@ ul.audit-opquast-hero__summary {
 	.audit-opquast-resultat-form__field--status {
 		max-width: none;
 	}
+
+	.audit-opquast-audit-cards {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
 @media (max-width: 640px) {
@@ -1452,6 +1452,10 @@ ul.audit-opquast-hero__summary {
 
 	.audit-opquast-form-actions {
 		justify-content: flex-start;
+	}
+
+	.audit-opquast-audit-cards {
+		grid-template-columns: 1fr;
 	}
 
 	.audit-opquast-audit-card__kpis {

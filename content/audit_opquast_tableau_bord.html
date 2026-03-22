@@ -6,14 +6,16 @@
 	#SET{audits_site,#ENV{id_audit}|audit_opquast_lister_audits_site_enfants}
 	#SET{id_audit_actif_site,#ENV{id_audit}|audit_opquast_site_id_audit_actif{#ENV{id_audit_url}}}
 	#SET{resume_site,#ENV{id_audit}|audit_opquast_resume_audit}
+	#SET{id_audit_reference,#ENV{id_audit}}
 	#SET{resume,#GET{resume_site}}
 	#SET{familles_resume,#ENV{id_audit}|audit_opquast_resume_familles}
 	#SET{synthese,#ENV{id_audit}|audit_opquast_synthese_decisionnelle}
-	#SET{score_conformite_affiche,#GET{resume}|table_valeur{score_conformite}}
+	#SET{score_conformite_affiche,#GET{resume_site}|table_valeur{score_conformite}}
 	[(#GET{est_site}|oui)
-		#SET{resume,#GET{id_audit_actif_site}|audit_opquast_resume_audit}
-		#SET{familles_resume,#GET{id_audit_actif_site}|audit_opquast_resume_familles}
-		#SET{synthese,#GET{id_audit_actif_site}|audit_opquast_synthese_decisionnelle}
+		#SET{id_audit_reference,#GET{id_audit_actif_site}}
+		#SET{resume,#GET{id_audit_reference}|audit_opquast_resume_audit}
+		#SET{familles_resume,#GET{id_audit_reference}|audit_opquast_resume_familles}
+		#SET{synthese,#GET{id_audit_reference}|audit_opquast_synthese_decisionnelle}
 		#SET{score_conformite_affiche,#GET{resume_site}|table_valeur{score_conformite}}
 	]
 

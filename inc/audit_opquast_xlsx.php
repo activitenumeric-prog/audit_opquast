@@ -25,12 +25,7 @@ function audit_opquast_export_xlsx($id_audit) {
 		. uniqid('audit-opquast-xlsx-', true)
 		. '.zip';
 
-	$sheets = [
-		audit_opquast_xlsx_feuille_tableau_bord($data),
-		audit_opquast_xlsx_feuille_detail($data),
-		audit_opquast_xlsx_feuille_familles($data),
-		audit_opquast_xlsx_feuille_non_conformites($data),
-	];
+	$sheets = audit_opquast_xlsx_construire_feuilles($data);
 
 	$files = [
 		'[Content_Types].xml' => audit_opquast_xlsx_content_types(count($sheets)),
@@ -55,6 +50,31 @@ function audit_opquast_export_xlsx($id_audit) {
 		'path' => $tmp,
 		'filename' => audit_opquast_nom_fichier_export_audit($data['audit'], 'xlsx'),
 		'mime' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+	];
+}
+
+function audit_opquast_xlsx_construire_feuilles($data) {
+	if (($data['type'] ?? 'url') === 'site') {
+		$sheets = [
+			audit_opquast_xlsx_feuille_site_tableau_bord($data),
+			audit_opquast_xlsx_feuille_site_comparatif($data),
+			audit_opquast_xlsx_feuille_site_detail($data),
+		];
+
+		foreach ((array) ($data['urls'] ?? []) as $url_data) {
+			$sheets[] = audit_opquast_xlsx_feuille_site_url($data, $url_data);
+		}
+
+		$sheets[] = audit_opquast_xlsx_feuille_non_conformites($data);
+
+		return $sheets;
+	}
+
+	return [
+		audit_opquast_xlsx_feuille_tableau_bord($data),
+		audit_opquast_xlsx_feuille_detail($data),
+		audit_opquast_xlsx_feuille_familles($data),
+		audit_opquast_xlsx_feuille_non_conformites($data),
 	];
 }
 
@@ -99,7 +119,131 @@ function audit_opquast_xlsx_creer_archive($path, $files) {
 function audit_opquast_xlsx_preparer_donnees($id_audit) {
 	$audit = audit_opquast_lire_audit($id_audit);
 
+	if (!$audit) {
+		return [];
+	}
+
+	$type_cible = (string) ($audit['type_cible'] ?? '');
+
+	if ($type_cible === 'url') {
+		return audit_opquast_xlsx_preparer_donnees_url($audit);
+	}
+
+	if ($type_cible === 'site') {
+		return audit_opquast_xlsx_preparer_donnees_site($audit);
+	}
+
+	return [];
+}
+
+function audit_opquast_xlsx_preparer_donnees_url($audit) {
 	if (!$audit || ($audit['type_cible'] ?? '') !== 'url') {
+		return [];
+	}
+
+	return array_merge(
+		[
+			'type' => 'url',
+			'audit' => $audit,
+		],
+		audit_opquast_xlsx_preparer_detail_audit($audit)
+	);
+}
+
+function audit_opquast_xlsx_preparer_donnees_site($audit) {
+	if (!$audit || ($audit['type_cible'] ?? '') !== 'site') {
+		return [];
+	}
+
+	$id_audit = intval($audit['id_audit'] ?? 0);
+
+	if (!$id_audit) {
+		return [];
+	}
+
+	$resume = audit_opquast_resume_audit($id_audit);
+	$enfants = audit_opquast_lister_audits_site_enfants($id_audit);
+	$urls = [];
+	$detail = [];
+	$non_conformes = [];
+	$familles_par_url = [];
+	$familles_noms = [];
+
+	foreach ($enfants as $index => $enfant) {
+		$id_enfant = intval($enfant['id_audit'] ?? 0);
+		$prepared = $id_enfant ? audit_opquast_xlsx_preparer_detail_audit($enfant) : [
+			'resume' => [],
+			'familles_resume' => [],
+			'detail' => [],
+			'par_famille' => [],
+			'non_conformes' => [],
+		];
+
+		$familles_index = [];
+		foreach ((array) ($prepared['familles_resume'] ?? []) as $famille_resume) {
+			$famille_nom = (string) ($famille_resume['famille'] ?? '');
+			$familles_index[$famille_nom] = $famille_resume;
+			$familles_noms[$famille_nom] = $famille_nom;
+		}
+
+		$url_data = [
+			'index' => $index + 1,
+			'sheet_name' => 'URL ' . ($index + 1),
+			'label' => audit_opquast_xlsx_site_url_label($enfant['url_cible'] ?? ''),
+			'audit' => $enfant,
+			'resume' => $prepared['resume'],
+			'familles_resume' => $prepared['familles_resume'],
+			'familles_index' => $familles_index,
+			'detail' => $prepared['detail'],
+			'par_famille' => $prepared['par_famille'],
+			'non_conformes' => $prepared['non_conformes'],
+		];
+
+		$urls[] = $url_data;
+		$familles_par_url[] = $url_data;
+		$detail = array_merge($detail, (array) ($prepared['detail'] ?? []));
+		$non_conformes = array_merge($non_conformes, (array) ($prepared['non_conformes'] ?? []));
+	}
+
+	natcasesort($familles_noms);
+	$comparatif_familles = [];
+
+	foreach ($familles_noms as $famille_nom) {
+		$row = [
+			'famille' => $famille_nom,
+			'par_url' => [],
+		];
+
+		foreach ($familles_par_url as $url_data) {
+			$row['par_url'][] = $url_data['familles_index'][$famille_nom] ?? [
+				'famille' => $famille_nom,
+				'conforme' => 0,
+				'non_conforme' => 0,
+				'a_verifier' => 0,
+				'non_applicable' => 0,
+				'total_regles' => 0,
+				'score_conformite' => null,
+			];
+		}
+
+		$comparatif_familles[] = $row;
+	}
+
+	return [
+		'type' => 'site',
+		'audit' => $audit,
+		'resume' => $resume,
+		'urls' => $urls,
+		'detail' => $detail,
+		'non_conformes' => $non_conformes,
+		'comparatif_familles' => $comparatif_familles,
+	];
+}
+
+function audit_opquast_xlsx_preparer_detail_audit($audit) {
+	$id_audit = intval($audit['id_audit'] ?? 0);
+
+	if (!$id_audit || !$audit) {
 		return [];
 	}
 
@@ -140,7 +284,6 @@ function audit_opquast_xlsx_preparer_donnees($id_audit) {
 	ksort($par_famille, SORT_NATURAL | SORT_FLAG_CASE);
 
 	return [
-		'audit' => $audit,
 		'resume' => $resume,
 		'familles_resume' => $familles_resume,
 		'detail' => $detail,
@@ -502,6 +645,383 @@ function audit_opquast_xlsx_feuille_non_conformites($data) {
 		],
 		'tab_color' => 'FFE74C3C',
 	];
+}
+
+function audit_opquast_xlsx_feuille_site_tableau_bord($data) {
+	$audit = $data['audit'];
+	$resume = $data['resume'];
+	$urls = $data['urls'] ?? [];
+	$rows = [];
+	$merges = [];
+	$total_regles = intval($resume['total_regles'] ?? 0);
+	$conforme = intval($resume['conforme'] ?? 0);
+	$non_conforme = intval($resume['non_conforme'] ?? 0);
+	$a_verifier = intval($resume['a_verifier'] ?? 0);
+	$non_applicable = intval($resume['non_applicable'] ?? 0);
+	$traitees = intval($resume['traitees'] ?? 0);
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text('AUDIT OPQUAST', 1),
+	], 28);
+	$merges[] = 'A' . $row . ':H' . $row;
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text(
+			trim((string) ($audit['titre'] ?? '')) . ' - Audit de site - ' . count($urls) . ' URL(s)',
+			2
+		),
+	], 22);
+	$merges[] = 'A' . $row . ':H' . $row;
+
+	audit_opquast_xlsx_add_row($rows, [], 8);
+
+	for ($i = 4; $i <= 7; $i++) {
+		audit_opquast_xlsx_add_row($rows, []);
+	}
+	$merges[] = 'A4:C7';
+	$rows[3]['cells'][1] = audit_opquast_xlsx_text(audit_opquast_xlsx_score_label($resume['score_conformite'] ?? null), 15);
+
+	$rows[3]['cells'][4] = audit_opquast_xlsx_text('Score global', 16);
+	$merges[] = 'D4:H4';
+	$rows[4]['cells'][4] = audit_opquast_xlsx_text(
+		'Methode Opquast : Conformes / (Conformes + Non conformes) x 100',
+		16
+	);
+	$merges[] = 'D5:H5';
+	$rows[5]['cells'][4] = audit_opquast_xlsx_text(
+		'Total regles : ' . $total_regles . ' - Evaluees : ' . ($conforme + $non_conforme) . ' - Conformes : ' . $conforme . ' - Non conformes : ' . $non_conforme,
+		16
+	);
+	$merges[] = 'D6:H6';
+	$rows[6]['cells'][4] = audit_opquast_xlsx_text(
+		'A verifier : ' . $a_verifier . ' - N/A : ' . $non_applicable . ' - Progression : ' . intval($resume['progression'] ?? 0) . '%',
+		16
+	);
+	$merges[] = 'D7:H7';
+
+	audit_opquast_xlsx_add_row($rows, [], 10);
+
+	audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text('Conforme', 17),
+		5 => audit_opquast_xlsx_text('Non conforme', 20),
+	], 18);
+	$merges[] = 'A9:D9';
+	$merges[] = 'E9:H9';
+	audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text((string) $conforme, 18),
+		5 => audit_opquast_xlsx_text((string) $non_conforme, 21),
+	], 30);
+	$merges[] = 'A10:D10';
+	$merges[] = 'E10:H10';
+	audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text(audit_opquast_xlsx_regles_percent_label($conforme, $total_regles), 19),
+		5 => audit_opquast_xlsx_text(audit_opquast_xlsx_regles_percent_label($non_conforme, $total_regles), 22),
+	], 18);
+	$merges[] = 'A11:D11';
+	$merges[] = 'E11:H11';
+
+	audit_opquast_xlsx_add_row($rows, [], 8);
+
+	audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text('A verifier', 23),
+		5 => audit_opquast_xlsx_text('Non applicable', 26),
+	], 18);
+	$merges[] = 'A13:D13';
+	$merges[] = 'E13:H13';
+	audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text((string) $a_verifier, 24),
+		5 => audit_opquast_xlsx_text((string) $non_applicable, 27),
+	], 30);
+	$merges[] = 'A14:D14';
+	$merges[] = 'E14:H14';
+	audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text(audit_opquast_xlsx_regles_percent_label($a_verifier, $total_regles), 25),
+		5 => audit_opquast_xlsx_text(audit_opquast_xlsx_regles_percent_label($non_applicable, $total_regles), 28),
+	], 18);
+	$merges[] = 'A15:D15';
+	$merges[] = 'E15:H15';
+
+	audit_opquast_xlsx_add_row($rows, [], 10);
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text('Resultats par URL', 3),
+	], 20);
+	$merges[] = 'A' . $row . ':H' . $row;
+
+	audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text('URL', 6),
+		2 => audit_opquast_xlsx_text('Traitees', 6),
+		3 => audit_opquast_xlsx_text('Conforme', 6),
+		4 => audit_opquast_xlsx_text('Non conforme', 6),
+		5 => audit_opquast_xlsx_text('A verifier', 6),
+		6 => audit_opquast_xlsx_text('Non applicable', 6),
+		7 => audit_opquast_xlsx_text('Score', 6),
+		8 => audit_opquast_xlsx_text('Feuille', 6),
+	]);
+
+	foreach ($urls as $url_data) {
+		$url_resume = $url_data['resume'] ?? [];
+		audit_opquast_xlsx_add_row($rows, [
+			1 => audit_opquast_xlsx_text((string) ($url_data['label'] ?? ''), 12),
+			2 => audit_opquast_xlsx_text((string) intval($url_resume['traitees'] ?? 0), 7),
+			3 => audit_opquast_xlsx_text((string) intval($url_resume['conforme'] ?? 0), 8),
+			4 => audit_opquast_xlsx_text((string) intval($url_resume['non_conforme'] ?? 0), 9),
+			5 => audit_opquast_xlsx_text((string) intval($url_resume['a_verifier'] ?? 0), 10),
+			6 => audit_opquast_xlsx_text((string) intval($url_resume['non_applicable'] ?? 0), 11),
+			7 => audit_opquast_xlsx_text(audit_opquast_xlsx_score_label($url_resume['score_conformite'] ?? null), 7),
+			8 => audit_opquast_xlsx_text((string) ($url_data['sheet_name'] ?? ''), 7),
+		]);
+	}
+
+	return [
+		'name' => 'Tableau de bord',
+		'rows' => $rows,
+		'merges' => $merges,
+		'cols' => [
+			1 => 30,
+			2 => 12,
+			3 => 12,
+			4 => 14,
+			5 => 14,
+			6 => 16,
+			7 => 14,
+			8 => 12,
+		],
+		'tab_color' => 'FFF39C12',
+	];
+}
+
+function audit_opquast_xlsx_feuille_site_comparatif($data) {
+	$audit = $data['audit'];
+	$urls = $data['urls'] ?? [];
+	$familles = $data['comparatif_familles'] ?? [];
+	$rows = [];
+	$merges = [];
+	$total_cols = max(2, 1 + (count($urls) * 5));
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text('Comparatif URLs', 1),
+	], 28);
+	$merges[] = 'A' . $row . ':' . audit_opquast_xlsx_column_name($total_cols) . $row;
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text(
+			trim((string) ($audit['titre'] ?? '')) . ' - ' . count($urls) . ' URL(s) comparee(s)',
+			2
+		),
+	], 22);
+	$merges[] = 'A' . $row . ':' . audit_opquast_xlsx_column_name($total_cols) . $row;
+
+	audit_opquast_xlsx_add_row($rows, [], 8);
+
+	$group_cells = [];
+	foreach ($urls as $index => $url_data) {
+		$start = 2 + ($index * 5);
+		$group_cells[$start] = audit_opquast_xlsx_text((string) ($url_data['label'] ?? ''), 13);
+		$merges[] = audit_opquast_xlsx_column_name($start) . '4:' . audit_opquast_xlsx_column_name($start + 4) . '4';
+	}
+	$rows[] = ['cells' => $group_cells, 'height' => 20];
+
+	$header_cells = [
+		1 => audit_opquast_xlsx_text('Famille', 6),
+	];
+	foreach ($urls as $index => $url_data) {
+		$start = 2 + ($index * 5);
+		$header_cells[$start] = audit_opquast_xlsx_text('Conf.', 6);
+		$header_cells[$start + 1] = audit_opquast_xlsx_text('Non conf.', 6);
+		$header_cells[$start + 2] = audit_opquast_xlsx_text('A ver.', 6);
+		$header_cells[$start + 3] = audit_opquast_xlsx_text('N/A', 6);
+		$header_cells[$start + 4] = audit_opquast_xlsx_text('Score', 6);
+	}
+	audit_opquast_xlsx_add_row($rows, $header_cells);
+
+	foreach ($familles as $famille_row) {
+		$cells = [
+			1 => audit_opquast_xlsx_text((string) ($famille_row['famille'] ?? ''), 7),
+		];
+
+		foreach ((array) ($famille_row['par_url'] ?? []) as $index => $resume_famille) {
+			$start = 2 + ($index * 5);
+			$cells[$start] = audit_opquast_xlsx_text((string) intval($resume_famille['conforme'] ?? 0), 8);
+			$cells[$start + 1] = audit_opquast_xlsx_text((string) intval($resume_famille['non_conforme'] ?? 0), 9);
+			$cells[$start + 2] = audit_opquast_xlsx_text((string) intval($resume_famille['a_verifier'] ?? 0), 10);
+			$cells[$start + 3] = audit_opquast_xlsx_text((string) intval($resume_famille['non_applicable'] ?? 0), 11);
+			$cells[$start + 4] = audit_opquast_xlsx_text(audit_opquast_xlsx_score_label($resume_famille['score_conformite'] ?? null), 7);
+		}
+
+		audit_opquast_xlsx_add_row($rows, $cells);
+	}
+
+	$cols = [1 => 24];
+	foreach ($urls as $index => $url_data) {
+		$start = 2 + ($index * 5);
+		$cols[$start] = 10;
+		$cols[$start + 1] = 12;
+		$cols[$start + 2] = 10;
+		$cols[$start + 3] = 10;
+		$cols[$start + 4] = 12;
+	}
+
+	return [
+		'name' => 'Comparatif URLs',
+		'rows' => $rows,
+		'merges' => $merges,
+		'cols' => $cols,
+		'tab_color' => 'FF3498DB',
+	];
+}
+
+function audit_opquast_xlsx_feuille_site_detail($data) {
+	$audit = $data['audit'];
+	$rows = [];
+	$merges = [];
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text('Detail des regles', 1),
+	], 28);
+	$merges[] = 'A' . $row . ':H' . $row;
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text(
+			trim((string) ($audit['titre'] ?? '')) . ' - ' . count((array) ($data['urls'] ?? [])) . ' URL(s) - ' . count((array) ($data['detail'] ?? [])) . ' lignes',
+			2
+		),
+	], 22);
+	$merges[] = 'A' . $row . ':H' . $row;
+
+	audit_opquast_xlsx_add_row($rows, [], 8);
+
+	audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text('No', 6),
+		2 => audit_opquast_xlsx_text('URL', 6),
+		3 => audit_opquast_xlsx_text('Famille', 6),
+		4 => audit_opquast_xlsx_text('Intitule de la regle', 6),
+		5 => audit_opquast_xlsx_text('Statut', 6),
+		6 => audit_opquast_xlsx_text('Commentaire', 6),
+		7 => audit_opquast_xlsx_text('Preuve / Note', 6),
+		8 => audit_opquast_xlsx_text('Lien Opquast', 6),
+	]);
+
+	foreach ($data['detail'] as $detail) {
+		audit_opquast_xlsx_add_row($rows, [
+			1 => audit_opquast_xlsx_text((string) ($detail['numero'] ?? ''), 7),
+			2 => audit_opquast_xlsx_text(audit_opquast_xlsx_site_url_label($detail['url'] ?? ''), 12),
+			3 => audit_opquast_xlsx_text((string) ($detail['famille'] ?? ''), 7),
+			4 => audit_opquast_xlsx_text((string) ($detail['titre'] ?? ''), 7),
+			5 => audit_opquast_xlsx_text(
+				(string) ($detail['statut_label'] ?? ''),
+				audit_opquast_xlsx_style_statut($detail['statut'] ?? '')
+			),
+			6 => audit_opquast_xlsx_text((string) ($detail['commentaire'] ?? ''), 7),
+			7 => audit_opquast_xlsx_text((string) ($detail['preuve'] ?? ''), 7),
+			8 => audit_opquast_xlsx_text((string) ($detail['lien'] ?? ''), 12),
+		]);
+	}
+
+	return [
+		'name' => 'Detail des regles',
+		'rows' => $rows,
+		'merges' => $merges,
+		'cols' => [
+			1 => 8,
+			2 => 28,
+			3 => 22,
+			4 => 66,
+			5 => 18,
+			6 => 30,
+			7 => 30,
+			8 => 38,
+		],
+		'tab_color' => 'FF5DADE2',
+	];
+}
+
+function audit_opquast_xlsx_feuille_site_url($data, $url_data) {
+	$audit = $url_data['audit'] ?? [];
+	$resume = $url_data['resume'] ?? [];
+	$rows = [];
+	$merges = [];
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text((string) ($url_data['sheet_name'] ?? 'URL'), 1),
+	], 28);
+	$merges[] = 'A' . $row . ':G' . $row;
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text(
+			(string) ($url_data['sheet_name'] ?? 'URL') . ' : ' . trim((string) ($audit['url_cible'] ?? '')),
+			2
+		),
+	], 22);
+	$merges[] = 'A' . $row . ':G' . $row;
+
+	$row = audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text(
+			'Score : ' . audit_opquast_xlsx_score_label($resume['score_conformite'] ?? null)
+			. ' - Conforme : ' . intval($resume['conforme'] ?? 0)
+			. ' - Non conforme : ' . intval($resume['non_conforme'] ?? 0)
+			. ' - A verifier : ' . intval($resume['a_verifier'] ?? 0)
+			. ' - N/A : ' . intval($resume['non_applicable'] ?? 0)
+			. ' - Total : ' . intval($resume['total_regles'] ?? 0),
+			14
+		),
+	], 20);
+	$merges[] = 'A' . $row . ':G' . $row;
+
+	audit_opquast_xlsx_add_row($rows, [], 8);
+
+	audit_opquast_xlsx_add_row($rows, [
+		1 => audit_opquast_xlsx_text('No', 6),
+		2 => audit_opquast_xlsx_text('Famille', 6),
+		3 => audit_opquast_xlsx_text('Intitule', 6),
+		4 => audit_opquast_xlsx_text('Statut', 6),
+		5 => audit_opquast_xlsx_text('Commentaire', 6),
+		6 => audit_opquast_xlsx_text('Preuve / Note', 6),
+		7 => audit_opquast_xlsx_text('Lien', 6),
+	]);
+
+	foreach ((array) ($url_data['detail'] ?? []) as $detail) {
+		audit_opquast_xlsx_add_row($rows, [
+			1 => audit_opquast_xlsx_text((string) ($detail['numero'] ?? ''), 7),
+			2 => audit_opquast_xlsx_text((string) ($detail['famille'] ?? ''), 7),
+			3 => audit_opquast_xlsx_text((string) ($detail['titre'] ?? ''), 7),
+			4 => audit_opquast_xlsx_text(
+				(string) ($detail['statut_label'] ?? ''),
+				audit_opquast_xlsx_style_statut($detail['statut'] ?? '')
+			),
+			5 => audit_opquast_xlsx_text((string) ($detail['commentaire'] ?? ''), 7),
+			6 => audit_opquast_xlsx_text((string) ($detail['preuve'] ?? ''), 7),
+			7 => audit_opquast_xlsx_text((string) ($detail['lien'] ?? ''), 12),
+		]);
+	}
+
+	return [
+		'name' => (string) ($url_data['sheet_name'] ?? 'URL'),
+		'rows' => $rows,
+		'merges' => $merges,
+		'cols' => [
+			1 => 8,
+			2 => 22,
+			3 => 68,
+			4 => 18,
+			5 => 30,
+			6 => 30,
+			7 => 38,
+		],
+		'tab_color' => 'FF85C1E9',
+	];
+}
+
+function audit_opquast_xlsx_site_url_label($url) {
+	$url = trim((string) $url);
+
+	if ($url === '') {
+		return '';
+	}
+
+	$url = preg_replace(',^https?://,i', '', $url);
+
+	return $url ?: '';
 }
 
 function audit_opquast_xlsx_score_famille($regles) {

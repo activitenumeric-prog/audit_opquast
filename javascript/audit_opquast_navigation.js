@@ -480,36 +480,33 @@
 			select.dataset.auditOpquastSiteSelectInit = 'oui';
 			select.addEventListener('change', function () {
 				var form = select.form || select.closest('form');
-				var currentUrl = new URL(window.location.href);
-				var currentPage = currentUrl.searchParams.get('page');
+				var targetUrl;
 
 				if (!form) {
 					return;
 				}
 
-				if (!currentPage || currentPage === 'audit_opquast_site') {
-					var auditIdField = form.querySelector('input[name="id_audit"]');
-					var ruleIdField = form.querySelector('input[name="id_regle"]');
+				targetUrl = new URL(form.getAttribute('action') || window.location.href, window.location.href);
 
-					if (auditIdField && auditIdField.value) {
-						currentUrl.searchParams.set('id_audit', auditIdField.value);
+				form.querySelectorAll('input[name]').forEach(function (field) {
+					if (!field.name || field.name === 'id_audit_url') {
+						return;
 					}
 
-					if (select.value) {
-						currentUrl.searchParams.set('id_audit_url', select.value);
+					if (field.value) {
+						targetUrl.searchParams.set(field.name, field.value);
 					} else {
-						currentUrl.searchParams.delete('id_audit_url');
+						targetUrl.searchParams.delete(field.name);
 					}
+				});
 
-					if (ruleIdField && ruleIdField.value) {
-						currentUrl.searchParams.set('id_regle', ruleIdField.value);
-					}
-
-					window.location.assign(preserveCurrentDebugParams(currentUrl.toString()));
-					return;
+				if (select.value) {
+					targetUrl.searchParams.set('id_audit_url', select.value);
+				} else {
+					targetUrl.searchParams.delete('id_audit_url');
 				}
 
-				form.submit();
+				window.location.assign(preserveCurrentDebugParams(targetUrl.toString()));
 			});
 		});
 	}

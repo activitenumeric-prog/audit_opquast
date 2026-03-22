@@ -36,9 +36,9 @@ function action_audit_opquast_exporter_audit_dist($arg = null) {
 	}
 
 	if ($format === 'xlsx') {
-		if (($audit['type_cible'] ?? '') !== 'url') {
+		if (!in_array(($audit['type_cible'] ?? ''), ['url', 'site'], true)) {
 			include_spip('inc/minipres');
-			echo minipres(_T('audit_opquast:info_export_excel_url_seulement'));
+			echo minipres(_T('audit_opquast:info_export_excel_url_site_seulement'));
 			exit;
 		}
 

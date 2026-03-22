@@ -47,11 +47,10 @@ function formulaires_appliquer_statut_famille_audit_opquast_traiter_dist($id_aud
 	$statut_cible = trim((string) _request('statut_cible'));
 	$id_auteur = intval($GLOBALS['visiteur_session']['id_auteur'] ?? 0);
 	$nb = audit_opquast_appliquer_statut_famille($id_audit, $famille, $statut_cible, $id_auteur);
-	$id_regle = intval(_request('id_regle'));
 	$id_audit_site = intval($id_audit_site ?: _request('id_audit_site'));
 	$redirect = $id_audit_site
-		? audit_opquast_url_site($id_audit_site, $id_audit, $id_regle, ['famille' => $famille]) . '#resume-familles'
-		: audit_opquast_url_audit_filtre($id_audit, $id_regle, ['famille' => $famille]) . '#resume-familles';
+		? audit_opquast_url_site_famille_action($id_audit_site, $id_audit, $famille)
+		: audit_opquast_url_audit_famille_action($id_audit, $famille);
 
 	return [
 		'message_ok' => _T(
