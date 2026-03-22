@@ -1,8 +1,8 @@
 [(#REM) Panneau de restitution de l'audit]
-#SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
+	#SET{audit,#ENV{id_audit}|audit_opquast_lire_audit}
 [(#GET{audit}|oui)
 	#SET{mode,#ENV{restitution_mode}|sinon{compact}}
-	#SET{pdf_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
+	#SET{pdf_disponible,#GET{audit}|table_valeur{type_cible}|in_array{#LISTE{url,site}}}
 	#SET{docx_disponible,#GET{audit}|table_valeur{type_cible}|=={url}}
 	[(#GET{mode}|=={edit}|oui)
 		<div class="audit-opquast-export audit-opquast-export--panel audit-opquast-hero-action-panel">
@@ -52,7 +52,7 @@
 							<input type="radio" name="format_restitution" value="pdf" disabled="disabled" />
 							<span class="audit-opquast-export-option__content">
 								<strong>PDF</strong>
-								<span><:audit_opquast:info_restitution_pdf_url_seulement:/></span>
+								<span><:audit_opquast:info_restitution_pdf_url_site_seulement:/></span>
 							</span>
 						</label>
 					]

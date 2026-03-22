@@ -473,7 +473,7 @@ function audit_opquast_export_pdf_action($id_audit) {
 
 	$audit = audit_opquast_lire_audit($id_audit);
 
-	if (!$audit || ($audit['type_cible'] ?? '') !== 'url') {
+	if (!$audit || !in_array(($audit['type_cible'] ?? ''), ['url', 'site'], true)) {
 		return false;
 	}
 

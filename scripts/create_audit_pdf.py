@@ -214,6 +214,46 @@ def compute_family_stats(data):
         results[fam] = {**counts, "total": total, "score": score}
     return results
 
+def group_rows_by_url(data):
+    grouped = {}
+    order = []
+
+    for row in data:
+        url = row["url"]
+        if url not in grouped:
+            grouped[url] = []
+            order.append(url)
+        grouped[url].append(row)
+
+    return [(url, grouped[url]) for url in order]
+
+def compute_site_context(data):
+    urls = []
+    for index, (url, rows) in enumerate(group_rows_by_url(data), start=1):
+        counts, total, score = compute_stats(rows)
+        family_stats = compute_family_stats(rows)
+        urls.append({
+            "index": index,
+            "url": url,
+            "label": shorten_url(url),
+            "rows": rows,
+            "counts": counts,
+            "total": total,
+            "score": score,
+            "family_stats": family_stats,
+        })
+
+    counts, total, score = compute_stats(data)
+    family_stats = compute_family_stats(data)
+
+    return {
+        "counts": counts,
+        "total": total,
+        "score": score,
+        "family_stats": family_stats,
+        "urls": urls,
+    }
+
 def score_color(score):
     if score is None:
         return GREY
@@ -241,6 +281,12 @@ def format_score(score):
 
 def format_percent(value):
     return f"{value:.1f}".replace('.', ',')
+
+def shorten_url(url):
+    if not url:
+        return ""
+    value = url.replace("https://", "").replace("http://", "")
+    return value.rstrip("/")
 
 def make_single_bar(pct, color, width):
     filled = max(width * (pct / 100.0), 0)
@@ -1350,7 +1396,323 @@ def build_section8(data):
 
     return elements
 
-# ─── DOCUMENT BUILDER ─────────────────────────────────────────────────────────
+def build_site_section1(site_ctx):
+    elements = []
+    elements.append(Paragraph("1. Contexte et objectifs de l'audit", S["h1"]))
+    elements.append(HRFlowable(width=CONTENT_W, thickness=2, color=TEAL, spaceAfter=6))
+    elements.append(Paragraph(
+        "Cet audit de type Site consolide plusieurs URLs auditees individuellement. "
+        "Chaque URL conserve ses 245 regles, ses propres statuts et son propre parcours d'evaluation.",
+        S["normal"]
+    ))
+    elements.append(Spacer(1, 6))
+    elements.append(Paragraph("URLs auditees", S["h2"]))
+
+    rows = [[
+        Paragraph("<b>#</b>", S["bold_white"]),
+        Paragraph("<b>URL</b>", S["bold_white"]),
+        Paragraph("<b>Regles</b>", S["bold_white"]),
+    ]]
+
+    for url_data in site_ctx["urls"]:
+        rows.append([
+            Paragraph(str(url_data["index"]), S["center"]),
+            Paragraph(url_data["url"], S["normal"]),
+            Paragraph(str(url_data["total"]), S["center"]),
+        ])
+
+    table = Table(rows, colWidths=[CONTENT_W * 0.08, CONTENT_W * 0.70, CONTENT_W * 0.12], repeatRows=1)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), NAVY),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [LIGHT_BG, WHITE]),
+        ("GRID", (0, 0), (-1, -1), 0.3, GREY),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("LEFTPADDING", (0, 0), (-1, -1), 6),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(table)
+    return elements
+
+def build_site_section2(audit_type, total_rows, url_count):
+    elements = []
+    elements.append(Paragraph("2. Methodologie", S["h1"]))
+    elements.append(HRFlowable(width=CONTENT_W, thickness=2, color=TEAL, spaceAfter=6))
+    elements.append(Paragraph(
+        "Le mode Site agrege les resultats de plusieurs audits URL enfants. "
+        "Le detail reste evalue page par page, tandis que le score principal du rapport est calcule globalement.",
+        S["normal"]
+    ))
+    elements.append(Spacer(1, 6))
+
+    peri_data = [
+        [Paragraph("<b>Type de cible</b>", S["bold"]), Paragraph(audit_type or "Site", S["normal"])],
+        [Paragraph("<b>Nombre d'URLs auditees</b>", S["bold"]), Paragraph(str(url_count), S["normal"])],
+        [Paragraph("<b>Nombre total de lignes evaluees</b>", S["bold"]), Paragraph(str(total_rows), S["normal"])],
+        [Paragraph("<b>Mode de calcul global</b>", S["bold"]), Paragraph("Somme des Conformes / (Somme Conformes + Somme Non conformes) x 100", S["normal"])],
+    ]
+    table = Table(peri_data, colWidths=[CONTENT_W * 0.30, CONTENT_W * 0.70])
+    table.setStyle(TableStyle([
+        ("ROWBACKGROUNDS", (0, 0), (-1, -1), [LIGHT_BG, WHITE]),
+        ("GRID", (0, 0), (-1, -1), 0.3, GREY),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("LEFTPADDING", (0, 0), (-1, -1), 8),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+    ]))
+    elements.append(table)
+    return elements
+
+def build_site_section3(site_ctx):
+    elements = []
+    counts = site_ctx["counts"]
+    total = site_ctx["total"]
+    score = site_ctx["score"]
+    elements.append(Paragraph("3. Synthese des resultats", S["h1"]))
+    elements.append(HRFlowable(width=CONTENT_W, thickness=2, color=TEAL, spaceAfter=6))
+    elements.append(build_status_distribution_table(counts, total))
+    elements.append(Spacer(1, 8))
+    elements.append(build_family_distribution_table(site_ctx["family_stats"]))
+    return elements
+
+def build_site_section4(site_ctx):
+    elements = []
+    elements.append(Paragraph("4. Comparatif des URLs auditees", S["h1"]))
+    elements.append(HRFlowable(width=CONTENT_W, thickness=2, color=TEAL, spaceAfter=6))
+
+    rows = [[
+        Paragraph("<b>URL</b>", S["bold_white"]),
+        Paragraph("<b>Conforme</b>", S["bold_white"]),
+        Paragraph("<b>Non conforme</b>", S["bold_white"]),
+        Paragraph("<b>A verifier</b>", S["bold_white"]),
+        Paragraph("<b>N/A</b>", S["bold_white"]),
+        Paragraph("<b>Score</b>", S["bold_white"]),
+    ]]
+
+    for url_data in site_ctx["urls"]:
+        counts = url_data["counts"]
+        rows.append([
+            Paragraph(url_data["url"], S["normal"]),
+            Paragraph(str(counts["Conforme"]), S["center"]),
+            Paragraph(str(counts["Non conforme"]), S["center"]),
+            Paragraph(str(counts["A verifier"]), S["center"]),
+            Paragraph(str(counts["Non applicable"]), S["center"]),
+            Paragraph(audit_opquast_site_score_label_py(url_data["score"]), S["center"]),
+        ])
+
+    table = Table(
+        rows,
+        colWidths=[CONTENT_W * 0.42, CONTENT_W * 0.11, CONTENT_W * 0.13, CONTENT_W * 0.11, CONTENT_W * 0.11, CONTENT_W * 0.12],
+        repeatRows=1
+    )
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), NAVY),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [LIGHT_BG, WHITE]),
+        ("GRID", (0, 0), (-1, -1), 0.3, GREY),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("LEFTPADDING", (0, 0), (-1, -1), 6),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(table)
+    return elements
+
+def build_site_section5(data):
+    elements = []
+    elements.append(Paragraph("5. Non-conformites et recommandations", S["h1"]))
+    elements.append(HRFlowable(width=CONTENT_W, thickness=2, color=TEAL, spaceAfter=6))
+    non_conf = [r for r in data if r["statut"] == "Non conforme"]
+
+    if not non_conf:
+        elements.append(Paragraph("Aucune regle non conforme n'a ete detectee sur les URLs auditees.", S["normal"]))
+        return elements
+
+    rows = [[
+        Paragraph("<b>No</b>", S["bold_white"]),
+        Paragraph("<b>URL</b>", S["bold_white"]),
+        Paragraph("<b>Famille</b>", S["bold_white"]),
+        Paragraph("<b>Intitule</b>", S["bold_white"]),
+        Paragraph("<b>Correction recommandee</b>", S["bold_white"]),
+    ]]
+
+    for rule in non_conf:
+        rows.append([
+            Paragraph(rule["num"], S["center"]),
+            Paragraph(shorten_url(rule["url"]), S["normal"]),
+            Paragraph(rule["famille"], S["normal"]),
+            Paragraph(rule["intitule"], S["normal"]),
+            Paragraph(get_correction(rule["num"], rule["famille"]), S["normal"]),
+        ])
+
+    table = Table(
+        rows,
+        colWidths=[CONTENT_W * 0.07, CONTENT_W * 0.20, CONTENT_W * 0.16, CONTENT_W * 0.27, CONTENT_W * 0.30],
+        repeatRows=1
+    )
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), RED),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [RED_PALE, WHITE]),
+        ("GRID", (0, 0), (-1, -1), 0.3, GREY),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("TOPPADDING", (0, 0), (-1, -1), 4),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+        ("LEFTPADDING", (0, 0), (-1, -1), 5),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+    ]))
+    elements.append(table)
+    return elements
+
+def build_site_section6(site_ctx):
+    elements = []
+    elements.append(Paragraph("6. Plan d'action priorise", S["h1"]))
+    elements.append(HRFlowable(width=CONTENT_W, thickness=2, color=TEAL, spaceAfter=6))
+
+    rows = [[
+        Paragraph("<b>#</b>", S["bold_white"]),
+        Paragraph("<b>URL</b>", S["bold_white"]),
+        Paragraph("<b>Score</b>", S["bold_white"]),
+        Paragraph("<b>Non conformes</b>", S["bold_white"]),
+        Paragraph("<b>A verifier</b>", S["bold_white"]),
+    ]]
+
+    ranked = sorted(site_ctx["urls"], key=lambda item: ((item["score"] if item["score"] is not None else -1), -item["counts"]["Non conforme"]))
+
+    for index, url_data in enumerate(ranked, start=1):
+        counts = url_data["counts"]
+        rows.append([
+            Paragraph(f"<b>P{index}</b>", S["center_bold"]),
+            Paragraph(url_data["url"], S["normal"]),
+            Paragraph(audit_opquast_site_score_label_py(url_data["score"]), S["center"]),
+            Paragraph(str(counts["Non conforme"]), S["center"]),
+            Paragraph(str(counts["A verifier"]), S["center"]),
+        ])
+
+    table = Table(rows, colWidths=[CONTENT_W * 0.08, CONTENT_W * 0.50, CONTENT_W * 0.14, CONTENT_W * 0.14, CONTENT_W * 0.14], repeatRows=1)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), NAVY),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [LIGHT_BG, WHITE]),
+        ("GRID", (0, 0), (-1, -1), 0.3, GREY),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("LEFTPADDING", (0, 0), (-1, -1), 6),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(table)
+    return elements
+
+def build_site_section7():
+    return build_section7()
+
+def build_site_section8(site_ctx):
+    elements = []
+    elements.append(Paragraph("8. Annexe - Detail par URL", S["h1"]))
+    elements.append(HRFlowable(width=CONTENT_W, thickness=2, color=TEAL, spaceAfter=6))
+    elements.append(Paragraph(
+        "Cette annexe detaille les regles par URL auditee, toujours dans la limite de 245 regles par page.",
+        S["normal"]
+    ))
+    elements.append(Spacer(1, 8))
+
+    for url_data in site_ctx["urls"]:
+        elements.append(Paragraph(url_data["url"], S["h2"]))
+        elements.append(Paragraph(
+            f"Score : {audit_opquast_site_score_label_py(url_data['score'])} - "
+            f"Conforme : {url_data['counts']['Conforme']} - "
+            f"Non conforme : {url_data['counts']['Non conforme']} - "
+            f"A verifier : {url_data['counts']['A verifier']} - "
+            f"N/A : {url_data['counts']['Non applicable']}",
+            S["normal"]
+        ))
+        elements.append(Spacer(1, 4))
+
+        headers = [
+            Paragraph("<b>No</b>", S["bold_white"]),
+            Paragraph("<b>Intitule</b>", S["bold_white"]),
+            Paragraph("<b>Statut</b>", S["bold_white"]),
+        ]
+        rows = [headers]
+
+        for rule in url_data["rows"]:
+            rows.append([
+                Paragraph(rule["num"], S["center"]),
+                Paragraph(rule["intitule"], S["normal"]),
+                Paragraph(t(f"statut_labels.{rule['statut']}"), S["center"]),
+            ])
+
+        table = Table(rows, colWidths=[CONTENT_W * 0.09, CONTENT_W * 0.71, CONTENT_W * 0.20], repeatRows=1)
+        table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), DARK_BLUE),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [LIGHT_BG, WHITE]),
+            ("GRID", (0, 0), (-1, -1), 0.3, GREY),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+            ("LEFTPADDING", (0, 0), (-1, -1), 5),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+        ]))
+        elements.append(table)
+        elements.append(Spacer(1, 10))
+
+    return elements
+
+def audit_opquast_site_score_label_py(score):
+    return format_score(score) + ("%" if score is not None else "")
+
+def generate_site_pdf(data, pdf_path, audit_name, audit_sta, audit_date):
+    site_ctx = compute_site_context(data)
+    counts = site_ctx["counts"]
+    total = site_ctx["total"]
+    score = site_ctx["score"]
+    audit_url = f"{len(site_ctx['urls'])} URL(s) auditees"
+    audit_type = data[0]["type"] if data else "Site"
+
+    print(f"[Opquast PDF] {len(data)} lignes site - {len(site_ctx['urls'])} URL(s) - score {format_score(score)}" + ("%" if score is not None else ""))
+
+    def on_first_page(canvas, doc):
+        build_cover(canvas, doc, audit_name, audit_url, audit_type,
+                    audit_sta, counts, total, score, audit_date)
+
+    def on_later_pages(canvas, doc):
+        on_page(canvas, doc, audit_name, audit_url)
+
+    doc = SimpleDocTemplate(
+        pdf_path,
+        pagesize=A4,
+        leftMargin=MARGIN,
+        rightMargin=MARGIN,
+        topMargin=HEADER_H + 8 * mm,
+        bottomMargin=FOOTER_H + 8 * mm,
+        title=f"Rapport Audit Opquast - {audit_name}",
+        author="Plugin audit_opquast / SPIP",
+        subject="Audit qualite web Opquast multi-URL",
+    )
+
+    story = []
+    story.append(PageBreak())
+    story.extend(build_site_section1(site_ctx))
+    story.append(PageBreak())
+    story.extend(build_site_section2(audit_type, len(data), len(site_ctx["urls"])))
+    story.append(PageBreak())
+    story.extend(build_site_section3(site_ctx))
+    story.append(PageBreak())
+    story.extend(build_site_section4(site_ctx))
+    story.append(PageBreak())
+    story.extend(build_site_section5(data))
+    story.append(PageBreak())
+    story.extend(build_site_section6(site_ctx))
+    story.append(PageBreak())
+    story.extend(build_site_section7())
+    story.append(PageBreak())
+    story.extend(build_site_section8(site_ctx))
+
+    doc.build(story, onFirstPage=on_first_page, onLaterPages=on_later_pages)
+    print(f"[Opquast PDF] PDF site genere : {pdf_path}")
+
+# DOCUMENT BUILDER
 def generate_pdf(csv_path, pdf_path):
     print(f"[Opquast PDF] Lecture CSV : {csv_path}")
     rows = load_csv(csv_path)
@@ -1359,18 +1721,21 @@ def generate_pdf(csv_path, pdf_path):
         sys.exit(1)
 
     data = parse_data(rows)
-    counts, total, score = compute_stats(data)
-    family_stats = compute_family_stats(data)
-
     audit_name = data[0]["audit"] if data else "Audit Opquast"
     audit_url  = data[0]["url"]   if data else ""
     audit_type = data[0]["type"]  if data else ""
     audit_sta  = data[0]["statut_audit"] if data else ""
     audit_date = datetime.now().strftime("%d/%m/%Y")
 
-    print(f"[Opquast PDF] {len(data)} règles · score {format_score(score)}" + ("%" if score is not None else ""))
+    if audit_type.lower() == "site":
+        generate_site_pdf(data, pdf_path, audit_name, audit_sta, audit_date)
+        return
 
-    # ── Callbacks en-tête / pied de page ──
+    counts, total, score = compute_stats(data)
+    family_stats = compute_family_stats(data)
+
+    print(f"[Opquast PDF] {len(data)} regles - score {format_score(score)}" + ("%" if score is not None else ""))
+
     def on_first_page(canvas, doc):
         build_cover(canvas, doc, audit_name, audit_url, audit_type,
                     audit_sta, counts, total, score, audit_date)
@@ -1378,7 +1743,6 @@ def generate_pdf(csv_path, pdf_path):
     def on_later_pages(canvas, doc):
         on_page(canvas, doc, audit_name, audit_url)
 
-    # ── Document ──
     doc = SimpleDocTemplate(
         pdf_path,
         pagesize=A4,
@@ -1386,52 +1750,32 @@ def generate_pdf(csv_path, pdf_path):
         rightMargin=MARGIN,
         topMargin=HEADER_H + 8 * mm,
         bottomMargin=FOOTER_H + 8 * mm,
-        title=f"Rapport Audit Opquast — {audit_name}",
+        title=f"Rapport Audit Opquast - {audit_name}",
         author="Plugin audit_opquast / SPIP",
-        subject="Audit qualité web Opquast 245 règles",
+        subject="Audit qualite web Opquast 245 regles",
     )
 
     story = []
-
-    # Couverture (page dédiée gérée par onFirstPage)
-    story.append(PageBreak())  # après la couverture
-
-    # Section 1
+    story.append(PageBreak())
     story.extend(build_section1())
     story.append(PageBreak())
-
-    # Section 2
     story.extend(build_section2(data))
     story.append(PageBreak())
-
-    # Section 3
     story.extend(build_section3(counts, total, score, family_stats))
     story.append(PageBreak())
-
-    # Section 4
     story.extend(build_section4(family_stats, counts, total, score))
     story.append(PageBreak())
-
-    # Section 5
     story.extend(build_section5(data))
     story.append(PageBreak())
-
-    # Section 6
     story.extend(build_section6(data, family_stats))
     story.append(PageBreak())
-
-    # Section 7
     story.extend(build_section7())
     story.append(PageBreak())
-
-    # Section 8
     story.extend(build_section8(data))
 
-    # Build
     doc.build(story, onFirstPage=on_first_page, onLaterPages=on_later_pages)
-    print(f"[Opquast PDF] PDF généré : {pdf_path}")
+    print(f"[Opquast PDF] PDF genere : {pdf_path}")
 
-# ─── POINT D'ENTRÉE CLI ───────────────────────────────────────────────────────
 if __name__ == "__main__":
     if len(sys.argv) >= 3:
         csv_in  = sys.argv[1]

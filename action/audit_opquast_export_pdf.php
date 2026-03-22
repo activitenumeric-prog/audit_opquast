@@ -38,17 +38,23 @@ function action_audit_opquast_export_pdf_dist($arg = null) {
 			exit;
 		}
 
-		if (($audit['type_cible'] ?? '') !== 'url') {
-			echo minipres(_T('audit_opquast:info_restitution_pdf_url_seulement'));
-			exit;
-		}
-
 		if ($format !== '' && !in_array($format, ['pdf', 'docx'], true)) {
 			echo minipres(_T('audit_opquast:info_restitution_generation_impossible'));
 			exit;
 		}
 
 		$is_docx = ($format === 'docx');
+
+		if ($is_docx && ($audit['type_cible'] ?? '') !== 'url') {
+			echo minipres(_T('audit_opquast:info_restitution_docx_url_seulement'));
+			exit;
+		}
+
+		if (!$is_docx && !in_array(($audit['type_cible'] ?? ''), ['url', 'site'], true)) {
+			echo minipres(_T('audit_opquast:info_restitution_pdf_url_site_seulement'));
+			exit;
+		}
+
 		$check = $is_docx ? audit_opquast_check_docx_requirements() : audit_opquast_check_requirements();
 
 		if (!$check['ok']) {
