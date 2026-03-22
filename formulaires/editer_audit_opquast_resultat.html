@@ -3,6 +3,29 @@
 		<p class="audit-opquast-resultat-form__intro"><:audit_opquast:info_selection_regle:/></p>
 	</div>
 
+	[(#ENV{_regle}|oui)
+	<div class="audit-opquast-rule-reference">
+		[(#ENV{_regle}|table_valeur{objectif}|trim|oui)
+		<section class="audit-opquast-rule-reference__section">
+			<h3 class="audit-opquast-rule-reference__title"><:audit_opquast:info_regle_objectif:/></h3>
+			<div class="audit-opquast-rule-reference__content">[(#ENV*{_regle}|table_valeur{objectif})]</div>
+		</section>
+		]
+		[(#ENV{_regle}|table_valeur{mise_en_oeuvre}|trim|oui)
+		<section class="audit-opquast-rule-reference__section">
+			<h3 class="audit-opquast-rule-reference__title"><:audit_opquast:info_regle_mise_en_oeuvre:/></h3>
+			<div class="audit-opquast-rule-reference__content">[(#ENV*{_regle}|table_valeur{mise_en_oeuvre})]</div>
+		</section>
+		]
+		[(#ENV{_regle}|table_valeur{controle}|trim|oui)
+		<section class="audit-opquast-rule-reference__section">
+			<h3 class="audit-opquast-rule-reference__title"><:audit_opquast:info_regle_controle:/></h3>
+			<div class="audit-opquast-rule-reference__content">[(#ENV*{_regle}|table_valeur{controle})]</div>
+		</section>
+		]
+	</div>
+	]
+
 	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
 	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
 
@@ -16,17 +39,38 @@
 			<input type="hidden" name="famille" value="#ENV{famille}" />
 			<input type="hidden" name="statut_verification_filtre" value="#ENV{statut_verification_filtre}" />
 			<input type="hidden" name="tri" value="#ENV{tri}" />
+			#SET{aide_correction_disponible,#ENV{_regle}|table_valeur{mise_en_oeuvre}|trim}
+			[(#GET{aide_correction_disponible}|non)#SET{aide_correction_disponible,#ENV{_regle}|table_valeur{controle}|trim}]
 
 			<div class="audit-opquast-resultat-form__layout">
 				<div class="editer editer_statut_verification audit-opquast-resultat-form__field audit-opquast-resultat-form__field--status[ (#ENV**{erreurs}|table_valeur{statut_verification}|oui)erreur]">
 					<label for="statut_verification"><:audit_opquast:champ_statut_verification_label:/></label>
 					[<span class="erreur_message">(#ENV**{erreurs}|table_valeur{statut_verification})</span>]
-					<select name="statut_verification" id="statut_verification">
+					<select name="statut_verification" id="statut_verification" data-audit-opquast-statut-select>
 						<BOUCLE_statuts_verif(DATA){source table, #ENV{_statuts_verification}}>
 							<option value="#CLE"[(#CLE|=={#ENV{statut_verification}}|oui) selected="selected"]>#VALEUR</option>
 						</BOUCLE_statuts_verif>
 					</select>
 				</div>
+
+				[(#GET{aide_correction_disponible}|oui)
+				<div class="audit-opquast-correction-help[(#ENV{_afficher_aide_correction}|=={oui}|non) is-hidden]" data-audit-opquast-correction-help>
+					<h3 class="audit-opquast-correction-help__title"><:audit_opquast:info_aide_correction:/></h3>
+					<p class="audit-opquast-correction-help__intro"><:audit_opquast:info_aide_correction_intro:/></p>
+					[(#ENV{_regle}|table_valeur{mise_en_oeuvre}|trim|oui)
+					<section class="audit-opquast-correction-help__section">
+						<h4 class="audit-opquast-correction-help__subtitle"><:audit_opquast:info_regle_mise_en_oeuvre:/></h4>
+						<div class="audit-opquast-correction-help__content">[(#ENV*{_regle}|table_valeur{mise_en_oeuvre})]</div>
+					</section>
+					]
+					[(#ENV{_regle}|table_valeur{controle}|trim|oui)
+					<section class="audit-opquast-correction-help__section">
+						<h4 class="audit-opquast-correction-help__subtitle"><:audit_opquast:info_regle_controle:/></h4>
+						<div class="audit-opquast-correction-help__content">[(#ENV*{_regle}|table_valeur{controle})]</div>
+					</section>
+					]
+				</div>
+				]
 
 				<div class="editer editer_commentaire audit-opquast-resultat-form__field">
 					<label for="commentaire"><:audit_opquast:champ_commentaire_label:/></label>

@@ -37,6 +37,7 @@ function formulaires_editer_audit_opquast_resultat_charger_dist($id_audit, $id_r
 		'_regle_numero' => $regle['numero'] ?? '',
 		'_regle_titre' => $regle['titre'] ?? '',
 		'_regle' => $regle,
+		'_afficher_aide_correction' => (($resultat['statut_verification'] ?? 'a_verifier') === 'non_conforme') ? 'oui' : '',
 		'_statuts_verification' => audit_opquast_statuts_verification(),
 	];
 }

@@ -511,6 +511,42 @@
 		});
 	}
 
+	function updateCorrectionHelp(form) {
+		if (!form) {
+			return;
+		}
+
+		var select = form.querySelector('[data-audit-opquast-statut-select]');
+		var help = form.querySelector('[data-audit-opquast-correction-help]');
+		var show = select && help && select.value === 'non_conforme';
+
+		if (!help) {
+			return;
+		}
+
+		help.classList.toggle('is-hidden', !show);
+		help.setAttribute('aria-hidden', show ? 'false' : 'true');
+	}
+
+	function initResultForms(root) {
+		if (!root) {
+			return;
+		}
+
+		root.querySelectorAll('.formulaire_editer_audit_opquast_resultat form').forEach(function (form) {
+			if (form.dataset.auditOpquastResultFormInit !== 'oui') {
+				form.dataset.auditOpquastResultFormInit = 'oui';
+				form.addEventListener('change', function (event) {
+					if (event.target.closest('[data-audit-opquast-statut-select]')) {
+						updateCorrectionHelp(form);
+					}
+				});
+			}
+
+			updateCorrectionHelp(form);
+		});
+	}
+
 	function initExportRegion(region) {
 		if (!region) {
 			return;
@@ -678,6 +714,7 @@
 		initResultsRegion(root.querySelector('[data-audit-opquast-results-region]'));
 		initAuditForm(root);
 		initSiteAuditSelector(root);
+		initResultForms(root);
 	}
 
 	document.addEventListener('DOMContentLoaded', function () {

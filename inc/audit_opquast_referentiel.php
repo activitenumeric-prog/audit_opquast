@@ -19,6 +19,7 @@ function audit_opquast_referentiel_regles() {
 	}
 
 	$items = json_decode($json, true);
+	$complements = audit_opquast_referentiel_complements();
 
 	if (!is_array($items)) {
 		$regles = [];
@@ -28,11 +29,16 @@ function audit_opquast_referentiel_regles() {
 	$regles = [];
 
 	foreach ($items as $item) {
+		$numero = intval($item['name']);
+		$complement = $complements[(string) $numero] ?? [];
 		$regles[] = [
-			'numero' => intval($item['name']),
+			'numero' => $numero,
 			'titre' => isset($item['description']) ? trim($item['description']) : '',
 			'famille' => isset($item['thema'][0]['name']) ? trim($item['thema'][0]['name']) : '',
 			'slug_famille' => isset($item['thema'][0]['slugify']) ? trim($item['thema'][0]['slugify']) : '',
+			'objectif' => audit_opquast_referentiel_html($complement['objectif'] ?? ($item['goal'] ?? '')),
+			'mise_en_oeuvre' => audit_opquast_referentiel_html($complement['mise_en_oeuvre'] ?? ''),
+			'controle' => audit_opquast_referentiel_html($complement['controle'] ?? ''),
 			'mots_cles' => audit_opquast_referentiel_liste_noms(isset($item['tags']) ? $item['tags'] : []),
 			'phases' => audit_opquast_referentiel_liste_noms(isset($item['steps']) ? $item['steps'] : []),
 			'url_source' => 'https://checklists.opquast.com' . (isset($item['url']) ? $item['url'] : ''),
@@ -43,6 +49,32 @@ function audit_opquast_referentiel_regles() {
 	}
 
 	return $regles;
+}
+
+function audit_opquast_referentiel_html($html) {
+	$html = trim((string) $html);
+
+	if ($html === '') {
+		return '';
+	}
+
+	$html = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+	$html = audit_opquast_referentiel_reparer_encodage($html);
+	$html = preg_replace("/\r\n|\r/u", "\n", $html);
+
+	return trim((string) $html);
+}
+
+function audit_opquast_referentiel_reparer_encodage($texte) {
+	$texte = (string) $texte;
+
+	if ($texte === '' || !preg_match('/Ã.|Â.|â€™|â€œ|â€\x9d|â€"|â€“|â€”/u', $texte)) {
+		return $texte;
+	}
+
+	$repare = @mb_convert_encoding($texte, 'UTF-8', 'Windows-1252');
+
+	return is_string($repare) && $repare !== '' ? $repare : $texte;
 }
 
 function audit_opquast_referentiel_liste_noms($items) {
@@ -75,6 +107,33 @@ function audit_opquast_referentiel_charger_json() {
 	}
 
 	return audit_opquast_referentiel_decoder($b64);
+}
+
+function audit_opquast_referentiel_complements() {
+	static $complements = null;
+
+	if (is_array($complements)) {
+		return $complements;
+	}
+
+	$fichier = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'referentiel' . DIRECTORY_SEPARATOR . 'opquast_v5_2025_2030_complements.json';
+
+	if (!is_file($fichier) || !is_readable($fichier)) {
+		$complements = [];
+		return $complements;
+	}
+
+	$json = file_get_contents($fichier);
+
+	if (!is_string($json) || $json === '') {
+		$complements = [];
+		return $complements;
+	}
+
+	$data = json_decode($json, true);
+	$complements = is_array($data['items'] ?? null) ? $data['items'] : [];
+
+	return $complements;
 }
 
 function audit_opquast_referentiel_fichier_source() {

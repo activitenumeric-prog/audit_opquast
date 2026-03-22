@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.29.0 - 2026-03-22
+
+- enrichissement du referentiel Opquast embarque avec `Objectif`, `Mise en oeuvre` et `Controle`
+- ajout d'un fichier local de complements pour conserver ces contenus sans dependance reseau au runtime
+- extension du schema et du peuplement de la table des regles avec ces trois nouveaux champs
+- affichage de ces contenus dans `Navigation entre les regles`
+- ajout d'un bloc `Aide a la correction` lorsque le statut d'une regle est `Non conforme`
+
 ## 1.28.3 - 2026-03-21
 
 - isolation d'une page detail dediee `Site` (`audit_opquast_site`) pour faire evoluer les audits `Site` sans casser la page detail `URL`

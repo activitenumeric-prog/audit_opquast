@@ -28,6 +28,10 @@ function audit_opquast_upgrade($nom_meta_base_version, $version_cible) {
 		['maj_tables', $tables],
 		['audit_opquast_peupler_referentiel'],
 	];
+	$maj['1.29.0'] = [
+		['maj_tables', $tables],
+		['audit_opquast_peupler_referentiel'],
+	];
 
 	include_spip('base/upgrade');
 	maj_plugin($nom_meta_base_version, $version_cible, $maj);
@@ -65,6 +69,9 @@ function audit_opquast_peupler_referentiel() {
 			'titre' => $regle['titre'],
 			'famille' => $regle['famille'],
 			'slug_famille' => $regle['slug_famille'],
+			'objectif' => $regle['objectif'] ?? '',
+			'mise_en_oeuvre' => $regle['mise_en_oeuvre'] ?? '',
+			'controle' => $regle['controle'] ?? '',
 			'mots_cles' => $regle['mots_cles'],
 			'phases' => $regle['phases'],
 			'url_source' => $regle['url_source'],

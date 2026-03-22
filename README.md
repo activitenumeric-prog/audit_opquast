@@ -1,7 +1,7 @@
 # Audit OpQuast
 
 ![SPIP](https://img.shields.io/badge/SPIP-4.4.7%20%7C%204.*-red)
-![Version](https://img.shields.io/badge/version-1.28.3-blue)
+![Version](https://img.shields.io/badge/version-1.29.0-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-brightgreen)
 ![Licence](https://img.shields.io/badge/licence-GNU%2FGPL-green)
 
@@ -9,7 +9,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 
 ## Version
 
-- Version courante : `1.28.3`
+- Version courante : `1.29.0`
 - Compatibilite SPIP : `4.0` a `4.4`
 - Referentiel embarque : `Opquast Qualite Numerique v5 (2025-2030)`
 
@@ -18,6 +18,7 @@ Plugin SPIP d'audit manuel et semi-assiste du referentiel Opquast.
 Le plugin pose les bases d'un outil d'audit dans SPIP avec :
 
 - une table des 245 regles Opquast
+- un referentiel enrichi avec `Objectif`, `Mise en oeuvre` et `Controle`
 - une table des audits
 - une table des resultats par regle et par audit
 - une installation qui cree les tables et peuple le referentiel
@@ -40,6 +41,8 @@ Le MVP permet maintenant :
 - de filtrer rapidement les regles via des raccourcis cliquables par statut
 - de naviguer entre les regles precedentes et suivantes dans un audit filtre
 - de saisir un resultat par regle avec statut, commentaire et preuve
+- d'afficher dans la navigation de chaque regle son `Objectif`, sa `Mise en oeuvre` et son `Controle`
+- de proposer une aide a la correction contextuelle quand une regle est declaree `Non conforme`
 - de generer une restitution `DOCX` pour les audits `URL` via Python 3, en conservant le template Word et un `document.xml` natif
 - de generer une restitution `PDF` pour les audits `URL` via Python 3 et `reportlab`
 - d'agreger les KPI d'un audit `Site` a partir de ses audits `URL` enfants
